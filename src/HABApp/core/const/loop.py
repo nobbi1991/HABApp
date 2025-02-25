@@ -1,6 +1,7 @@
 import asyncio
 import os
 import sys
+import threading
 
 
 # we can have subprocesses (https://docs.python.org/3/library/asyncio-platforms.html#subprocess-support-on-windows)
@@ -15,3 +16,11 @@ asyncio.set_event_loop(loop)
 
 loop.set_debug(True)
 loop.slow_callback_duration = 0.02
+
+LOOP_THREAD_ID = None
+
+async def get_loop_thread_id():
+    global LOOP_THREAD_ID
+    LOOP_THREAD_ID =  threading.get_ident()
+
+asyncio.run(get_loop_thread_id())

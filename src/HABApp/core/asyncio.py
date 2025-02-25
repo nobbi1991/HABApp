@@ -4,10 +4,12 @@ from asyncio import Future as _Future
 from asyncio import Task as _Task
 from asyncio import run_coroutine_threadsafe as _run_coroutine_threadsafe
 from contextvars import ContextVar as _ContextVar
+import threading
 from typing import TYPE_CHECKING
 from typing import Any as _Any
 from typing import ParamSpec as _ParamSpec
 from typing import TypeVar as _TypeVar
+from HABApp.core.const.loop import LOOP_THREAD_ID
 
 from HABApp.core.const import loop
 from HABApp.core.lib.helper import get_obj_name
@@ -71,13 +73,12 @@ _P = _ParamSpec('_P')
 
 
 def run_func_from_async(func: _Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs) -> _T:
-    # we already have an async context
-    if thread_context.get(None) is None:
+    if threading.get_ident() != LOOP_THREAD_ID:
+        # We're not in the event loop's thread, use run_coroutine_threadsafe
+        return _run_coroutine_threadsafe(_async_execute_func(func, *args, **kwargs), loop).result()
+    else:
+        # We're in the event loop's thread, call the function directly
         return func(*args, **kwargs)
-
-    # we are in a thread, that's why we can wait (and block) for the future
-    future = _run_coroutine_threadsafe(_async_execute_func(func, *args, **kwargs), loop)
-    return future.result()
 
 
 async def _async_execute_func(func: _Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs) -> _T:
