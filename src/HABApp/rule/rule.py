@@ -7,7 +7,7 @@ from pathlib import Path
 from re import Pattern
 from typing import Any, Final, Literal, ParamSpec, TypeVar, overload
 
-import HABApp
+from HABApp.config.config import HABAPP_CONFIG
 import HABApp.core
 import HABApp.openhab
 import HABApp.rule_manager
@@ -235,7 +235,7 @@ class Rule(ContextProvidingObj):
         if p.suffix.lower() == '.py':
             # if it's a relative path make it relative to the config
             if not p.is_absolute():
-                p = (HABApp.CONFIG._file_path.parent / p).resolve()
+                p = (HABAPP_CONFIG._file_path.parent / p).resolve()
 
             new_args.insert(0, p)
 

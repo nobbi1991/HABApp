@@ -7,7 +7,7 @@ from typing import Any
 
 from easyconfig.yaml import yaml_safe as _yaml_safe
 
-from HABApp.config.config import CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.config.errors import AbsolutePathExpected
 from HABApp.config.logging import rotate_file
 from HABApp.core.const.const import PYTHON_312, PYTHON_313
@@ -42,11 +42,11 @@ def fix_log_filenames(handlers_cfg: dict) -> None:
         p = Path(filename)
         if not p.is_absolute():
             # Our log folder ist not yet converted to path -> it is not loaded
-            if not CONFIG.directories.logging.is_absolute():
+            if not HABAPP_CONFIG.directories.logging.is_absolute():
                 raise AbsolutePathExpected()
 
             # Use defined parent folder
-            p = (CONFIG.directories.logging / p).resolve()
+            p = (HABAPP_CONFIG.directories.logging / p).resolve()
             cfg['filename'] = str(p)
 
 
@@ -99,7 +99,7 @@ def rotate_handler_files(handlers_cfg: dict) -> None:
 
 
 def inject_queue_handler(handlers_cfg: dict, loggers_cfg: dict, log: BufferedLogger) -> list[HABAppQueueHandler]:
-    if not CONFIG.habapp.logging.use_buffer:
+    if not HABAPP_CONFIG.habapp.logging.use_buffer:
         return []
 
     prefix = 'HABAppQueue_'

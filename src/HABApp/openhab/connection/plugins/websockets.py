@@ -9,7 +9,7 @@ from typing import Annotated, Final, get_args, get_origin
 from aiohttp import BasicAuth, ClientError, ClientWebSocketResponse, WSMsgType
 from pydantic import ValidationError
 
-import HABApp
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.connections import BaseConnectionPlugin
 from HABApp.core.const.const import PYTHON_311
 from HABApp.core.const.log import TOPIC_EVENTS
@@ -129,7 +129,7 @@ class WebsocketPlugin(BaseConnectionPlugin[OpenhabConnection]):
             session = self.plugin_connection.context.session
             token = self._build_token(session.auth)
 
-            ws_cfg = HABApp.CONFIG.openhab.connection.websocket
+            ws_cfg = HABAPP_CONFIG.openhab.connection.websocket
             max_msg_size = int(ws_cfg.max_msg_size)
             ping_interval = ws_cfg.ping_interval
 
@@ -180,7 +180,7 @@ class WebsocketPlugin(BaseConnectionPlugin[OpenhabConnection]):
 
     async def _setup_websocket_filter(self, ws: ClientWebSocketResponse, log: logging.Logger) -> None:
         # setup event type filter
-        filter_cfg = HABApp.CONFIG.openhab.connection.websocket.event_filter
+        filter_cfg = HABAPP_CONFIG.openhab.connection.websocket.event_filter
         supported_event_names = set(self._get_type_names_from_adapter())
 
         names: set[str] = set()

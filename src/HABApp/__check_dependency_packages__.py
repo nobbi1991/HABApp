@@ -23,13 +23,22 @@ def get_dependencies() -> list[str]:
         'ujson',
         'immutables',
         'javaproperties',
-
         'typing-extensions',
     ]
 
 
+def setup_uvloop_if_available() -> None:
+    """setup uvloop if installed, because it seems to be much faster (untested)."""
+    try:
+        import uvloop  # type: ignore
+
+        uvloop.install()
+        print('Using uvloop')
+    except ModuleNotFoundError:
+        pass
+
 def check_dependency_packages() -> None:
-    """Imports all dependencies and reports failures"""
+    """Imports all dependencies and reports failures."""
 
     missing: dict[str, ModuleNotFoundError] = {}
 

@@ -5,7 +5,7 @@ from easyconfig import yaml
 from pydantic import BaseModel
 
 import HABApp.config.models
-from HABApp.config import CONFIG
+from HABApp.config import HABAPP_CONFIG
 
 
 def test_sample_yaml(pytestconfig) -> None:
@@ -44,7 +44,7 @@ def test_sample_yaml(pytestconfig) -> None:
         sample_cfg = '\n'.join(cfg_lines)
 
         map = yaml.yaml_rt.load(sample_cfg)
-        CONFIG.load_config_dict(map)
+        HABAPP_CONFIG.load_config_dict(map)
 
 
 def test_config_documentation_complete(pytestconfig) -> None:

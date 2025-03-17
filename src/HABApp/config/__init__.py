@@ -1,8 +1,6 @@
-from .errors import InvalidConfigError
 
-# isort: split
 
-from .config import CONFIG
+from .config import HABAPP_CONFIG
 
 # isort: split
 

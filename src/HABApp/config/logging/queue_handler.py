@@ -6,7 +6,7 @@ from typing import Final
 
 import HABApp
 
-from .config import CONFIG
+from .config import HABAPP_CONFIG
 
 
 log = logging.getLogger('HABApp.logging')
@@ -16,7 +16,7 @@ LOCK = Lock()
 
 
 class HABAppQueueHandler:
-    FLUSH_DELAY: float = CONFIG.habapp.logging.flush_every
+    FLUSH_DELAY: float = HABAPP_CONFIG.habapp.logging.flush_every
 
     def __init__(self, queue: SimpleQueue, handler_name: str, thread_name: str) -> None:
         self._handler: logging.Handler | None = None

@@ -4,7 +4,7 @@ import asyncio
 import logging
 from typing import Final
 
-import HABApp
+from HABApp.config.config import HABAPP_CONFIG
 import HABApp.core
 import HABApp.openhab.events
 from HABApp.config.models.openhab import General as OpenHABGeneralConfig
@@ -28,7 +28,7 @@ class WaitForStartlevelPlugin(BaseConnectionPlugin[OpenhabConnection]):
 
     async def __on_connected_new(self, context: OpenhabContext, connection: OpenhabConnection) -> None:
         log = connection.log
-        oh_general = HABApp.CONFIG.openhab.general
+        oh_general = HABAPP_CONFIG.openhab.general
         start_level_reached_timeout: Final = 10 * 60
 
         if (system_info := await async_get_system_info()) is not None:
@@ -161,7 +161,7 @@ class WaitForStartlevelPlugin(BaseConnectionPlugin[OpenhabConnection]):
 
 
 async def _start_level_reached() -> tuple[bool, None | int]:
-    start_level_min = HABApp.CONFIG.openhab.general.min_start_level
+    start_level_min = HABAPP_CONFIG.openhab.general.min_start_level
 
     if (system_info := await async_get_system_info()) is None:
         return False, None

@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Final
 
-from HABApp.config import CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.connections import BaseConnectionPlugin
 from HABApp.core.internals import uses_item_registry
 from HABApp.core.logger import log_warning
@@ -11,7 +11,7 @@ from HABApp.openhab.connection.connection import OpenhabConnection
 from HABApp.openhab.connection.handler.func_async import async_get_links, async_get_things
 
 
-PING_CONFIG: Final = CONFIG.openhab.ping
+PING_CONFIG: Final = HABAPP_CONFIG.openhab.ping
 
 Items = uses_item_registry()
 

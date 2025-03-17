@@ -5,7 +5,7 @@ from typing import TypeAlias
 
 from aiomqtt import Client, MqttError
 
-import HABApp
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.connections import AutoReconnectPlugin, BaseConnection, Connections, ConnectionStateToEventBusPlugin
 from HABApp.core.connections.base_connection import AlreadyHandledException
 from HABApp.core.connections.base_plugin import BaseConnectionPluginConnectedTask
@@ -18,7 +18,7 @@ CONTEXT_TYPE: TypeAlias = Client | None
 
 
 def setup() -> None:
-    config = HABApp.config.CONFIG.mqtt
+    config = HABAPP_CONFIG.mqtt
 
     from HABApp.mqtt.connection.handler import CONNECTION_HANDLER
     from HABApp.mqtt.connection.publish import PUBLISH_HANDLER

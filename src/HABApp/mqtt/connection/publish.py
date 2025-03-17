@@ -3,7 +3,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from HABApp.config import CONFIG
+from HABApp.config import HABAPP_CONFIG
 from HABApp.config.models.mqtt import QOS
 from HABApp.core.asyncio import run_func_from_async
 from HABApp.core.const.json import dump_json
@@ -16,7 +16,7 @@ class PublishHandler(MqttPlugin):
         super().__init__(task_name='MqttPublish')
 
     async def mqtt_task(self) -> None:
-        if CONFIG.mqtt.general.listen_only:
+        if HABAPP_CONFIG.mqtt.general.listen_only:
             return None
 
         connection = self.plugin_connection
@@ -24,7 +24,7 @@ class PublishHandler(MqttPlugin):
             client = self.plugin_connection.context
             assert client is not None
 
-            cfg = CONFIG.mqtt.publish
+            cfg = HABAPP_CONFIG.mqtt.publish
             queue = QUEUE
             assert queue is not None
 
@@ -42,7 +42,7 @@ class PublishHandler(MqttPlugin):
     async def on_connected(self) -> None:
         global QUEUE
 
-        if not CONFIG.mqtt.general.listen_only:
+        if not HABAPP_CONFIG.mqtt.general.listen_only:
             QUEUE = Queue()
         await super().on_connected()
 

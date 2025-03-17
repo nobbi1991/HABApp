@@ -5,8 +5,8 @@ from pathlib import Path
 import eascheduler
 import pydantic
 
-from HABApp import __version__
-from HABApp.config.config import CONFIG
+from HABApp.__version__ import __version__
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.config.logging import HABAppQueueHandler, load_logging_file
 from HABApp.core import shutdown
 from HABApp.core.internals.proxy.proxies import uses_file_manager
@@ -25,8 +25,8 @@ file_manager = uses_file_manager()
 
 def setup_habapp_configuration(config_folder: Path) -> None:
 
-    CONFIG.set_file_path(config_folder / 'config.yml')
-    preprocess = CONFIG.load_preprocess
+    HABAPP_CONFIG.set_file_path(config_folder / 'config.yml')
+    preprocess = HABAPP_CONFIG.load_preprocess
     preprocess.set_log_func(log.warning)
     # old sse event handler config, remove 2026
     preprocess.delete_entry(('openhab', 'connection', 'buffer'))
@@ -59,11 +59,11 @@ def setup_habapp_configuration(config_folder: Path) -> None:
     watcher.watch_file('config.log_file', config_file_changed, config_folder / 'logging.yml', habapp_internal=True)
     watcher.watch_file('config.cfg_file', config_file_changed, config_folder / 'config.yml', habapp_internal=True)
 
-    CONFIG.habapp.logging.subscribe_for_changes(set_flush_delay)
+    HABAPP_CONFIG.habapp.logging.subscribe_for_changes(set_flush_delay)
 
 
 def set_flush_delay() -> None:
-    HABAppQueueHandler.FLUSH_DELAY = CONFIG.habapp.logging.flush_every
+    HABAppQueueHandler.FLUSH_DELAY = HABAPP_CONFIG.habapp.logging.flush_every
 
 
 async def config_file_changed(path: str) -> None:
@@ -82,19 +82,19 @@ def load_habapp_cfg(do_print=False) -> None:
             log.error(text)
 
     try:
-        CONFIG.load_config_file()
+        HABAPP_CONFIG.load_config_file()
     except pydantic.ValidationError as e:
         for line in str(e).splitlines():
             error(line)
         raise InvalidConfigError from None
 
     # check if folders exist and print warnings, maybe because of missing permissions
-    if not CONFIG.directories.rules.is_dir():
-        log.warning(f'Folder for rules files does not exist: {CONFIG.directories.rules}')
+    if not HABAPP_CONFIG.directories.rules.is_dir():
+        log.warning(f'Folder for rules files does not exist: {HABAPP_CONFIG.directories.rules}')
 
-    CONFIG.directories.create_folders()
+    HABAPP_CONFIG.directories.create_folders()
 
-    location = CONFIG.location
+    location = HABAPP_CONFIG.location
     eascheduler.set_location(location.latitude, location.longitude, location.elevation)
 
     if not location.country:

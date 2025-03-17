@@ -6,14 +6,14 @@ from time import monotonic
 from typing import Final
 
 import HABApp.openhab.events
-from HABApp.config import CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.connections import BaseConnectionPlugin
 from HABApp.core.internals import uses_event_bus, uses_item_registry
 from HABApp.core.lib import SingleTask
 from HABApp.openhab.connection.connection import OpenhabConnection
 
 
-PING_CONFIG: Final = CONFIG.openhab.ping
+PING_CONFIG: Final = HABAPP_CONFIG.openhab.ping
 
 log = logging.getLogger('HABApp.openhab.items')
 Items = uses_item_registry()
@@ -41,7 +41,7 @@ class PingPlugin(BaseConnectionPlugin[OpenhabConnection]):
         self.timestamp_sent = None
 
         self.listener = HABApp.core.internals.EventBusListener(
-            HABApp.config.CONFIG.openhab.ping.item,
+            HABAPP_CONFIG.openhab.ping.item,
             HABApp.core.internals.wrap_func(self.ping_received),
             HABApp.core.events.EventFilter(HABApp.openhab.events.ItemStateUpdatedEvent)
         )

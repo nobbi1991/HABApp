@@ -4,8 +4,9 @@ import typing
 from asyncio import sleep
 from pathlib import Path
 
-import HABApp
+import HABApp.runtime
 import HABApp.__cmd_args__ as cmd_args
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core import shutdown
 from HABApp.core.connections import Connections
 from HABApp.core.files.errors import AlreadyHandledFileError
@@ -47,7 +48,7 @@ class RuleManager:
             await file.check_all_rules()
             return None
 
-        path = HABApp.CONFIG.directories.rules
+        path = HABAPP_CONFIG.directories.rules
         prefix = 'rules/'
 
         file_manager.add_handler(
@@ -63,7 +64,7 @@ class RuleManager:
 
     async def load_rules_on_startup(self):
 
-        if HABApp.CONFIG.openhab.general.wait_for_openhab:
+        if HABAPP_CONFIG.openhab.general.wait_for_openhab:
             c = Connections.get('openhab')
             while not (c.is_shutdown or c.is_disabled or c.is_online):
                 await sleep(1)

@@ -5,14 +5,14 @@ import logging
 from typing import Final
 
 import HABApp
-from HABApp.config import CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.connections import BaseConnectionPlugin
 from HABApp.core.internals import uses_item_registry
 from HABApp.openhab.connection.connection import OpenhabConnection
 from HABApp.openhab.definitions.helpers.log_table import Table
 
 
-PING_CONFIG: Final = CONFIG.openhab.ping
+PING_CONFIG: Final = HABAPP_CONFIG.openhab.ping
 
 Items = uses_item_registry()
 

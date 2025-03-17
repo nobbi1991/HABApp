@@ -3,7 +3,7 @@ from asyncio import iscoroutinefunction
 from collections.abc import Callable, Coroutine
 from typing import Any
 
-from HABApp.config import CONFIG
+from HABApp.config import HABAPP_CONFIG
 from HABApp.core import shutdown
 from HABApp.core.internals import Context
 from HABApp.core.internals.wrapped_function.base import P, R, WrappedFunctionBase
@@ -62,5 +62,5 @@ def setup() -> None:
     shutdown.register(stop_thread_pool, msg='Stopping thread pool', last=True)
 
 
-THREAD_POOL = CONFIG.habapp.thread_pool
+THREAD_POOL = HABAPP_CONFIG.habapp.thread_pool
 THREAD_POOL.subscribe_for_changes(setup)

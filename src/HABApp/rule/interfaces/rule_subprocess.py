@@ -5,7 +5,7 @@ from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any, TypeAlias
 
-import HABApp
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.logger import HABAppError, HABAppWarning
 from HABApp.core.wrapper import process_exception
 
@@ -75,7 +75,7 @@ def build_exec_params(*args: HINT_EXEC_ARGS,
 
     # set config folder as working directory
     if 'cwd' not in kwargs:
-        kwargs['cwd'] = HABApp.CONFIG._file_path.parent
+        kwargs['cwd'] = HABAPP_CONFIG._file_path.parent
 
     return _ensure_str_objs(args, 'args'), kwargs
 

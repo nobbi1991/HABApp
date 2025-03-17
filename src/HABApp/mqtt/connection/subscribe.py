@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 import HABApp
-from HABApp.config import CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.asyncio import run_coro_from_thread
 from HABApp.core.errors import ItemNotFoundException
 from HABApp.core.internals import uses_get_item, uses_item_registry, uses_post_event
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
     from HABApp.config.models.mqtt import QOS
 
-SUBSCRIBE_CFG = CONFIG.mqtt.subscribe
+SUBSCRIBE_CFG = HABAPP_CONFIG.mqtt.subscribe
 
 
 class SubscriptionHandler(MqttPlugin):
@@ -106,7 +106,7 @@ class SubscriptionHandler(MqttPlugin):
         # Unsubscribing has the corresponding handling, so we call that every time
         if not self.plugin_connection.has_errors:
             # subscription from config
-            for topic, qos in CONFIG.mqtt.subscribe.get_topic_qos():
+            for topic, qos in HABAPP_CONFIG.mqtt.subscribe.get_topic_qos():
                 target[topic] = qos
             # runtime subscriptions overwrite the subscriptions from the config file
             for topic, qos in self.runtime_subs.items():

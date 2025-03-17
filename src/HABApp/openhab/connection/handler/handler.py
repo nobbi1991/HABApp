@@ -7,7 +7,7 @@ import aiohttp
 from aiohttp.client import ClientResponse, _RequestContextManager
 from aiohttp.hdrs import METH_DELETE, METH_GET, METH_POST, METH_PUT
 
-from HABApp.config import CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core import shutdown
 from HABApp.core.connections import BaseConnectionPlugin
 from HABApp.core.connections._definitions import CONNECTION_HANDLER_NAME
@@ -29,11 +29,11 @@ class ConnectionHandler(BaseConnectionPlugin[OpenhabConnection]):
         self.session: aiohttp.ClientSession | None = None
 
     def update_cfg_general(self) -> None:
-        self.read_only = CONFIG.openhab.general.listen_only
+        self.read_only = HABAPP_CONFIG.openhab.general.listen_only
 
     async def on_setup(self, connection: OpenhabConnection) -> None:
         log = self.plugin_connection.log
-        config = CONFIG.openhab.connection
+        config = HABAPP_CONFIG.openhab.connection
         url: str = config.url
         user: str = config.user
         password: str = config.password

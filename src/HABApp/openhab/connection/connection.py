@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, TypeAlias
 
 import aiohttp
 
-import HABApp
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.connections import AutoReconnectPlugin, BaseConnection, Connections, ConnectionStateToEventBusPlugin
 
 
@@ -50,7 +50,7 @@ CONTEXT_TYPE: TypeAlias = OpenhabContext | None
 
 
 def setup() -> None:
-    config = HABApp.config.CONFIG.openhab
+    config = HABAPP_CONFIG.openhab
 
     from HABApp.openhab.connection.handler import HANDLER as CONNECTION_HANDLER
     from HABApp.openhab.connection.plugins import (

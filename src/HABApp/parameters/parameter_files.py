@@ -3,7 +3,8 @@ import re
 from pathlib import Path
 from typing import Final
 
-import HABApp
+from HABApp.core.const.yml import yml
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.files.file import HABAppFile
 from HABApp.core.internals.proxy import uses_file_manager
 
@@ -24,7 +25,7 @@ def get_user_name(name: str) -> str:
 
 async def load_file(name: str, path: Path) -> None:
     with path.open(mode='r', encoding='utf-8') as file:
-        data = HABApp.core.const.yml.load(file)
+        data = yml.load(file)
     if data is None:
         data = {}
 
@@ -42,7 +43,7 @@ async def unload_file(name: str, path: Path) -> None:
 
 def save_file(file: str):
     assert isinstance(file, str), type(file)
-    path = HABApp.CONFIG.directories.params
+    path = HABAPP_CONFIG.directories.params
     if path is None:
         msg = 'Parameter files are disabled! Configure a folder to use them!'
         raise ValueError(msg)
@@ -51,7 +52,7 @@ def save_file(file: str):
 
     log.info(f'Updated {filename}')
     with filename.open('w', encoding='utf-8') as outfile:
-        HABApp.core.const.yml.dump(get_parameter_file(file), outfile)
+        yml.dump(get_parameter_file(file), outfile)
 
 
 class HABAppParameterFile(HABAppFile):
@@ -61,7 +62,7 @@ class HABAppParameterFile(HABAppFile):
 
 
 async def setup_param_files() -> bool:
-    path = HABApp.CONFIG.directories.params
+    path = HABAPP_CONFIG.directories.params
     if path is None:
         return False
 

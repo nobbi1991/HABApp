@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-import HABApp
+from HABApp.config.config import HABAPP_CONFIG
 import HABApp.openhab.events
 from HABApp.core.connections import BaseConnectionPlugin
 from HABApp.core.files.file import HABAppFile
@@ -42,7 +42,7 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
         self.cache_cfg: list[dict[str, Any]] = []
 
     async def on_setup(self):
-        path = HABApp.CONFIG.directories.config
+        path = HABAPP_CONFIG.directories.config
         if path is None:
             return None
 

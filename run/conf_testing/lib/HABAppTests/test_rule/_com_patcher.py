@@ -12,7 +12,7 @@ import HABApp.mqtt.connection.subscribe
 import HABApp.openhab.connection.handler
 import HABApp.openhab.connection.handler.func_async
 import HABApp.openhab.process_events
-from HABApp.config import CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 
 
 class PatcherName:
@@ -47,7 +47,7 @@ class BasePatcher:
 
 def shorten_url(url: str) -> str:
     url = str(url)
-    cfg = CONFIG.openhab.connection.url
+    cfg = HABAPP_CONFIG.openhab.connection.url
     if url.startswith(cfg):
         return url[len(cfg):]
     return url

@@ -5,7 +5,8 @@ from asyncio import sleep
 from datetime import datetime
 from typing import Final, TextIO
 
-import HABApp
+import HABApp.core
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.config.logging import rotate_file
 from HABApp.core.asyncio import create_task
 from HABApp.core.wrapper import log_exception
@@ -17,7 +18,7 @@ TRACEBACK_FILE: TextIO | None = None
 def setup_debug() -> None:
     global TRACEBACK_FILE
 
-    debug = HABApp.CONFIG.habapp.debug
+    debug = HABAPP_CONFIG.habapp.debug
     periodic_tb_cfg = debug.periodic_traceback
     event_loop_cfg = debug.watch_event_loop
     tb_on_shutdown_signal = debug.traceback_on_shutdown_signal
@@ -25,7 +26,7 @@ def setup_debug() -> None:
     if not event_loop_cfg.enabled and not tb_on_shutdown_signal and not periodic_tb_cfg.enabled:
         return None
 
-    file: Final = HABApp.CONFIG.directories.logging / 'HABApp_traceback.log'
+    file: Final = HABAPP_CONFIG.directories.logging / 'HABApp_traceback.log'
     logging.getLogger('HABApp').info(f'Dumping traceback to {file}')
 
     rotate_file(file, 3)

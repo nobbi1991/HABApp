@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import HABApp
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.rule.rule_hook import HABAppRuleHook
 from HABApp.rule_manager import RuleFile
 
@@ -18,9 +18,9 @@ class BenchFile(RuleFile):
         hook.in_dict(globals())
 
         rule_ha = rule = HABAppBenchRule()
-        if HABApp.CONFIG.mqtt.connection.host:
+        if HABAPP_CONFIG.mqtt.connection.host:
             rule = rule.link_rule(MqttBenchRule())
-        if HABApp.CONFIG.openhab.connection.url:
+        if HABAPP_CONFIG.openhab.connection.url:
             rule = rule.link_rule(OpenhabBenchRule())
 
         rule_ha.run.at(5, rule_ha.do_bench_start)
