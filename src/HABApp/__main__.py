@@ -10,32 +10,7 @@ from HABApp.__debug_info__ import print_debug_info
 from HABApp.__splash_screen__ import show_start_screen
 
 
-def init_stuff_temp() -> None:
-
-
-
-    # 4. Core features
-    import HABApp.core
-
-    # This holds only textual references to other objects so we can import this before everything else
-    import HABApp.rule_ctx
-
-
-    # Import the rest
-    import HABApp.mqtt
-    import HABApp.openhab
-    import HABApp.rule
-    import HABApp.runtime
-
-
-    import HABApp.util
-    from HABApp.rule import Rule
-    from HABApp.parameters import Parameter, DictParameter
-
-
-
 def main() -> int | str:
-
     setup_uvloop_if_available()
 
     # We do this here, so we can print a nice error message. Otherwise the corresponding
@@ -43,9 +18,6 @@ def main() -> int | str:
     check_dependency_packages()
 
     show_start_screen()
-
-
-    init_stuff_temp()
 
     # This has to be done before we create HABApp because of the possible sleep time
     args = parse_args()
