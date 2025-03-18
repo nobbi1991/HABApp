@@ -4,9 +4,11 @@ import runpy
 import typing
 from pathlib import Path
 
-import HABApp
 from HABApp.core.internals import get_current_context
 from HABApp.rule.rule_hook import HABAppRuleHook
+
+if typing.TYPE_CHECKING:
+    import HABApp.rule.rule
 
 
 log = logging.getLogger('HABApp.Rules')
@@ -22,12 +24,11 @@ class RuleFile:
         self.name: str = name
         self.path: Path = path
 
-        self.rules = {}  # type: typing.Dict[str, HABApp.Rule]
+        self.rules = {}  # type: typing.Dict[str, HABApp.rule.rule.Rule]
 
         self.class_ctr: typing.Dict[str, int] = collections.defaultdict(lambda: 1)
 
-    def suggest_rule_name(self, obj: 'HABApp.Rule') -> str:
-
+    def suggest_rule_name(self, obj: 'HABApp.rule.rule.Rule') -> str:
         # if there is already a name set we make no suggestion
         if getattr(obj, 'rule_name', '') != '':
             return obj.rule_name.replace('ü', 'ue').replace('ö', 'oe').replace('ä', 'ae')
@@ -39,17 +40,16 @@ class RuleFile:
         return f'{name:s}.{found:d}' if found > 1 else f'{name:s}'
 
     async def check_all_rules(self) -> None:
-        for rule in self.rules.values():  # type: HABApp.Rule
+        for rule in self.rules.values():  # type: HABApp.rule.rule.Rule
             await get_current_context(rule).check_rule()
 
     async def unload(self) -> None:
-
         # If we don't have any rules we can not unload
         if not self.rules:
             return None
 
         # unload all registered callbacks
-        for rule in self.rules.values():  # type: HABApp.Rule
+        for rule in self.rules.values():  # type: HABApp.rule.rule.Rule
             await get_current_context(rule).unload_rule()
 
         log.debug(f'File {self.name} successfully unloaded!')
@@ -60,7 +60,6 @@ class RuleFile:
         return [line.replace('<module>', self.path.name) for line in tb]
 
     def create_rules(self, created_rules: list) -> None:
-
         rule_hook = HABAppRuleHook(created_rules.append, self.suggest_rule_name, self.rule_manager.runtime, self)
 
         # It seems like python 3.8 doesn't allow path like objects any more:
@@ -69,8 +68,7 @@ class RuleFile:
             runpy.run_path(str(self.path), run_name=str(self.path), init_globals=rule_hook.in_dict())
 
     def load(self) -> bool:
-
-        created_rules: typing.List[HABApp.rule.Rule] = []
+        created_rules: typing.List[HABApp.rule.rule.Rule] = []
 
         ign = HABApp.core.wrapper.ExceptionToHABApp(logger=log)
         ign.proc_tb = self.__process_tc
