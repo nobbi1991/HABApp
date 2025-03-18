@@ -1,5 +1,4 @@
-
-import HABApp
+import HABApp.openhab.errors
 from HABApp.openhab.connection.handler.func_async import (
     async_create_item,
     async_create_link,
@@ -35,7 +34,7 @@ async def cleanup_items(keep_items: set[str]):
     all_items = await async_get_items()
 
     to_delete: dict[str, HABAppThingPluginData] = {}
-    for cfg in filter(_filter_items, all_items):    # type: ItemResp
+    for cfg in filter(_filter_items, all_items):  # type: ItemResp
         name = cfg.name
         if name not in keep_items:
             to_delete[name] = cfg.metadata['HABApp']
@@ -65,7 +64,6 @@ async def _remove_item(item: str, data: HABAppThingPluginData) -> None:
 
 
 async def create_item(item: UserItem, test: bool) -> bool:
-
     if test:
         _txt = str(item)
         if _txt.startswith('UserItem'):

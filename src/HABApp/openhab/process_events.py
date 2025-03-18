@@ -1,6 +1,5 @@
 import logging
 
-import HABApp
 import HABApp.core
 import HABApp.openhab.events
 from HABApp.core.asyncio import create_task_from_async

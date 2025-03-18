@@ -250,4 +250,4 @@ class SimpleRuleRunner:
                 if process_events:
                     obj.process_events()
 
-        HABApp.core.asyncio.loop.run_until_complete(_run())
+        HABApp.core.asyncio.LOOP.run_until_complete(_run())

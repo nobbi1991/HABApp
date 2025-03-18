@@ -52,7 +52,7 @@ def use_dummy_cfg(monkeypatch):
 
 @pytest.fixture(autouse=True, scope='session')
 def event_loop():
-    yield HABApp.core.const.loop
+    yield HABApp.core.const.LOOP
 
 
 @pytest.fixture()

@@ -3,7 +3,6 @@ from pathlib import Path
 
 import eascheduler
 
-import HABApp
 import HABApp.config
 import HABApp.config.errors
 import HABApp.config.loader

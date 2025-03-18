@@ -5,11 +5,9 @@ from typing import TYPE_CHECKING, Any, Optional
 from HABApp.core.errors import ContextNotFoundError, ContextNotSetError
 from HABApp.core.internals.context import Context, ContextBoundObj, ContextProvidingObj
 
-
 if TYPE_CHECKING:
     from types import FrameType
-
-    import HABApp
+    import HABApp.rule_ctx
 
 
 # noinspection PyProtectedMember
@@ -20,7 +18,6 @@ def get_current_context(obj: ContextProvidingObj | None = None) -> 'HABApp.rule_
     frame: FrameType | None = sys_get_frame(1)
 
     while frame is not None:
-
         ctx_obj: None | object | ContextProvidingObj = frame.f_locals.get('self')
         if ctx_obj is not None and isinstance(ctx_obj, ContextProvidingObj):
             ctx = ctx_obj._habapp_ctx

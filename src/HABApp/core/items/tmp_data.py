@@ -2,11 +2,9 @@ import logging
 import typing
 from datetime import datetime, timedelta
 
-import HABApp
+import HABApp.core.logger
 from HABApp.core.lib import PendingFuture
-
 from .base_item_watch import BaseWatch
-
 
 if typing.TYPE_CHECKING:
     from .base_item import BaseItem
@@ -74,8 +72,10 @@ async def clean_tmp_data() -> None:
 
         # show a warning because otherwise it's not clear what is happening
         w = HABApp.core.logger.HABAppWarning(logging.getLogger('HABApp.Item'))
-        w.add(f'Item {name} has been deleted {diff.total_seconds():.1f}s ago even though it has item watchers. '
-              f'If it will be added again the watchers have to be created again, too!')
+        w.add(
+            f'Item {name} has been deleted {diff.total_seconds():.1f}s ago even though it has item watchers. '
+            f'If it will be added again the watchers have to be created again, too!'
+        )
         w.dump()
 
     for name in to_del:

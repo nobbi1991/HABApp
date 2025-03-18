@@ -3,13 +3,11 @@ import time
 from collections import deque
 from threading import Lock
 
-import HABApp
+import HABApp.core
 from HABApp.core.events import ValueUpdateEvent, ValueUpdateEventFilter
 from HABApp.openhab.items import NumberItem
-
 from .bench_base import BenchBaseRule
 from .bench_times import BenchContainer, BenchTime
-
 
 LOCK = Lock()
 
@@ -64,7 +62,7 @@ class OpenhabBenchRule(BenchBaseRule):
     def bench_item_create(self) -> None:
         print('Bench item operations ', end='')
 
-        max_duration = 10   # how long should each bench take
+        max_duration = 10  # how long should each bench take
 
         times = BenchContainer()
 
@@ -147,7 +145,6 @@ class OpenhabBenchRule(BenchBaseRule):
         self.bench_times_container.show()
 
     def start_load(self) -> None:
-
         for i in range(10, 20):
             self.openhab.create_item('Number', self.name_list[i], label='MyLabel')
 
@@ -155,9 +152,11 @@ class OpenhabBenchRule(BenchBaseRule):
 
         for i in range(10, 20):
             if self.item_obj is None:
+
                 def load_cb(event, item: str = self.name_list[i]) -> None:
                     self.openhab.post_update(item, random.randint(0, 99999999), transport='http')
             else:
+
                 def load_cb(event, item: NumberItem = NumberItem.get_item(self.name_list[i])) -> None:  # noqa: B008
                     item.oh_post_update(random.randint(0, 99999999))
 

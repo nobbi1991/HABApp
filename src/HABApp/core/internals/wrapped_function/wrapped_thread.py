@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Final
 from typing_extensions import override
 
 from HABApp.core.asyncio import thread_context
-from HABApp.core.const import loop
+from HABApp.core.const import LOOP
 from HABApp.core.internals import Context, ContextProvidingObj
 from HABApp.core.internals.wrapped_function.base import P, R, WrappedFunctionBase, default_logger
 
@@ -144,4 +144,4 @@ class WrappedThreadFunction(WrappedFunctionBase[P, R]):
     async def async_run(self, *args: P.args, **kwargs: P.kwargs) -> R | None:
 
         pool_func = PoolFunc(self, self.func, args, kwargs, context=self._habapp_ctx)
-        return await loop.run_in_executor(POOL, pool_func.run)
+        return await LOOP.run_in_executor(POOL, pool_func.run)

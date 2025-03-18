@@ -2,7 +2,7 @@ from asyncio import CancelledError, Task, current_task
 from collections.abc import Awaitable, Callable
 from typing import Any, Final
 
-from HABApp.core.const import loop
+from HABApp.core.const import LOOP
 
 
 _TASK_REFS = set()
@@ -52,18 +52,18 @@ class SingleTask:
 
     def start(self) -> Task:
         self.cancel()
-        self.task = task = loop.create_task(self._task_wrap(), name=self.name)
+        self.task = task = LOOP.create_task(self._task_wrap(), name=self.name)
         return task
 
     def start_if_not_running(self) -> Task:
         if (task := self.task) is not None:
             return task
 
-        self.task = task = loop.create_task(self._task_wrap(), name=self.name)
+        self.task = task = LOOP.create_task(self._task_wrap(), name=self.name)
         return task
 
     async def _task_wrap(self) -> None:
-        task = current_task(loop)
+        task = current_task(LOOP)
 
         # don't use try-finally because
         try:

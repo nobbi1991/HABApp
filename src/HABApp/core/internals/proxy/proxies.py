@@ -5,7 +5,7 @@ from HABApp.core.internals.proxy.proxy_obj import create_proxy, replace_proxies
 
 
 if TYPE_CHECKING:
-    import HABApp
+    import HABApp.core.internals
 
 
 def uses_post_event() -> Callable[[str, Any], None]:

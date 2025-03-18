@@ -3,10 +3,9 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING, Final, TypeVar
 
-import HABApp
+import HABApp.core.wrapper
 from HABApp.core.connections import BaseConnection
 from HABApp.core.connections._definitions import connection_log
-
 
 if TYPE_CHECKING:
     from collections.abc import Generator

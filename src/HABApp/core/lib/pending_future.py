@@ -3,7 +3,7 @@ from asyncio import Task, create_task, run_coroutine_threadsafe, sleep
 from collections.abc import Awaitable, Callable
 from typing import Any
 
-from HABApp.core.const import loop
+from HABApp.core.const import LOOP
 
 
 # TODO: switch to time.monotonic for measurements instead of fixed sleep time
@@ -40,7 +40,7 @@ class PendingFuture:
             self.task = None
 
         if thread_safe:
-            self.task = run_coroutine_threadsafe(self.__countdown(), loop)
+            self.task = run_coroutine_threadsafe(self.__countdown(), LOOP)
         else:
             self.task = create_task(self.__countdown())
 

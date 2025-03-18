@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from immutables import Map
 
-import HABApp
+import HABApp.openhab.events
 from HABApp.core.internals import uses_item_registry
 from HABApp.core.logger import log_warning
 from HABApp.openhab.definitions.things import (
@@ -14,7 +14,6 @@ from HABApp.openhab.definitions.things import (
     ThingStatusDetailEnum,
     ThingStatusEnum,
 )
-
 
 if TYPE_CHECKING:
     from HABApp.openhab.definitions.rest import ThingResp
@@ -62,7 +61,7 @@ def remove_from_registry(name: str) -> None:
     if not Items.item_exists(name):
         return None
 
-    item = Items.get_item(name)  # type: HABApp.openhab.items.OpenhabItem
+    item = Items.get_item(name)  # type: OpenhabItem
     for grp in item.groups:
         m = MEMBERS.get(grp, set())
         m.discard(name)
@@ -92,19 +91,14 @@ def get_members(group_name: str) -> tuple[OpenhabItem, ...]:
 # Thing handling
 # ----------------------------------------------------------------------------------------------------------------------
 
-def get_thing_status_from_resp(
-        obj: ThingResp | None) -> tuple[ThingStatusEnum, ThingStatusDetailEnum, str]:
+
+def get_thing_status_from_resp(obj: ThingResp | None) -> tuple[ThingStatusEnum, ThingStatusDetailEnum, str]:
     if obj is None:
         return THING_STATUS_DEFAULT, THING_STATUS_DETAIL_DEFAULT, ''
-    return (
-        obj.status.status,
-        obj.status.detail,
-        obj.status.description if obj.status.description is not None else ''
-    )
+    return (obj.status.status, obj.status.detail, obj.status.description if obj.status.description is not None else '')
 
 
 def add_thing_to_registry(data: ThingResp | ThingAddedEvent):
-
     if isinstance(data, HABApp.openhab.events.thing_events.ThingAddedEvent):
         name = data.name
         status, status_detail, status_description = get_thing_status_from_resp(None)

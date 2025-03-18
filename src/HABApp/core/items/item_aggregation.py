@@ -6,7 +6,6 @@ import time
 import typing
 from datetime import timedelta
 
-import HABApp
 from HABApp.core.errors import ItemNameNotOfTypeStrError, ItemNotFoundException, WrongItemTypeError
 from HABApp.core.events import EventFilter, ValueChangeEvent, ValueUpdateEvent
 from HABApp.core.internals import (
@@ -18,7 +17,6 @@ from HABApp.core.internals import (
 )
 from HABApp.core.items import BaseValueItem
 from HABApp.core.wrapper import process_exception
-
 
 get_item = uses_get_item()
 item_registry = uses_item_registry()
@@ -102,7 +100,7 @@ class AggregationItem(BaseValueItem):
             self.__listener = None
 
         self.__listener = EventBusListener(
-            topic=source.name if isinstance(source, HABApp.core.items.BaseValueItem) else source,
+            topic=source.name if isinstance(source, BaseValueItem) else source,
             callback=wrap_func(self._add_value, name=f'{self.name}.add_value'),
             event_filter=EventFilter(ValueChangeEvent if only_changes else ValueUpdateEvent)
         )

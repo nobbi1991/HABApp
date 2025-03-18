@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-import HABApp
+import HABApp.mqtt.items
 from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.asyncio import run_coro_from_thread
 from HABApp.core.errors import ItemNotFoundException
@@ -12,7 +12,6 @@ from HABApp.core.wrapper import process_exception
 from HABApp.mqtt.connection.connection import MqttPlugin
 from HABApp.mqtt.events import MqttValueChangeEvent, MqttValueUpdateEvent
 from HABApp.mqtt.mqtt_payload import get_msg_payload
-
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -30,8 +29,9 @@ class SubscriptionHandler(MqttPlugin):
 
         self.sub_task = SingleTask(self.apply_subscriptions, 'ApplySubscriptionsTask')
 
-    async def interface_subscribe(self, topic_or_topics: str | Iterable[tuple[str, int | None]],
-                                  qos: QOS | None = None) -> None:
+    async def interface_subscribe(
+        self, topic_or_topics: str | Iterable[tuple[str, int | None]], qos: QOS | None = None
+    ) -> None:
         """
         Subscribe to a MQTT topic. Note that subscriptions made this way are volatile and will only remain until
         the next restart.
@@ -171,10 +171,9 @@ Items = uses_item_registry()
 
 
 def msg_to_event(topic: str, payload: Any, retain: bool) -> None:
-
-    _item = None    # type: HABApp.mqtt.items.MqttBaseItem | None
+    _item = None  # type: HABApp.mqtt.items.MqttBaseItem | None
     try:
-        _item = get_item(topic)   # type: HABApp.mqtt.items.MqttBaseItem
+        _item = get_item(topic)  # type: HABApp.mqtt.items.MqttBaseItem
     except ItemNotFoundException:
         # only create items for if the message has the retain flag
         if retain:

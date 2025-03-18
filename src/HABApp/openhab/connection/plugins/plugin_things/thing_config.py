@@ -3,9 +3,8 @@ import typing
 
 import bidict
 
-import HABApp
+import HABApp.openhab.interface_async
 from HABApp.core.logger import log_error
-
 from ._log import log_cfg as log
 
 

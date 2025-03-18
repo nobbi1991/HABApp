@@ -1,10 +1,9 @@
-
-import HABApp
+import HABApp.rule.rule
 from HABApp.core import shutdown
 from HABApp.core.const.topics import TOPIC_ERRORS
 
 
-class BenchBaseRule(HABApp.Rule):
+class BenchBaseRule(HABApp.rule.rule.Rule):
     BENCH_TYPE: str
 
     def __init__(self) -> None:

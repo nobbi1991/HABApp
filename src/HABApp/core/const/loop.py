@@ -10,8 +10,8 @@ if (sys.platform.lower() == 'win32' or os.name.lower() == 'nt') and os.environ.g
     from asyncio import WindowsSelectorEventLoopPolicy, set_event_loop_policy
     set_event_loop_policy(WindowsSelectorEventLoopPolicy())
 
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
+LOOP = asyncio.new_event_loop()
+asyncio.set_event_loop(LOOP)
 
-loop.set_debug(True)
-loop.slow_callback_duration = 0.02
+LOOP.set_debug(True)
+LOOP.slow_callback_duration = 0.02

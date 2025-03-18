@@ -5,13 +5,11 @@ from collections.abc import Callable
 from types import TracebackType
 from typing import TYPE_CHECKING, Final, Literal
 
-import HABApp
+import HABApp.core.wrapper
 from HABApp.core.connections._definitions import ConnectionStatus, connection_log
 from HABApp.core.connections.status_transitions import StatusTransitions
 from HABApp.core.lib import PriorityList, SingleTask
-
 from ..wrapper import process_exception
-
 
 if TYPE_CHECKING:
     from .base_plugin import BaseConnectionPlugin

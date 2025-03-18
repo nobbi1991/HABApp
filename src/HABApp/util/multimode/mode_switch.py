@@ -1,7 +1,7 @@
 import logging
 
-import HABApp
-
+import HABApp.core.events
+import HABApp.openhab.items
 from . import ValueMode
 
 
@@ -22,14 +22,19 @@ class SwitchItemValueMode(ValueMode):
                               second argument is own value.
     """
 
-    def __init__(self, name: str,
-                 # these are the parameters special to SwitchItemValueMode
-                 switch_item: 'HABApp.openhab.items.SwitchItem', invert_switch: bool = False,
-                 # default kw-args from the base class
-                 initial_value=None,
-                 logger: logging.Logger | None = None,
-                 auto_disable_after=None, auto_disable_func=None,
-                 calc_value_func=None) -> None:
+    def __init__(
+        self,
+        name: str,
+        # these are the parameters special to SwitchItemValueMode
+        switch_item: 'HABApp.openhab.items.SwitchItem',
+        invert_switch: bool = False,
+        # default kw-args from the base class
+        initial_value=None,
+        logger: logging.Logger | None = None,
+        auto_disable_after=None,
+        auto_disable_func=None,
+        calc_value_func=None,
+    ) -> None:
         """
 
         :param name: Name of the mode
@@ -46,13 +51,16 @@ class SwitchItemValueMode(ValueMode):
         assert isinstance(switch_item, HABApp.openhab.items.SwitchItem), type(switch_item)
         self.__invert_switch: bool = invert_switch
 
-        super().__init__(name=name,
-                         initial_value=initial_value,
-                         enabled=switch_item.value == ('ON' if not self.__invert_switch else 'OFF'),
-                         enable_on_value=False,  # enable_on_value must be pinned False
-                         logger=logger,
-                         auto_disable_after=auto_disable_after, auto_disable_func=auto_disable_func,
-                         calc_value_func=calc_value_func)
+        super().__init__(
+            name=name,
+            initial_value=initial_value,
+            enabled=switch_item.value == ('ON' if not self.__invert_switch else 'OFF'),
+            enable_on_value=False,  # enable_on_value must be pinned False
+            logger=logger,
+            auto_disable_after=auto_disable_after,
+            auto_disable_func=auto_disable_func,
+            calc_value_func=calc_value_func,
+        )
 
         # setup listener as the last thing
         switch_item.listen_event(self.__switch_changed, HABApp.core.events.ValueChangeEventFilter())

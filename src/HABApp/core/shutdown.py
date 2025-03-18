@@ -9,7 +9,7 @@ from types import BuiltinMethodType, FunctionType, MethodType
 from typing import TYPE_CHECKING
 
 from HABApp.core.asyncio import create_task
-from HABApp.core.const import loop
+from HABApp.core.const import LOOP
 from HABApp.core.lib.helper import get_obj_name
 
 
@@ -96,7 +96,7 @@ async def _shutdown() -> None:
         *(obj for obj in _REGISTERED if obj.last),
         # shutdown of the event loop has to be the last thing that is done
         # since stopping of the loop exits the program
-        ShutdownFunction(func=loop.stop, msg='Stopping asyncio loop', last=True)
+        ShutdownFunction(func=LOOP.stop, msg='Stopping asyncio loop', last=True)
     )
 
     for obj in objs:

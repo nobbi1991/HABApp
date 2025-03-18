@@ -4,10 +4,8 @@ from threading import Lock, Thread
 from time import sleep
 from typing import Final
 
-import HABApp
-
+import HABApp.core.wrapper
 from .config import HABAPP_CONFIG
-
 
 log = logging.getLogger('HABApp.logging')
 
@@ -92,10 +90,10 @@ class HABAppQueueHandler:
             while True:
                 if first_rec:
                     # first call is blocking
-                    rec = q.get()           # type: Optional[logging.LogRecord]
+                    rec = q.get()  # type: Optional[logging.LogRecord]
                     first_rec = False
                 else:
-                    rec = q.get_nowait()    # type: Optional[logging.LogRecord]
+                    rec = q.get_nowait()  # type: Optional[logging.LogRecord]
 
                 if rec is None:
                     return True

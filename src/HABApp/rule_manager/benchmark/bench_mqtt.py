@@ -3,13 +3,11 @@ import time
 from collections import deque
 from threading import Lock
 
-import HABApp
+import HABApp.core
 from HABApp.core.events import ValueUpdateEvent, ValueUpdateEventFilter
 from HABApp.mqtt.interface_sync import publish
-
 from .bench_base import BenchBaseRule
 from .bench_times import BenchContainer, BenchTime
-
 
 LOCK = Lock()
 
@@ -71,7 +69,7 @@ class MqttBenchRule(BenchBaseRule):
         listener = self.listen_event(
             self.name,
             self.post_next_event_val if not do_async else self.a_post_next_event_val,
-            ValueUpdateEventFilter()
+            ValueUpdateEventFilter(),
         )
 
         self.bench_times = self.bench_times_container.create(test_name)

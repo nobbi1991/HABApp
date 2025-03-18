@@ -3,17 +3,16 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, TypeVar
 
-import HABApp
+import HABApp.core.wrapper
 from HABApp.core.const.topics import ALL_TOPICS
 from HABApp.core.internals import Context, EventBusListener, uses_event_bus, uses_item_registry, wrap_func
 from HABApp.core.internals.event_bus import EventBusBaseListener
 from HABApp.core.lib import get_obj_name
 
-
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from HABApp import Rule
+    from HABApp.rule.rule import Rule
 
 
 event_bus = uses_event_bus()
@@ -55,7 +54,7 @@ class HABAppRuleContext(Context):
                 with HABApp.core.wrapper.ExceptionToHABApp(log):
                     to_cancel = next(iter(self.objs))
                     to_cancel.cancel()
-            self.objs = None    # Set to None so we crash if we want to schedule new stuff
+            self.objs = None  # Set to None so we crash if we want to schedule new stuff
 
             # clean references
             self.rule = None
@@ -68,7 +67,6 @@ class HABAppRuleContext(Context):
         with HABApp.core.wrapper.ExceptionToHABApp(log):
             # We need items if we want to run the test
             if item_registry:
-
                 # Check if we have a valid item for all listeners
                 for listener in self.objs:
                     if not isinstance(listener, EventBusBaseListener):
@@ -80,8 +78,10 @@ class HABAppRuleContext(Context):
 
                     # check if specific item exists
                     if not item_registry.item_exists(listener.topic):
-                        log.warning(f'Item "{listener.topic}" does not exist (yet)! '
-                                    f'self.listen_event in "{self.rule.rule_name}" may not work as intended.')
+                        log.warning(
+                            f'Item "{listener.topic}" does not exist (yet)! '
+                            f'self.listen_event in "{self.rule.rule_name}" may not work as intended.'
+                        )
 
             # enable the scheduler
             self.rule.run._scheduler.set_enabled(True)

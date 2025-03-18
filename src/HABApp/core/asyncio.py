@@ -12,8 +12,8 @@ from typing import Any as _Any
 from typing import ParamSpec as _ParamSpec
 from typing import TypeVar as _TypeVar
 
-import HABApp
-from HABApp.core.const import loop
+import HABApp.core
+from HABApp.core.const import LOOP
 from HABApp.core.const.installation import PYTHON_INSTALLATION_PATHS
 from HABApp.core.const.topics import TOPIC_ERRORS
 from HABApp.core.lib.helper import get_obj_name
@@ -91,19 +91,19 @@ _T = _TypeVar('_T')
 def create_task(coro: _Coroutine[_Any, _Any, _T], name: str | None = None) -> _Future[_T]:
     # https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task
     if _in_thread():
-        f = _run_coroutine_threadsafe(_async_execute_awaitable(coro), loop)
+        f = _run_coroutine_threadsafe(_async_execute_awaitable(coro), LOOP)
         _tasks.add(f)
         f.add_done_callback(_tasks.discard)
         return f
 
-    t = loop.create_task(coro, name=name)
+    t = LOOP.create_task(coro, name=name)
     _tasks.add(t)
     t.add_done_callback(_tasks.discard)
     return t
 
 
 def create_task_from_async(coro: _Coroutine[_Any, _Any, _T], name: str | None = None) -> _Task[_T]:
-    t = loop.create_task(coro, name=name)
+    t = LOOP.create_task(coro, name=name)
     _tasks.add(t)
     t.add_done_callback(_tasks.discard)
     return t
@@ -114,7 +114,7 @@ def run_coro_from_thread(coro: _Coroutine[_Any, _Any, _T], calling: _Callable) -
     if not _in_thread():
         raise AsyncContextError(calling)
 
-    fut = _run_coroutine_threadsafe(_async_execute_awaitable(coro), loop)
+    fut = _run_coroutine_threadsafe(_async_execute_awaitable(coro), LOOP)
     return fut.result()
 
 
@@ -127,7 +127,7 @@ def run_func_from_async(func: _Callable[_P, _T], *args: _P.args, **kwargs: _P.kw
         return func(*args, **kwargs)
 
     # we are in a thread, that's why we can wait (and block) for the future
-    future = _run_coroutine_threadsafe(_async_execute_func(func, *args, **kwargs), loop)
+    future = _run_coroutine_threadsafe(_async_execute_func(func, *args, **kwargs), LOOP)
     return future.result()
 
 
