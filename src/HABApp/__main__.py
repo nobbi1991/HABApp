@@ -11,8 +11,7 @@ from HABApp.__splash_screen__ import show_start_screen
 
 def init_stuff_temp() -> None:
 
-    # 3. User configuration
-    import HABApp.config
+
 
     # 4. Core features
     import HABApp.core
@@ -32,8 +31,6 @@ def init_stuff_temp() -> None:
     from HABApp.rule import Rule
     from HABApp.parameters import Parameter, DictParameter
 
-    from HABApp.config import HABAPP_CONFIG
-
 
 
 def main() -> int | str:
@@ -45,6 +42,7 @@ def main() -> int | str:
     check_dependency_packages()
 
     show_start_screen()
+
 
     init_stuff_temp()
 

@@ -5,6 +5,8 @@ import eascheduler
 
 import HABApp
 import HABApp.config
+import HABApp.config.errors
+import HABApp.config.loader
 import HABApp.core
 import HABApp.mqtt.connection as mqtt_connection
 import HABApp.parameters.parameter_files
@@ -49,7 +51,7 @@ class Runtime:
             file_manager.setup()
 
             # Load config
-            HABApp.config.setup_habapp_configuration(config_folder)
+            HABApp.config.loader.setup_habapp_configuration(config_folder)
 
             # generic HTTP
             await HABApp.rule.interfaces._http.create_client()
@@ -68,7 +70,7 @@ class Runtime:
 
             Connections.application_startup_complete()
 
-        except HABApp.config.InvalidConfigError:
+        except HABApp.config.errors.InvalidConfigError:
             shutdown.request()
         except Exception as e:
             process_exception('Runtime.start', e)

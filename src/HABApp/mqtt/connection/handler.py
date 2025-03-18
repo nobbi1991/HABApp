@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from aiomqtt import Client, TLSParameters
 
-from HABApp.config import HABAPP_CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.connections import BaseConnectionPlugin
 from HABApp.core.connections._definitions import CONNECTION_HANDLER_NAME
 from HABApp.core.internals import uses_get_item, uses_item_registry, uses_post_event

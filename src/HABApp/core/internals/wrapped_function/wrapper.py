@@ -3,7 +3,7 @@ from asyncio import iscoroutinefunction
 from collections.abc import Callable, Coroutine
 from typing import Any
 
-from HABApp.config import HABAPP_CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core import shutdown
 from HABApp.core.internals import Context
 from HABApp.core.internals.wrapped_function.base import P, R, WrappedFunctionBase

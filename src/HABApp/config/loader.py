@@ -11,10 +11,10 @@ from HABApp.config.logging import HABAppQueueHandler, load_logging_file
 from HABApp.core import shutdown
 from HABApp.core.internals.proxy.proxies import uses_file_manager
 
-from .debug import setup_debug
-from .errors import AbsolutePathExpected, InvalidConfigError
-from .logging import create_default_logfile, get_logging_dict
-from .logging.buffered_logger import BufferedLogger
+from HABApp.config.debug import setup_debug
+from HABApp.config.errors import AbsolutePathExpected, InvalidConfigError
+from HABApp.config.logging import create_default_logfile, get_logging_dict
+from HABApp.config.logging.buffered_logger import BufferedLogger
 
 
 log = logging.getLogger('HABApp.Config')

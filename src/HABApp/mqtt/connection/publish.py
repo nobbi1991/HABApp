@@ -3,7 +3,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from HABApp.config import HABAPP_CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.config.models.mqtt import QOS
 from HABApp.core.asyncio import run_func_from_async
 from HABApp.core.const.json import dump_json
