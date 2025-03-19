@@ -2,8 +2,7 @@ import logging
 
 import HABApp.core.events
 import HABApp.openhab.items
-
-from . import ValueMode
+from HABApp.util.multimode.mode_value import ValueMode
 
 
 class SwitchItemValueMode(ValueMode):
