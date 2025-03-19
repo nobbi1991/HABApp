@@ -5,8 +5,10 @@ from threading import Lock
 
 import HABApp.core
 from HABApp.core.events import ValueUpdateEvent
+
 from .bench_base import BenchBaseRule
 from .bench_times import BenchContainer, BenchTime
+
 
 LOCK = Lock()
 

@@ -3,8 +3,8 @@ import re
 from pathlib import Path
 from typing import Final
 
-from HABApp.core.const.yml import yml
 from HABApp.config.config import HABAPP_CONFIG
+from HABApp.core.const.yml import yml
 from HABApp.core.files.file import HABAppFile
 from HABApp.core.internals.proxy import uses_file_manager
 

@@ -7,14 +7,12 @@ import pydantic
 
 from HABApp.__version__ import __version__
 from HABApp.config.config import HABAPP_CONFIG
-from HABApp.config.logging import HABAppQueueHandler, load_logging_file
-from HABApp.core import shutdown
-from HABApp.core.internals.proxy.proxies import uses_file_manager
-
 from HABApp.config.debug import setup_debug
 from HABApp.config.errors import AbsolutePathExpected, InvalidConfigError
-from HABApp.config.logging import create_default_logfile, get_logging_dict
+from HABApp.config.logging import HABAppQueueHandler, create_default_logfile, get_logging_dict, load_logging_file
 from HABApp.config.logging.buffered_logger import BufferedLogger
+from HABApp.core import shutdown
+from HABApp.core.internals.proxy.proxies import uses_file_manager
 
 
 log = logging.getLogger('HABApp.Config')

@@ -18,6 +18,7 @@ from HABApp.core.internals import (
 from HABApp.core.items import BaseValueItem
 from HABApp.core.wrapper import process_exception
 
+
 get_item = uses_get_item()
 item_registry = uses_item_registry()
 event_bus = uses_event_bus()

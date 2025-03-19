@@ -5,7 +5,9 @@ from time import sleep
 from typing import Final
 
 import HABApp.core.wrapper
+
 from .config import HABAPP_CONFIG
+
 
 log = logging.getLogger('HABApp.logging')
 

@@ -7,11 +7,11 @@ from pathlib import Path
 from re import Pattern
 from typing import Any, Final, Literal, ParamSpec, TypeVar, overload
 
-from HABApp.config.config import HABAPP_CONFIG
 import HABApp.core
 import HABApp.openhab
 import HABApp.rule_manager
 import HABApp.util
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.asyncio import create_task
 from HABApp.core.const.hints import TYPE_EVENT_CALLBACK
 from HABApp.core.internals import (

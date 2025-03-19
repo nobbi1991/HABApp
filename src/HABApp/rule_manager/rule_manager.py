@@ -4,8 +4,8 @@ import typing
 from asyncio import sleep
 from pathlib import Path
 
-import HABApp.runtime
 import HABApp.__cmd_args__ as cmd_args
+import HABApp.runtime
 from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core import shutdown
 from HABApp.core.connections import Connections

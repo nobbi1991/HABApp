@@ -16,8 +16,8 @@ from HABApp.core.lib import PendingFuture
 
 
 if typing.TYPE_CHECKING:
-    from HABApp.core.const.hints import TYPE_EVENT_CALLBACK
     import HABApp.core.internals
+    from HABApp.core.const.hints import TYPE_EVENT_CALLBACK
 
 
 log = logging.getLogger('HABApp')

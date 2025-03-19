@@ -16,6 +16,7 @@ from HABApp.core.files.file_properties import get_file_properties
 from HABApp.core.files.name_builder import FileNameBuilder
 from HABApp.core.lib import SingleTask
 
+
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
     from re import Pattern

@@ -1,12 +1,11 @@
 import logging
 from collections.abc import Callable
-
-# noinspection PyProtectedMember
 from sys import _getframe as sys_get_frame
 from types import FrameType, TracebackType
 from typing import TYPE_CHECKING, Any, Final
 
 import HABApp.runtime.runtime
+
 
 if TYPE_CHECKING:
     import HABApp.rule_manager

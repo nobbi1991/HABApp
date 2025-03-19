@@ -4,8 +4,8 @@ import time
 from pathlib import Path
 from typing import Any
 
-from HABApp.config.config import HABAPP_CONFIG
 import HABApp.openhab.events
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.connections import BaseConnectionPlugin
 from HABApp.core.files.file import HABAppFile
 from HABApp.core.lib import PendingFuture

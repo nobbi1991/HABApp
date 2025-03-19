@@ -7,6 +7,7 @@ from pathlib import Path
 from HABApp.core.internals import get_current_context
 from HABApp.rule.rule_hook import HABAppRuleHook
 
+
 if typing.TYPE_CHECKING:
     import HABApp.rule.rule
 

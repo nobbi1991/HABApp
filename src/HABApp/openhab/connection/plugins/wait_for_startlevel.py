@@ -5,8 +5,6 @@ import logging
 from typing import Final
 
 from HABApp.config.config import HABAPP_CONFIG
-import HABApp.core
-import HABApp.openhab.events
 from HABApp.config.models.openhab import General as OpenHABGeneralConfig
 from HABApp.core import shutdown
 from HABApp.core.connections import BaseConnectionPlugin
@@ -16,7 +14,6 @@ from HABApp.openhab.connection.handler.func_async import async_get_system_info
 
 
 class WaitForStartlevelPlugin(BaseConnectionPlugin[OpenhabConnection]):
-
     def __init__(self, name: str | None = None) -> None:
         super().__init__(name)
 
@@ -40,9 +37,9 @@ class WaitForStartlevelPlugin(BaseConnectionPlugin[OpenhabConnection]):
                 log.debug(f'Uptime greater than {uptime_skip_always:d} secs, skipping start level check')
 
             # If openHAB is already running we have a fast exit path here
-            if started_long_ago or (system_info.uptime >= oh_general.min_uptime and
-                                    system_info.start_level >= oh_general.min_start_level):
-
+            if started_long_ago or (
+                system_info.uptime >= oh_general.min_uptime and system_info.start_level >= oh_general.min_start_level
+            ):
                 # Show a hint in case it's possible to increase the start level
                 # A higher start level means a more consistent startup and thus is more desirable
                 if system_info.start_level > oh_general.min_start_level:
@@ -93,7 +90,6 @@ class WaitForStartlevelPlugin(BaseConnectionPlugin[OpenhabConnection]):
 
             # log only when level changed, so we don't spam the log
             if level_change.set_value(level).changed:
-
                 log.debug(f'Start level: {level:d}')
                 if level >= oh_general.min_start_level:
                     break
@@ -111,7 +107,6 @@ class WaitForStartlevelPlugin(BaseConnectionPlugin[OpenhabConnection]):
         log.info('openHAB startup complete')
 
     async def __on_connected_old(self, context: OpenhabContext, connection: OpenhabConnection):
-
         level_reached, level = await _start_level_reached()
 
         if level_reached:

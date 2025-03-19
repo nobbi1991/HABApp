@@ -1,5 +1,6 @@
 import HABApp.core.events
 
+
 class MqttValueUpdateEvent(HABApp.core.events.ValueUpdateEvent):
     pass
 

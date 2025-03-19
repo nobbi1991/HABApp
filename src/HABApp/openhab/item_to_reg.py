@@ -15,6 +15,7 @@ from HABApp.openhab.definitions.things import (
     ThingStatusEnum,
 )
 
+
 if TYPE_CHECKING:
     from HABApp.openhab.definitions.rest import ThingResp
     from HABApp.openhab.events import ThingAddedEvent

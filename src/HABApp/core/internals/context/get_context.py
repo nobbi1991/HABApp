@@ -5,8 +5,10 @@ from typing import TYPE_CHECKING, Any, Optional
 from HABApp.core.errors import ContextNotFoundError, ContextNotSetError
 from HABApp.core.internals.context import Context, ContextBoundObj, ContextProvidingObj
 
+
 if TYPE_CHECKING:
     from types import FrameType
+
     import HABApp.rule_ctx
 
 

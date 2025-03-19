@@ -9,6 +9,7 @@ from HABApp.core.internals import Context, EventBusListener, uses_event_bus, use
 from HABApp.core.internals.event_bus import EventBusBaseListener
 from HABApp.core.lib import get_obj_name
 
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 
