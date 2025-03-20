@@ -6,7 +6,7 @@ from inspect import iscoroutinefunction
 from types import TracebackType
 from typing import Any, Final
 
-import HABApp
+import HABApp.core
 from HABApp.core.events import NoEventFilter
 from HABApp.core.internals import EventBusListener, WrappedFunctionBase, wrap_func
 from HABAppTests.test_rule._com_patcher import BasePatcher, MqttPatcher, RestPatcher, WebsocketPatcher

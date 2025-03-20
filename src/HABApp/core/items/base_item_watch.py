@@ -28,7 +28,7 @@ post_event = uses_post_event()
 class BaseWatch(AutoContextBoundObj):
     EVENT: type[ItemNoUpdateEvent | ItemNoChangeEvent]
 
-    def __init__(self, name: str, secs: int | float) -> None:
+    def __init__(self, name: str, secs: float) -> None:
         super().__init__()
         self.fut = PendingFuture(self._post_event, secs)
         self.name: str = name

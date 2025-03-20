@@ -8,7 +8,7 @@ class TimeoutNotRunningError(Exception):
 
 
 class Timeout:
-    __slots__ = ('_timeout', '_started')
+    __slots__ = ('_started', '_timeout')
 
     def __init__(self, timeout: float, *, start: bool = True) -> None:
         self._timeout: float = timeout
@@ -25,8 +25,7 @@ class Timeout:
             return f'<Timeout {self._timeout:.{decimals:d}f}s>'
 
         time = monotonic() - self._started
-        if time >= self._timeout:
-            time = self._timeout
+        time = min(self._timeout, time)
         return f'<Timeout {time:.{decimals:d}f}/{self._timeout:.{decimals:d}f}s>'
 
     def reset(self):
@@ -87,7 +86,7 @@ class Timeout:
         if self._started is None:
             raise TimeoutNotRunningError()
         remaining = self._timeout - (monotonic() - self._started)
-        return 0 if remaining <= 0 else remaining
+        return max(0, remaining)
 
     def remaining_or_none(self) -> float | None:
         """Return the remaining seconds. Raises an exception if the timeout is not running
@@ -97,4 +96,4 @@ class Timeout:
         if self._started is None:
             return None
         remaining = self._timeout - (monotonic() - self._started)
-        return 0 if remaining <= 0 else remaining
+        return max(0, remaining)

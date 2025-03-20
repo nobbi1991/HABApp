@@ -27,5 +27,5 @@ def load_habapp_meta(data: ItemResp) -> ItemResp:
     return data
 
 
-def get_api_vals(obj: HABAppThingPluginData) -> typing.Tuple[str, dict]:
+def get_api_vals(obj: HABAppThingPluginData) -> tuple[str, dict]:
     return obj.obj_name, obj.model_dump(exclude_defaults=True)

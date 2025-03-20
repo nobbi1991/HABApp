@@ -226,7 +226,7 @@ def _setup_ir(clean_objs, monkeypatch, ir, eb):
     monkeypatch.setattr(HABApp.core, 'Items', ir)
     monkeypatch.setattr(HABApp.core, 'EventBus', eb)
 
-    yield
+    return
 
 
 @pytest.mark.skipif(not PYTHON_313, reason='New traceback from python 3.13')

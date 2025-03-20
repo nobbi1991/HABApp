@@ -170,8 +170,7 @@ def validate_cfg(_in, filename: str | None = None) -> list[UserThingCfg] | None:
     try:
         if isinstance(_in, list):
             return TypeAdapter(list[UserThingCfg]).validate_python(_in)
-        else:
-            return [UserThingCfg.model_validate(_in)]
+        return [UserThingCfg.model_validate(_in)]
     except ValidationError as e:
         log.error(f'Error while parsing "{filename}"')
         HABAppError(log).add_exception(e).dump()

@@ -5,7 +5,7 @@ from typing import Any, overload
 
 from typing_extensions import Self
 
-import HABApp
+import HABApp.rule
 from HABAppTests.test_rule.test_case import TestCase, TestResult, run_test_cases
 
 
@@ -25,7 +25,7 @@ class TestConfig:
         self.warning_is_error = False
 
 
-class TestBaseRule(HABApp.Rule):
+class TestBaseRule(HABApp.rule.Rule):
     def __init__(self) -> None:
         super().__init__()
 

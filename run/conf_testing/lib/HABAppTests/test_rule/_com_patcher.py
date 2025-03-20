@@ -7,6 +7,7 @@ from typing import Any, Final
 
 from pytest import MonkeyPatch
 
+import HABApp.core.connections
 import HABApp.mqtt.connection.publish
 import HABApp.mqtt.connection.subscribe
 import HABApp.openhab.connection.handler

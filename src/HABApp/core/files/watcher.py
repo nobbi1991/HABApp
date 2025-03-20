@@ -183,7 +183,7 @@ class HABAppFileWatcher:
                             await dispatcher.dispatch(path)
 
                 log.debug('File watcher stopped')
-            except Exception as e:  # noqa: PERF203
+            except Exception as e:
                 process_exception(self._watcher_task, e, logger=log)
                 delay *= 2
                 await asyncio.sleep(delay)
@@ -244,7 +244,7 @@ class HABAppFileWatcher:
                 continue
             path = Path(path_str)
 
-            if path.is_file():  # noqa: PTH113
+            if path.is_file():
                 files.append(path.as_posix())
                 continue
 

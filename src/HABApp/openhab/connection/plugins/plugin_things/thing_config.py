@@ -60,8 +60,8 @@ class ThingConfigChanger:
     def __init__(self, uid: str) -> None:
         self.uid: str = uid
         self.alias: bidict.bidict[str | int, str] = bidict.bidict()
-        self.org: typing.Dict[str, typing.Any] = {}
-        self.new: typing.Dict[str, typing.Any] = {}
+        self.org: dict[str, typing.Any] = {}
+        self.new: dict[str, typing.Any] = {}
 
     def __getitem__(self, key):
         return self.org[self.alias.get(key, key)]

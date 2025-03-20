@@ -21,8 +21,7 @@ class MapTransformationRegistry(TransformationRegistryBase):
 
         if default:
             return MapTransformationWithDefault(data, name=name, default=default)
-        else:
-            return MapTransformation(data, name=name)
+        return MapTransformation(data, name=name)
 
     def set(self, name: str, configuration: dict[str, str]):
         data = load_map_file(configuration['function'])

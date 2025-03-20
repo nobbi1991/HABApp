@@ -16,7 +16,7 @@ def show_config_overview(cfgs: list[ThingConfigChanger], all_params) -> None:
             sorted(filter(lambda x: isinstance(x, int), all_params)),
             sorted(filter(lambda x: not isinstance(x, int), all_params))):
         c_p.add(str(p))
-        for col, cfg in zip(c_s, cfgs):
+        for col, cfg in zip(c_s, cfgs, strict=False):
             v = cfg.get(p, '')
             col.add(str(v))
     for line in t.get_lines():

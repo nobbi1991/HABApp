@@ -30,7 +30,7 @@ class RuleManager:
         assert isinstance(parent, HABApp.runtime.Runtime)
         self.runtime = parent
 
-        self.files: typing.Dict[str, RuleFile] = {}
+        self.files: dict[str, RuleFile] = {}
 
     async def setup(self):
 
@@ -86,9 +86,8 @@ class RuleManager:
             if rule_name is None:
                 for rule in file.rules.values():
                     found.append(rule)
-            else:
-                if rule_name in file.rules:
-                    found.append(file.rules[rule_name])
+            elif rule_name in file.rules:
+                found.append(file.rules[rule_name])
 
         # if we want all return them
         if rule_name is None:

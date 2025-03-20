@@ -8,11 +8,10 @@ from typing import Any, NotRequired, TypedDict, Unpack
 
 from typing_extensions import Self
 
-import HABApp
+import HABApp.openhab.interface_sync
 from HABApp.core.asyncio import AsyncContextError, thread_context
 from HABApp.openhab.definitions.topics import TOPIC_ITEMS
 from HABApp.openhab.items import OpenhabItem
-
 from . import EventWaiter, get_random_name
 
 
@@ -77,7 +76,6 @@ class OpenhabTmpItem(OpenhabTmpItemBase):
         def decorator(func):
             @wraps(func)
             def new_func(*args, **kwargs):
-
                 with OpenhabTmpItem._insert_kwargs(item_type, name, kwargs, arg_name):
                     return func(*args, **kwargs)
 
@@ -88,7 +86,9 @@ class OpenhabTmpItem(OpenhabTmpItemBase):
     def __enter__(self) -> HABApp.openhab.items.OpenhabItem:
         return self.create_item()
 
-    def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None) -> bool:
+    def __exit__(
+        self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
+    ) -> bool:
         self.remove()
         return False
 
@@ -105,7 +105,6 @@ class OpenhabTmpItem(OpenhabTmpItemBase):
         interface.create_item(self._type, self._name, **kwargs)
 
     def create_item(self, **kwargs: Unpack[ItemApiKwargs]) -> OpenhabItem:
-
         self._create(**kwargs)
         for delay in self._wait_until_item_exists():
             time.sleep(delay)
@@ -135,11 +134,9 @@ class AsyncOpenhabTmpItem(OpenhabTmpItemBase):
 
     @staticmethod
     def create(item_type: str, name: str | None = None, *, arg_name: str | None = None):
-
         def decorator(func):
             @wraps(func)
             async def new_func(*args, **kwargs):
-
                 async with AsyncOpenhabTmpItem._insert_kwargs(item_type, name, kwargs, arg_name):
                     return await func(*args, **kwargs)
 
@@ -150,7 +147,9 @@ class AsyncOpenhabTmpItem(OpenhabTmpItemBase):
     async def __aenter__(self) -> HABApp.openhab.items.OpenhabItem:
         return await self.create_item()
 
-    async def __aexit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None) -> bool:
+    async def __aexit__(
+        self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
+    ) -> bool:
         await self.remove()
         return False
 
@@ -162,7 +161,6 @@ class AsyncOpenhabTmpItem(OpenhabTmpItemBase):
         await interface.async_create_item(self._type, self._name, **kwargs)
 
     async def create_item(self, **kwargs: Unpack[ItemApiKwargs]) -> OpenhabItem:
-
         await self._create(**kwargs)
         for delay in self._wait_until_item_exists():
             await asyncio.sleep(delay)

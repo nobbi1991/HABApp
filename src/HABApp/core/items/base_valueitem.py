@@ -131,7 +131,7 @@ class BaseValueItem(BaseItem):
 
     # only support == and != operators by default
     # __ne__ delegates to __eq__ and inverts the result so this is not overloaded separately
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return self.value == other
 
     def __bool__(self) -> bool:

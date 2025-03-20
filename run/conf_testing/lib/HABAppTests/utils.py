@@ -4,7 +4,8 @@ import time
 import typing
 from pathlib import Path
 
-import HABApp
+import HABApp.core
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.asyncio import run_coro_from_thread
 from HABApp.openhab.connection.handler import post
 from HABApp.openhab.items import Thing
@@ -80,4 +81,4 @@ def get_file_path_of_obj(obj: typing.Any) -> str:
         module = obj.__class__.__module__
 
     module_of_class = Path(module)
-    return str(module_of_class.relative_to(HABApp.CONFIG.directories.rules))
+    return str(module_of_class.relative_to(HABAPP_CONFIG.directories.rules))

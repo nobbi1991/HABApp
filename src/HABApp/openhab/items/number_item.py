@@ -33,7 +33,7 @@ class NumberItem(OpenhabItem):
     _update_to_oh: Final = OutgoingStateEvent('NumberItem', DecimalTypeModel, QuantityTypeModel, 'UnDef')
     _command_to_oh: Final = OutgoingCommandEvent('NumberItem', DecimalTypeModel, QuantityTypeModel, 'Refresh')
 
-    def __init__(self, name: str, initial_value: int | float = None, label: str | None = None,
+    def __init__(self, name: str, initial_value: float = None, label: str | None = None,
                  tags: frozenset[str] = frozenset(), groups: frozenset[str] = frozenset(),
                  metadata: Mapping[str, MetaData] = Map(), dimension: str | None = None) -> None:
         super().__init__(name, initial_value, label, tags, groups, metadata)

@@ -11,7 +11,7 @@ class DummyRule(ContextProvidingObj):
         self.rule_name = 'DummyRule'
 
 
-@fixture()
+@fixture
 def parent_rule(monkeypatch):
     rule = DummyRule()
 

@@ -3,7 +3,7 @@ import asyncio
 from HABAppTests import TestResult, TestRunnerRule
 from HABAppTests.test_rule.test_case import TestCase, run_test_cases
 
-from HABApp import CONFIG
+from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.const.topics import TOPIC_FILES
 from HABApp.core.events.habapp_events import RequestFileUnloadEvent
 from HABApp.core.items import Item
@@ -21,7 +21,7 @@ class TestRunnerImpl(TestRunnerRule):
         )
 
         # show errors of HABApp.log
-        log_file = CONFIG.directories.logging / 'HABApp.log'
+        log_file = HABAPP_CONFIG.directories.logging / 'HABApp.log'
 
         seek = self._file_pos
         self._file_pos = log_file.stat().st_size

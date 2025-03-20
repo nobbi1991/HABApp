@@ -52,15 +52,15 @@ def use_dummy_cfg(monkeypatch):
 
 @pytest.fixture(autouse=True, scope='session')
 def event_loop():
-    yield HABApp.core.const.LOOP
+    return HABApp.core.const.LOOP
 
 
-@pytest.fixture()
+@pytest.fixture
 def ir():
     return ItemRegistry()
 
 
-@pytest.fixture()
+@pytest.fixture
 def file_manager():
     return FileManager(None)
 

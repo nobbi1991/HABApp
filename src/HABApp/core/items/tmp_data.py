@@ -12,14 +12,14 @@ if typing.TYPE_CHECKING:
     from .base_item import BaseItem
 
 
-TMP_DATA: typing.Dict[str, 'TmpItemData'] = {}
+TMP_DATA: dict[str, 'TmpItemData'] = {}
 
 
 class TmpItemData:
     def __init__(self) -> None:
         self.ts = datetime.now()
-        self.update: typing.Set[BaseWatch] = set()
-        self.change: typing.Set[BaseWatch] = set()
+        self.update: set[BaseWatch] = set()
+        self.change: set[BaseWatch] = set()
 
     def add_tasks(self, update, change) -> None:
         self.ts = datetime.now()

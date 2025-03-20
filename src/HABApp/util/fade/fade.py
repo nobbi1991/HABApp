@@ -52,7 +52,7 @@ class Fade:
 
         self.value = 0
 
-    def setup(self, start_value: VAL_TYPE, stop_value: VAL_TYPE, duration: int | float | timedelta,
+    def setup(self, start_value: VAL_TYPE, stop_value: VAL_TYPE, duration: float | timedelta,
               min_step_duration: float = MIN_STEP_TIME, now: float | None = None) -> 'Fade':
         """Calculates everything that is needed to fade a value
 
@@ -109,10 +109,9 @@ class Fade:
             if value <= self._fade_stop_value:
                 self._fade_finished = True
                 value = max(value, self._fade_stop_value)
-        else:
-            if value >= self._fade_stop_value:
-                self._fade_finished = True
-                value = min(value, self._fade_stop_value)
+        elif value >= self._fade_stop_value:
+            self._fade_finished = True
+            value = min(value, self._fade_stop_value)
 
         self.value = value = round(value, 2)
         return value

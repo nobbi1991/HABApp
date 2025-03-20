@@ -48,10 +48,9 @@ def format_exception(e: HINT_EXCEPTION) -> list[str]:
         for i, frame_info in enumerate(all_frames):
             if isinstance(frame_info, FrameInfo):
                 added = format_frame_info(tb, frame_info, is_last=i == last_frame)
-            else:
-                # repeated frames in case of recursion
-                if added:
-                    tb.append(f'... {frame_info.description} ...\n')
+            # repeated frames in case of recursion
+            elif added:
+                tb.append(f'... {frame_info.description} ...\n')
 
         # add a short traceback
         tb.append(SEPARATOR_NEW_FRAME)

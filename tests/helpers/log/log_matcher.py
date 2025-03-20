@@ -56,7 +56,7 @@ class AsyncDebugWarningMatcher(LogEntryMatcherBase):
             coro = 'NO_CORO'
 
         secs = float(m_dur.group(1))
-        if secs < 0.03 or coro == 'async_subprocess_exec' and secs < 0.15:
+        if secs < 0.03 or (coro == 'async_subprocess_exec' and secs < 0.15):
             return True
 
         return False

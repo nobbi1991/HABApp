@@ -29,7 +29,7 @@ class ItemTimes(Generic[WATCH_OBJ]):
             run_func_from_async(self.__async_schedule_events)
         return None
 
-    def add_watch(self, secs: int | float) -> WATCH_OBJ:
+    def add_watch(self, secs: float) -> WATCH_OBJ:
         # don't add the watch two times
         for t in self.tasks:
             if not t.fut.is_canceled and t.fut.secs == secs:

@@ -2,7 +2,7 @@ from time import monotonic, sleep
 
 from HABAppTests import TestBaseRule, get_random_name
 
-from HABApp import Rule
+from HABApp.rule.rule import Rule
 from HABApp.core.events import ValueUpdateEventFilter
 from HABApp.core.items import Item
 

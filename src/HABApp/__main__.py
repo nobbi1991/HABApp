@@ -33,7 +33,7 @@ def main() -> int | str:
 
         # see if we have user code (e.g. for additional logging configuration or additional setup)
         try:
-            import HABAppUser  # noqa: F401
+            import HABAppUser
         except ModuleNotFoundError:
             pass
 

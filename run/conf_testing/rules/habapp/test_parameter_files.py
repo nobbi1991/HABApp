@@ -1,15 +1,14 @@
 import logging
 
 from HABAppTests import TestBaseRule
-
-import HABApp
+import HABApp.parameters
 
 
 log = logging.getLogger('HABApp.TestParameterFiles')
 
 # User Parameter files to create rules dynamically
-assert HABApp.DictParameter('param_file') == {'key': 10}
-assert HABApp.Parameter('param_file', 'key') == 10
+assert HABApp.parameters.DictParameter('param_file') == {'key': 10}
+assert HABApp.parameters.Parameter('param_file', 'key') == 10
 
 
 class TestParamFile(TestBaseRule):
@@ -21,12 +20,12 @@ class TestParamFile(TestBaseRule):
         self.add_test('ParamFile', self.test_param_file)
 
     def test_param_file(self) -> None:
-        p = HABApp.Parameter('param_file', 'key')
+        p = HABApp.parameters.Parameter('param_file', 'key')
         assert p.value == 10
         assert p < 11
         assert p > 9
 
-        p = HABApp.DictParameter('param_file')
+        p = HABApp.parameters.DictParameter('param_file')
         assert p == {'key': 10}
 
 

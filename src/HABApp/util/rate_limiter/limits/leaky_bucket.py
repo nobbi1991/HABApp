@@ -47,8 +47,7 @@ class LeakyBucketLimit(BaseRateLimit):
         self.do_test_allow()
 
         remaining = self.next_drop - monotonic()
-        if remaining <= 0:
-            remaining = 0
+        remaining = max(0, remaining)
 
         return LeakyBucketLimitInfo(
             time_remaining=remaining, hits=self.hits, skips=self.skips, limit=self.allowed

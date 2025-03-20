@@ -43,7 +43,7 @@ class EventListenerCreator(ListenerCreatorBase):
 
 
 class NoUpdateEventListenerCreator(ListenerCreatorBase):
-    def __init__(self, item: BaseItem, callback: Callable[[Any], Any], secs: int | float) -> None:
+    def __init__(self, item: BaseItem, callback: Callable[[Any], Any], secs: float) -> None:
         super().__init__(item, callback)
         self.secs = secs
 
@@ -52,7 +52,7 @@ class NoUpdateEventListenerCreator(ListenerCreatorBase):
 
 
 class NoChangeEventListenerCreator(ListenerCreatorBase):
-    def __init__(self, item: BaseItem, callback: Callable[[Any], Any], secs: int | float) -> None:
+    def __init__(self, item: BaseItem, callback: Callable[[Any], Any], secs: float) -> None:
         super().__init__(item, callback)
         self.secs = secs
 

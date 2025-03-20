@@ -10,6 +10,8 @@
 #
 # ----------------------------------------------------------------------------------------------------------------------
 import time
+import HABApp.core
+import HABApp.openhab.items
 
 from HABAppTests import (
     EventWaiter,
@@ -22,7 +24,6 @@ from HABAppTests import (
     get_random_name,
 )
 
-import HABApp
 from HABApp.openhab.events import ItemCommandEventFilter
 
 

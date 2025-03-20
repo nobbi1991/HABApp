@@ -9,7 +9,7 @@ from HABApp.core.const import LOOP
 # TODO: switch to time.monotonic for measurements instead of fixed sleep time
 
 class PendingFuture:
-    def __init__(self, future: Callable[[], Awaitable[Any]], secs: int | float) -> None:
+    def __init__(self, future: Callable[[], Awaitable[Any]], secs: float) -> None:
         assert asyncio.iscoroutinefunction(future), type(future)
         if not isinstance(secs, (int, float)) or secs < 0:
             raise ValueError(f'Pending time must be int/float and >= 0! Is: {secs} ({type(secs)})')

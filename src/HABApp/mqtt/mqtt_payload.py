@@ -42,7 +42,7 @@ def get_msg_payload(msg: Message) -> tuple[str | None, Any]:
             return topic, int(val)
 
         # json list/dict
-        if val.startswith('{') and val.endswith('}') or val.startswith('[') and val.endswith(']'):
+        if (val.startswith('{') and val.endswith('}')) or (val.startswith('[') and val.endswith(']')):
             try:
                 return topic, load_json(val)
             except ValueError:

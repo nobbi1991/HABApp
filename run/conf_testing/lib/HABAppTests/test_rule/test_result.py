@@ -2,9 +2,8 @@ import logging
 from enum import IntEnum, auto
 from typing import Final
 
-import HABApp
+import HABApp.core.wrapper
 from HABAppTests.errors import TestCaseFailed
-
 
 log = logging.getLogger('HABApp.Tests')
 
@@ -38,8 +37,7 @@ class TestResult:
         self.msgs: Final[list[str]] = []
 
     def set_state(self, new_state: TestResultStatus) -> None:
-        if self.state <= new_state:
-            self.state = new_state
+        self.state = max(new_state, self.state)
 
     def exception(self, e: Exception) -> None:
         if isinstance(e, TestCaseFailed):

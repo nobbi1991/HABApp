@@ -79,11 +79,10 @@ class TestOpenhabItemFuncs(TestBaseRule):
                 func = getattr(item, test_param.func_name)
                 if test_param.func_params is None:
                     func()
+                elif isinstance(test_param.func_params, (str, float, int, bytes)):
+                    func(test_param.func_params)
                 else:
-                    if isinstance(test_param.func_params, (str, float, int, bytes)):
-                        func(test_param.func_params)
-                    else:
-                        func(*test_param.func_params)
+                    func(*test_param.func_params)
 
                 if waiter.wait_for_state(test_param.result):
                     log.info(f'{item_type}.{test_param.func_name}() is ok!')

@@ -38,7 +38,7 @@ class BenchBaseRule(HABApp.rule.rule.Rule):
                 print('+' + '-' * 78 + '+')
                 print(f'| {self.BENCH_TYPE:^76s} |')
                 print('+' + '-' * 78 + '+')
-                print('')
+                print()
 
                 self.set_up()
                 self.run_bench()

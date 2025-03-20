@@ -1,6 +1,6 @@
 import logging
 
-import HABApp
+import HABApp.rule
 from HABApp.core import shutdown
 from HABApp.core.const.topics import TOPIC_FILES
 from HABApp.core.events import EventFilter
@@ -8,14 +8,12 @@ from HABApp.core.events.habapp_events import RequestFileLoadEvent
 from HABApp.core.lib import SingleTask
 from HABApp.core.wrapper import ignore_exception
 from HABAppTests.test_rule.test_case import TestResult, TestResultStatus
-
 from .test_rule import TestBaseRule, TestRuleStatus
-
 
 log = logging.getLogger('HABApp.Tests')
 
 
-class TestRunnerRule(HABApp.Rule):
+class TestRunnerRule(HABApp.rule.Rule):
     def __init__(self) -> None:
         super().__init__()
 

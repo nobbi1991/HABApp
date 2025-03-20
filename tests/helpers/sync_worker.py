@@ -10,7 +10,7 @@ class SyncTestWorker:
         callback(*args, **kwargs)
 
 
-@pytest.fixture()
+@pytest.fixture
 def sync_worker(monkeypatch) -> None:
     monkeypatch.setattr(wrapped_thread, 'POOL', SyncTestWorker())
 

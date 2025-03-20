@@ -23,6 +23,9 @@ from HABApp.core.internals import (
     uses_post_event,
     wrap_func,
 )
+import HABApp.rule_ctx
+import HABApp.mqtt.interface_sync
+import HABApp.runtime.runtime
 from HABApp.core.items import BaseItem, BaseValueItem
 from HABApp.rule import interfaces
 from HABApp.rule.scheduler.job_builder import HABAppJobBuilder as _HABAppJobBuilder
@@ -68,8 +71,8 @@ class Rule(ContextProvidingObj):
         hook = _get_rule_hook()
         hook.register_rule(self)
 
-        self.__runtime: HABApp.runtime.Runtime = hook.runtime
-        assert isinstance(self.__runtime, HABApp.runtime.Runtime)
+        self.__runtime: HABApp.runtime.runtime.Runtime = hook.runtime
+        assert isinstance(self.__runtime, HABApp.runtime.runtime.Runtime)
 
         # scheduler
         self.run: Final = _HABAppJobBuilder(self._habapp_ctx)

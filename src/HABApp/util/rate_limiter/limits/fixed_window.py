@@ -47,8 +47,7 @@ class FixedWindowElasticExpiryLimit(BaseRateLimit):
         self.do_test_allow()
 
         remaining = self.stop - monotonic()
-        if remaining <= 0:
-            remaining = 0
+        remaining = max(0, remaining)
 
         if not remaining and not self.hits:
             remaining = self.interval

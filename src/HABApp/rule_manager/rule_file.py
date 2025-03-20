@@ -4,9 +4,9 @@ import runpy
 import typing
 from pathlib import Path
 
+import HABApp.core.wrapper
 from HABApp.core.internals import get_current_context
 from HABApp.rule.rule_hook import HABAppRuleHook
-
 
 if typing.TYPE_CHECKING:
     import HABApp.rule.rule
@@ -27,7 +27,7 @@ class RuleFile:
 
         self.rules = {}  # type: typing.Dict[str, HABApp.rule.rule.Rule]
 
-        self.class_ctr: typing.Dict[str, int] = collections.defaultdict(lambda: 1)
+        self.class_ctr: dict[str, int] = collections.defaultdict(lambda: 1)
 
     def suggest_rule_name(self, obj: 'HABApp.rule.rule.Rule') -> str:
         # if there is already a name set we make no suggestion
@@ -69,7 +69,7 @@ class RuleFile:
             runpy.run_path(str(self.path), run_name=str(self.path), init_globals=rule_hook.in_dict())
 
     def load(self) -> bool:
-        created_rules: typing.List[HABApp.rule.rule.Rule] = []
+        created_rules: list[HABApp.rule.rule.Rule] = []
 
         ign = HABApp.core.wrapper.ExceptionToHABApp(logger=log)
         ign.proc_tb = self.__process_tc

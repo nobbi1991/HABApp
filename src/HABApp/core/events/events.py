@@ -64,7 +64,7 @@ class ItemNoChangeEvent:
     name: str
     seconds: int | float
 
-    def __init__(self, name: str, seconds: int | float) -> None:
+    def __init__(self, name: str, seconds: float) -> None:
         self.name: Final = name
         self.seconds: Final = seconds
 
@@ -80,7 +80,7 @@ class ItemNoUpdateEvent:
     name: str
     seconds: int | float
 
-    def __init__(self, name: str, seconds: int | float) -> None:
+    def __init__(self, name: str, seconds: float) -> None:
         self.name: Final = name
         self.seconds: Final = seconds
 

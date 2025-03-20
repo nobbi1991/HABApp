@@ -2,7 +2,7 @@ import time
 
 from HABAppTests import EventWaiter, TestBaseRule, get_random_name
 
-import HABApp
+import HABApp.core
 from HABApp.core.events import (
     EventFilter,
     ItemNoChangeEvent,

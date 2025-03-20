@@ -2,7 +2,7 @@ import asyncio
 
 from HABAppTests import EventWaiter, TestBaseRule, get_random_string
 
-import HABApp
+import HABApp.core
 from HABApp.core.connections import Connections, ConnectionStatus
 from HABApp.core.events import ValueUpdateEventFilter
 from HABApp.mqtt import interface_async

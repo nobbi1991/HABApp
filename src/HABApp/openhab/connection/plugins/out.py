@@ -86,7 +86,7 @@ class OutgoingCommandsPlugin(BaseConnectionPlugin[OpenhabConnection]):
                         await post(f'/rest/items/{item:s}', data=state)
                     else:
                         await put(f'/rest/items/{item:s}/state', data=state)
-            except Exception as e:  # noqa: PERF203
+            except Exception as e:
                 self.plugin_connection.process_exception(e, 'Outgoing queue worker')
 
     def async_post_update(self, item: str | ItemRegistryItem, state: Any) -> None:

@@ -10,18 +10,17 @@ def format_duration(duration: None | str | float) -> str:
     if duration < 0.0001:
         # 99.9ns
         return f'{duration * 1000 * 1000:4.1f}us'
-    elif duration < 0.01:
+    if duration < 0.01:
         # 9.99ms
         return f'{duration * 1000:4.2f}ms'
-    elif duration < 0.1:
+    if duration < 0.1:
         # 99.9ms
         return f'{duration * 1000:4.1f}ms'
-    elif duration < 10:
+    if duration < 10:
         # 1.234s
         return f'{duration:5.3f}s'
-    else:
-        #  19.2s
-        return f'{duration:5.1f}s'
+    #  19.2s
+    return f'{duration:5.1f}s'
 
 
 class BenchContainer:
@@ -38,7 +37,7 @@ class BenchContainer:
         BenchTime.show_table(indent)
         for b in self.times:
             b.show(indent)
-        print('')
+        print()
 
 
 class BenchTime:

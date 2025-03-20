@@ -69,7 +69,7 @@ class AggregationItem(BaseValueItem):
         self.__aggregation_func = func
         return self
 
-    def aggregation_period(self, period: float | int | timedelta) -> AggregationItem:
+    def aggregation_period(self, period: float | timedelta) -> AggregationItem:
         """Set the period in which the items will be aggregated
 
         :param period: period in seconds

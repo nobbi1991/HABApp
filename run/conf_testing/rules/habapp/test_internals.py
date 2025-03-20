@@ -1,4 +1,4 @@
-from HABApp import Rule
+from HABApp.rule.rule import Rule
 from HABApp.core.asyncio import (
     create_task,
     create_task_from_async,
