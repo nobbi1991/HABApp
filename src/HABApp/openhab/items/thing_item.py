@@ -1,14 +1,18 @@
-from collections.abc import Mapping
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from immutables import Map
 from whenever import Instant
 
 from HABApp.core.items import BaseItem
-from HABApp.openhab.definitions import ThingStatusDetailEnum, ThingStatusEnum
 from HABApp.openhab.definitions.things import THING_STATUS_DEFAULT, THING_STATUS_DETAIL_DEFAULT
 from HABApp.openhab.events import ThingConfigStatusInfoEvent, ThingStatusInfoEvent, ThingUpdatedEvent
 from HABApp.openhab.interface_sync import set_thing_enabled
+
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+    from HABApp.openhab.definitions import ThingStatusDetailEnum, ThingStatusEnum
 
 
 class Thing(BaseItem):
@@ -40,14 +44,14 @@ class Thing(BaseItem):
         # https://github.com/openhab/openhab-core/issues/3055
         return self.status_detail != 'DISABLED'
 
-    def __update_timestamps(self, changed: bool):
+    def __update_timestamps(self, changed: bool) -> None:
         _now = Instant.now()
         self._last_update.set(_now)
         if changed:
             self._last_change.set(_now)
         return None
 
-    def process_event(self, event):
+    def process_event(self, event) -> None:
 
         if isinstance(event, ThingStatusInfoEvent):
             old_status = self.status

@@ -119,7 +119,7 @@ class AggregationItem(BaseValueItem):
             self.__task.cancel()
             self.__task = None
 
-    async def __update_task(self):
+    async def __update_task(self) -> None:
         try:
             while len(self._ts) > 1:
                 ts = self._ts[1]
@@ -149,7 +149,7 @@ class AggregationItem(BaseValueItem):
             self.__task = None
         return None
 
-    async def _add_value(self, event: ValueChangeEvent):
+    async def _add_value(self, event: ValueChangeEvent) -> None:
         self._ts.append(time.time())
         self._vals.append(event.value)
 

@@ -43,7 +43,7 @@ class SwitchItem(OpenhabItem, OnOffCommand):
         """Test value against off-value"""
         return self.value == 'OFF'
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle the switch. Turns the switch on when off or off when currently on."""
         if self.value == 'ON':
             self.off()
@@ -65,9 +65,7 @@ class SwitchItem(OpenhabItem, OnOffCommand):
         if isinstance(other, int):
             if other and self.is_on():
                 return True
-            if not other and self.is_off():
-                return True
-            return False
+            return bool(not other and self.is_off())
 
         return NotImplemented
 

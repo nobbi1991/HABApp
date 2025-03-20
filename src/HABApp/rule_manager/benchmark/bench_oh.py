@@ -35,7 +35,7 @@ class OpenhabBenchRule(BenchBaseRule):
 
         self.load_listener = []
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         self.stop_load()
 
         all_items = set(HABApp.core.Items.get_item_names())
@@ -199,7 +199,7 @@ class OpenhabBenchRule(BenchBaseRule):
 
         print('.', end='')
 
-    def proceed_item_val(self, event: ValueUpdateEvent):
+    def proceed_item_val(self, event: ValueUpdateEvent) -> None:
         if event.value != self.item_values[0]:
             return None
 

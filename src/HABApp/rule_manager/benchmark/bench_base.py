@@ -1,3 +1,5 @@
+from typing import NoReturn
+
 import HABApp.rule.rule
 from HABApp.core import shutdown
 from HABApp.core.const.topics import TOPIC_ERRORS
@@ -53,7 +55,7 @@ class BenchBaseRule(HABApp.rule.rule.Rule):
     def tear_down(self) -> None:
         pass
 
-    def run_bench(self):
+    def run_bench(self) -> NoReturn:
         raise NotImplementedError()
 
     def do_bench_finished(self) -> None:

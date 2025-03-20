@@ -21,7 +21,8 @@ class Statistics:
         """
 
         if max_age is None and max_samples is None:
-            raise ValueError('Please specify max age or max samples!')
+            msg = 'Please specify max age or max samples!'
+            raise ValueError(msg)
 
         self._max_age = max_age
 
@@ -38,7 +39,7 @@ class Statistics:
         self.last_value: float = None
         self.last_change: float = None
 
-    def _remove_old(self):
+    def _remove_old(self) -> None:
         if self._max_age is None:
             return None
 

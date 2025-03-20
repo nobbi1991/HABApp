@@ -1,6 +1,6 @@
 import datetime
 from collections.abc import Mapping
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, NoReturn
 
 from immutables import Map
 from typing_extensions import Self, override
@@ -56,7 +56,7 @@ class OpenhabItem(BaseValueItem):
         return cls(name, value, label=label, tags=tags, groups=groups, metadata=metadata, **kwargs)
 
     @staticmethod
-    def _state_from_oh_str(state: str):
+    def _state_from_oh_str(state: str) -> NoReturn:
         """Gets called to convert the state if it is not None"""
         raise NotImplementedError()
 

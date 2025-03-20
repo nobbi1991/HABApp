@@ -33,9 +33,11 @@ class StrBuilder:
                     search = search.strip()
                     regex = re.compile(search, re.IGNORECASE)
                     if replace is None and not regex.groups:
-                        raise ValueError(f'Pattern {search} does not have a group!')
+                        msg = f'Pattern {search} does not have a group!'
+                        raise ValueError(msg)
                 except re.error as e:
-                    raise ValueError(f'Could not compile regex "{search}": {e}') from None
+                    msg = f'Could not compile regex "{search}": {e}'
+                    raise ValueError(msg) from None
 
             assert accessor in THING_ALIAS or accessor in CHANNEL_ALIAS, accessor
             self.regex[f'{{{p}}}'] = accessor.strip(), regex, replace
@@ -54,7 +56,8 @@ class StrBuilder:
             else:
                 m = regex.search(context[accessor])
                 if m is None:
-                    raise ValueError(f'Regex "{regex.pattern}" did not match "{context[accessor]}"')
+                    msg = f'Regex "{regex.pattern}" did not match "{context[accessor]}"'
+                    raise ValueError(msg)
                 val = m.group(1)
             out = out.replace(search, val.strip())
 

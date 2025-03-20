@@ -107,7 +107,7 @@ HINT_PROCESS_CB_FULL: TypeAlias = Callable[[FinishedProcessInfo], Any]
 HINT_PROCESS_CB_SIMPLE: TypeAlias = Callable[[str], Any]
 
 
-async def async_subprocess_exec(callback, *args, calling_func, raw_info: bool, **kwargs):
+async def async_subprocess_exec(callback, *args, calling_func, raw_info: bool, **kwargs) -> None:
     call_str = ''
 
     try:

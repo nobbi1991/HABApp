@@ -28,13 +28,13 @@ def get_msg_payload(msg: Message) -> tuple[str | None, Any]:
             log._log(logging.DEBUG, f'{topic} ({msg.qos}): {val}', [])
 
         # None
-        if val == 'none' or val == 'None':
+        if val in ('none', 'None'):
             return topic, None
 
         # bool
-        if val == 'true' or val == 'True':
+        if val in ('true', 'True'):
             return topic, True
-        if val == 'false' or val == 'False':
+        if val in ('false', 'False'):
             return topic, False
 
         # int

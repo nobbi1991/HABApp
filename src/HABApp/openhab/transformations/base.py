@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Final, Generic, TypeVar
+from typing import Any, Final, Generic, NoReturn, TypeVar
 
 
 T = TypeVar('T')
@@ -40,10 +40,10 @@ class TransformationRegistryBase:
     def available(self) -> tuple[str, ...]:
         return tuple(sorted(self.objs.keys(), key=sort_order))
 
-    def get(self, name: str):
+    def get(self, name: str) -> NoReturn:
         raise NotImplementedError()
 
-    def set(self, name: str, configuration: dict):
+    def set(self, name: str, configuration: dict) -> NoReturn:
         raise NotImplementedError()
 
     def clear(self) -> None:

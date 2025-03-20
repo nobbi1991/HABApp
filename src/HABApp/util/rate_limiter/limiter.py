@@ -17,7 +17,7 @@ _LITERAL_FIXED_WINDOW_ELASTIC_EXPIRY = Literal['fixed_window_elastic_expiry']
 LIMITER_ALGORITHM_HINT: TypeAlias = Literal[_LITERAL_LEAKY_BUCKET, _LITERAL_FIXED_WINDOW_ELASTIC_EXPIRY]
 
 
-def _check_arg(name: str, value, allow_0=False):
+def _check_arg(name: str, value, allow_0=False) -> None:
     if not isinstance(value, int) or ((value <= 0) if not allow_0 else (value < 0)):
         msg = f'Parameter {name:s} must be an int >{"=" if allow_0 else ""} 0, is {value} ({type(value)})'
         raise ValueError(msg)

@@ -1,3 +1,4 @@
+import contextlib
 from asyncio import CancelledError, Task, current_task
 from collections.abc import Awaitable, Callable
 from typing import Any, Final
@@ -36,19 +37,15 @@ class SingleTask:
 
     async def cancel_wait(self) -> None:
         if task := self.cancel():
-            try:
+            with contextlib.suppress(CancelledError):
                 await task
-            except CancelledError:
-                pass
 
-    async def wait(self):
+    async def wait(self) -> None:
         if self.task is None:
             return None
 
-        try:
+        with contextlib.suppress(CancelledError):
             await self.task
-        except CancelledError:
-            pass
 
     def start(self) -> Task:
         self.cancel()

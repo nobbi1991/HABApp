@@ -65,7 +65,7 @@ class MqttBenchRule(BenchBaseRule):
         self.name = self.name_list[0]
         HABApp.mqtt.items.MqttItem.get_create_item(self.name)
 
-        for i in range(50_000):
+        for _i in range(50_000):
             self.values.append(random.randint(0, 99999999))
 
         listener = self.listen_event(
@@ -89,7 +89,7 @@ class MqttBenchRule(BenchBaseRule):
 
         print('.', end='')
 
-    def post_next_event_val(self, event):
+    def post_next_event_val(self, event) -> None:
         if event.value != self.values[0]:
             return None
 

@@ -28,10 +28,7 @@ SUPPRESSED_HABAPP_PATHS = (
 
 
 def is_suppressed_habapp_file(name: str) -> bool:
-    for r in SUPPRESSED_HABAPP_PATHS:
-        if r.search(name):
-            return True
-    return False
+    return any(r.search(name) for r in SUPPRESSED_HABAPP_PATHS)
 
 
 def is_lib_file(name: str) -> bool:

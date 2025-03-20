@@ -1,7 +1,10 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
-from typing import Generic, Literal, TypeAlias, TypeVar
+from typing import TYPE_CHECKING, Generic, Literal, TypeAlias, TypeVar
+
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 T = TypeVar('T')
@@ -28,18 +31,18 @@ class PriorityList(Generic[T]):
         self._objs.append((priority, obj))
         self._objs.sort(key=sort_func)
 
-    def remove(self, obj: T):
+    def remove(self, obj: T) -> None:
         for i, (_, existing) in self._objs:
             if existing is obj:
                 self._objs.pop(i)
                 return None
 
     def __iter__(self) -> Iterator[T]:
-        for p, o in self._objs:
+        for _p, o in self._objs:
             yield o
 
     def reversed(self) -> Iterator[T]:
-        for p, o in reversed(self._objs):
+        for _p, o in reversed(self._objs):
             yield o
 
     def __repr__(self) -> str:

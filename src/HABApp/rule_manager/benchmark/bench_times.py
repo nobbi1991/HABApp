@@ -33,7 +33,7 @@ class BenchContainer:
         return c
 
     def show(self) -> None:
-        indent = max(map(lambda x: len(x.name), self.times), default=0)
+        indent = max((len(x.name) for x in self.times), default=0)
         BenchTime.show_table(indent)
         for b in self.times:
             b.show(indent)

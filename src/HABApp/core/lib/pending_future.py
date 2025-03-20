@@ -12,7 +12,8 @@ class PendingFuture:
     def __init__(self, future: Callable[[], Awaitable[Any]], secs: float) -> None:
         assert asyncio.iscoroutinefunction(future), type(future)
         if not isinstance(secs, (int, float)) or secs < 0:
-            raise ValueError(f'Pending time must be int/float and >= 0! Is: {secs} ({type(secs)})')
+            msg = f'Pending time must be int/float and >= 0! Is: {secs} ({type(secs)})'
+            raise ValueError(msg)
 
         self.func: Callable[[], Awaitable[Any]] = future
         self.secs = secs
@@ -29,7 +30,7 @@ class PendingFuture:
                 self.task.cancel()
             self.task = None
 
-    def reset(self, thread_safe=False):
+    def reset(self, thread_safe=False) -> None:
         if self.is_canceled:
             return None
 

@@ -68,12 +68,12 @@ class SubscriptionHandler(MqttPlugin):
         if self.plugin_connection.context is not None:
             await self.apply_subscriptions()
 
-    def subscription_cfg_changed(self):
+    def subscription_cfg_changed(self) -> None:
         if not self.plugin_connection.is_online:
             return None
         self.sub_task.start_if_not_running()
 
-    async def unsubscribe(self, topics: list[str] | None):
+    async def unsubscribe(self, topics: list[str] | None) -> None:
         log = self.plugin_connection.log
 
         if (client := self.plugin_connection.context) is None:
@@ -96,7 +96,6 @@ class SubscriptionHandler(MqttPlugin):
 
     async def apply_subscriptions(self) -> None:
         log = self.plugin_connection.log
-        default_qos = SUBSCRIBE_CFG.qos
 
         client = self.plugin_connection.context
         assert client is not None

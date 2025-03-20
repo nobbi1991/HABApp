@@ -51,9 +51,8 @@ class EventFilter(EventFilterBase):
             if getattr(event, self.attr_name1, None) != self.attr_value1:
                 return False
 
-            if self.attr_name2 is not None:
-                if getattr(event, self.attr_name2, None) != self.attr_value2:
-                    return False
+            if self.attr_name2 is not None and getattr(event, self.attr_name2, None) != self.attr_value2:
+                return False
 
         return True
 

@@ -23,7 +23,7 @@ def show_config_overview(cfgs: list[ThingConfigChanger], all_params) -> None:
         log.info(line)
 
 
-async def update_thing_cfg(target_cfg, things, test: bool):
+async def update_thing_cfg(target_cfg, things, test: bool) -> None:
 
     cfgs = [ThingConfigChanger.from_dict(k['UID'], k.get('configuration', {})) for k in things]
     cur_vals = tuple(k.get_dict(filter=True) for k in cfgs)

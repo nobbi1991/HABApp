@@ -55,7 +55,7 @@ class ItemsFileWriter:
 
         ret = []
         # sort alphabetical by key
-        for key, values in sorted(grouped_items.items(), key=lambda x: x[0]):
+        for _key, values in sorted(grouped_items.items(), key=lambda x: x[0]):
             # if it's only one value it'll be not written in a block
             if len(values) <= 1:
                 not_grouped.extend(values)

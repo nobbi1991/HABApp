@@ -8,8 +8,11 @@ from re import Pattern
 from typing import Any, Final, Literal, ParamSpec, TypeVar, overload
 
 import HABApp.core
+import HABApp.mqtt.interface_sync
 import HABApp.openhab
+import HABApp.rule_ctx
 import HABApp.rule_manager
+import HABApp.runtime.runtime
 import HABApp.util
 from HABApp.config.config import HABAPP_CONFIG
 from HABApp.core.asyncio import create_task
@@ -23,9 +26,6 @@ from HABApp.core.internals import (
     uses_post_event,
     wrap_func,
 )
-import HABApp.rule_ctx
-import HABApp.mqtt.interface_sync
-import HABApp.runtime.runtime
 from HABApp.core.items import BaseItem, BaseValueItem
 from HABApp.rule import interfaces
 from HABApp.rule.scheduler.job_builder import HABAppJobBuilder as _HABAppJobBuilder
@@ -324,7 +324,7 @@ class Rule(ContextProvidingObj):
                 continue
 
             if metadata_value is not None and not any(
-                    map(metadata_value.search, map(lambda x: x[0], item.metadata.values()))):
+                    map(metadata_value.search, (x[0] for x in item.metadata.values()))):
                 continue
 
             ret.append(item)

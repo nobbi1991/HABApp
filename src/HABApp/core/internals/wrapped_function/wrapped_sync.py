@@ -1,13 +1,18 @@
 from __future__ import annotations
 
-import logging
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from typing_extensions import override
 
 from HABApp.core.asyncio import create_task
-from HABApp.core.internals import Context
 from HABApp.core.internals.wrapped_function.base import P, R, WrappedFunctionBase
+
+
+if TYPE_CHECKING:
+    import logging
+    from collections.abc import Callable
+
+    from HABApp.core.internals import Context
 
 
 class WrappedSyncFunction(WrappedFunctionBase[P, R]):

@@ -49,10 +49,7 @@ def is_type_hint_or_type(value: Any) -> bool:
 
 def _filter_expressions(name: str, value: Any) -> bool:
     # a is None = True
-    if name.endswith(' is None'):
-        return True
-
-    return False
+    return bool(name.endswith(' is None'))
 
 
 SKIPPED_OBJS: Final[tuple[str, ...]] = (
@@ -97,7 +94,7 @@ def skip_variable(var: Variable) -> bool:
     return any(func(name, value) for func in SKIP_VARIABLE)
 
 
-def format_frame_variables(tb: list[str], stack_variables: list[Variable]):
+def format_frame_variables(tb: list[str], stack_variables: list[Variable]) -> None:
     if not stack_variables:
         return None
 
@@ -115,8 +112,7 @@ def format_frame_variables(tb: list[str], stack_variables: list[Variable]):
     # Sort output
     used_vars = sorted(used_vars, key=lambda x: (
         isinstance(x.nodes[0], ast.Compare),                                        # Compare objects last
-        not any(map(
-            lambda y: x.name == y or x.name.startswith(y + '.'), dotted_names)),    # Classes with attributes
+        not any(x.name == y or x.name.startswith(y + '.') for y in dotted_names),    # Classes with attributes
         x.name.lower()                                                              # Name lowercase
     ))
 

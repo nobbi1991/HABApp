@@ -64,7 +64,7 @@ class HABAppBenchRule(BenchBaseRule):
         self.name = self.name_list[0]
         self.openhab.create_item('String', self.name, label='MyLabel')
 
-        for i in range(50_000):
+        for _i in range(50_000):
             self.values.append(random.randint(0, 99999999))
 
         listener = self.listen_event(
@@ -86,7 +86,7 @@ class HABAppBenchRule(BenchBaseRule):
 
         print('.', end='')
 
-    def post_next_event_val(self, value):
+    def post_next_event_val(self, value) -> None:
         if value != self.values[0]:
             return None
 

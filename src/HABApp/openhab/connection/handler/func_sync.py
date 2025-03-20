@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from HABApp.core.asyncio import run_coro_from_thread
 from HABApp.core.internals import ItemRegistryItem
 from HABApp.openhab import definitions
 from HABApp.openhab.definitions.helpers import OpenhabPersistenceData
-from HABApp.openhab.definitions.rest import ItemChannelLinkResp, ItemResp
 
 from .func_async import (
     async_create_item,
@@ -25,6 +24,10 @@ from .func_async import (
     async_set_persistence_data,
     async_set_thing_enabled,
 )
+
+
+if TYPE_CHECKING:
+    from HABApp.openhab.definitions.rest import ItemChannelLinkResp, ItemResp
 
 
 # ----------------------------------------------------------------------------------------------------------------------

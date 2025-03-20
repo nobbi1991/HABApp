@@ -88,7 +88,7 @@ class ThingConfigStatusInfoEvent(OpenhabEvent):
     name: str
     config_messages: dict[str, str]
 
-    def __init__(self, name: str = '', config_messages: dict[str, str] = None) -> None:
+    def __init__(self, name: str = '', config_messages: dict[str, str] | None = None) -> None:
         super().__init__()
 
         self.name: str = name

@@ -73,11 +73,11 @@ class Table:
         for k, col in self.columns.items():
             col.add(_in[k])
 
-    def get_lines(self, sort_columns: list[str | Column] = None) -> list[str]:
+    def get_lines(self, sort_columns: list[str | Column] | None = None) -> list[str]:
         # check if all tables have the same length
         vals = list(self.columns.values())
         len1 = len(vals[0].entries)
-        assert all(map(lambda x: len(x.entries) == len1, vals)), {k: len(v.entries) for k, v in self.columns.items()}
+        assert all(len(x.entries) == len1 for x in vals), {k: len(v.entries) for k, v in self.columns.items()}
 
         # We don't show the empty table
         if len1 <= 0:
@@ -96,7 +96,7 @@ class Table:
             for i in range(len1):
                 lines_dict[tuple(c.entries[i] for c in sort_columns) + (i,)] = i
 
-        line_sep = '+-' + '-+-'.join(map(lambda x: '-' * x.width, self.columns.values())) + '-+'
+        line_sep = '+-' + '-+-'.join('-' * x.width for x in self.columns.values()) + '-+'
 
         ret = []
         if self.heading:
@@ -114,10 +114,10 @@ class Table:
         ret.append(l1)
         ret.append(line_sep)
 
-        for t, i in sorted(lines_dict.items()):
-            lines = max(map(lambda x: x.get_lines(i), self.columns.values()))
+        for _t, i in sorted(lines_dict.items()):
+            lines = max(x.get_lines(i) for x in self.columns.values())
 
-            grid = tuple(map(lambda x: x.format_entry(i, lines), self.columns.values()))  # type: tuple[list[str], ...]
+            grid = tuple(x.format_entry(i, lines) for x in self.columns.values())  # type: tuple[list[str], ...]
             for col_i in range(lines):
                 cols = [obj[col_i] for obj in grid]
                 ret.append('| ' + ' | '.join(cols) + ' |')

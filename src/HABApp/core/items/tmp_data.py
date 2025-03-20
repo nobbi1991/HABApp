@@ -5,11 +5,10 @@ from datetime import datetime, timedelta
 import HABApp.core.logger
 from HABApp.core.lib import PendingFuture
 
-from .base_item_watch import BaseWatch
-
 
 if typing.TYPE_CHECKING:
     from .base_item import BaseItem
+    from .base_item_watch import BaseWatch
 
 
 TMP_DATA: dict[str, 'TmpItemData'] = {}
@@ -36,7 +35,7 @@ class TmpItemData:
                 obj.remove(p)
 
 
-def add_tmp_data(item: 'BaseItem'):
+def add_tmp_data(item: 'BaseItem') -> None:
     if not item._last_update.tasks and not item._last_change.tasks:
         return None
 
@@ -46,7 +45,7 @@ def add_tmp_data(item: 'BaseItem'):
     CLEANUP.reset(thread_safe=True)
 
 
-def restore_tmp_data(item: 'BaseItem'):
+def restore_tmp_data(item: 'BaseItem') -> None:
     data = TMP_DATA.pop(item.name, None)
     if data is None:
         return None

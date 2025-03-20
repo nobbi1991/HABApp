@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import warnings
-from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.parse import quote as quote_url
 
-from HABApp.core.internals import ItemRegistryItem
 from HABApp.openhab.definitions.rest import (
     ItemChannelLinkResp,
     ItemChannelLinkRespList,
@@ -41,12 +39,18 @@ from . import convert_to_oh_str
 from .handler import delete, get, post, put
 
 
+if TYPE_CHECKING:
+    from datetime import datetime
+
+    from HABApp.core.internals import ItemRegistryItem
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 # root
 # ----------------------------------------------------------------------------------------------------------------------
 async def async_get_root() -> RootResp | None:
     resp = await get('/rest/', log_404=False)
-    if resp.status == 404 or resp.status == 500:
+    if resp.status in (404, 500):
         return None
 
     # during startup, we sometimes get an empty response
@@ -69,7 +73,7 @@ async def async_get_uuid() -> str:
 # ----------------------------------------------------------------------------------------------------------------------
 async def async_get_system_info():
     resp = await get('/rest/systeminfo', log_404=False)
-    if resp.status == 404 or resp.status == 500:
+    if resp.status in (404, 500):
         return None
 
     # during startup, we sometimes get an empty response
@@ -235,7 +239,8 @@ async def async_set_thing_cfg(thing: str | ItemRegistryItem, cfg: dict[str, Any]
     if ret.status == 409:
         raise ThingNotEditableError.from_uid(thing)
     if ret.status >= 300:
-        raise ValueError('Something went wrong')
+        msg = 'Something went wrong'
+        raise ValueError(msg)
 
     return ret.status
 
@@ -261,7 +266,7 @@ async def async_set_thing_enabled(thing: str | ItemRegistryItem, enabled: bool):
 # ----------------------------------------------------------------------------------------------------------------------
 # /links
 # ----------------------------------------------------------------------------------------------------------------------
-async def async_purge_links():
+async def async_purge_links() -> None:
     resp = await post('/rest/purge')
     if resp.status != 200:
         msg = 'Unexpected error'
@@ -345,7 +350,7 @@ async def async_create_link(
     raise LinkRequestError(msg)
 
 
-async def async_remove_link(item: str | ItemRegistryItem, channel: str):
+async def async_remove_link(item: str | ItemRegistryItem, channel: str) -> None:
 
     if (resp := await delete(__get_item_link_url(item, channel), log_404=False)) is None:
         return None
@@ -410,13 +415,13 @@ async def async_get_persistence_data(item: str | ItemRegistryItem, persistence: 
 
 
 async def async_set_persistence_data(item: str | ItemRegistryItem, persistence: str | None,
-                                     time: datetime, state: Any):
+                                     time: datetime, state: Any) -> None:
     # noinspection PyProtectedMember
     item = item if isinstance(item, str) else item._name
 
     # This does only work for some persistence services (as of OH 3.4)
     warnings.warn(f'{async_set_persistence_data.__name__} calls a part of the openHAB API which is buggy!',
-                  category=ResourceWarning)
+                  category=ResourceWarning, stacklevel=2)
 
     params = {
         'time': convert_to_oh_str(time),

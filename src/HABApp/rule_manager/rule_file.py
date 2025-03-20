@@ -5,11 +5,9 @@ import typing
 from pathlib import Path
 
 import HABApp.core.wrapper
+import HABApp.rule.rule
 from HABApp.core.internals import get_current_context
 from HABApp.rule.rule_hook import HABAppRuleHook
-
-if typing.TYPE_CHECKING:
-    import HABApp.rule.rule
 
 
 log = logging.getLogger('HABApp.Rules')
@@ -96,7 +94,8 @@ class RuleFile:
 
                 # rule name must be unique for every file
                 if rule.rule_name in self.rules:
-                    raise ValueError(f'Rule name must be unique!\n"{rule.rule_name}" is already used!')
+                    msg = f'Rule name must be unique!\n"{rule.rule_name}" is already used!'
+                    raise ValueError(msg)
 
                 self.rules[rule.rule_name] = rule
                 log.info(f'Added rule "{rule.rule_name}" from {self.name}')

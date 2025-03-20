@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Awaitable, Callable
 from typing import TYPE_CHECKING, Any, Final, Generic, TypeVar
 
 from HABApp.core.lib import SingleTask
 
 
 if TYPE_CHECKING:
-    from .base_connection import BaseConnection
+    from collections.abc import Awaitable, Callable
     from .plugin_callback import PluginCallbackHandler
 
 T = TypeVar('T', bound='BaseConnection')

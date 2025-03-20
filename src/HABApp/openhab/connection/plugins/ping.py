@@ -32,7 +32,7 @@ class PingPlugin(BaseConnectionPlugin[OpenhabConnection]):
 
         self.listener: HABApp.core.internals.EventBusListener | None = None
 
-    async def on_connected(self):
+    async def on_connected(self) -> None:
         if not PING_CONFIG.enabled:
             return None
 
@@ -56,7 +56,7 @@ class PingPlugin(BaseConnectionPlugin[OpenhabConnection]):
             self.listener.cancel()
             self.listener = None
 
-    async def ping_received(self, event: HABApp.openhab.events.ItemStateEvent):
+    async def ping_received(self, event: HABApp.openhab.events.ItemStateEvent) -> None:
         value = event.value
         if value != self.sent_value:
             return None

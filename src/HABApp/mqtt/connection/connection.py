@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TypeAlias
+from typing import NoReturn, TypeAlias
 
 from aiomqtt import Client, MqttError
 
@@ -55,7 +55,7 @@ class MqttPlugin(BaseConnectionPluginConnectedTask[MqttConnection]):
     def __init__(self, task_name: str) -> None:
         super().__init__(self._mqtt_wrap_task, task_name)
 
-    async def mqtt_task(self):
+    async def mqtt_task(self) -> NoReturn:
         raise NotImplementedError()
 
     async def _mqtt_wrap_task(self) -> None:

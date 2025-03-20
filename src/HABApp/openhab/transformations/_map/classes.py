@@ -24,4 +24,5 @@ class MapTransformationWithDefault(MapTransformation):
         return super().__repr__(f', default={self._default}{additional}')
 
     def get(self, key, default=None) -> NoReturn:
-        raise MapTransformationError(f'Mapping is already defined with a default: "{self._default}"')
+        msg = f'Mapping is already defined with a default: "{self._default}"'
+        raise MapTransformationError(msg)

@@ -61,6 +61,7 @@ class StartUpProxyObj(ProxyObjBase):
 
         self.globals = None
         self.to_replace = None
+        return None
 
 
 def create_proxy(to_replace: Callable) -> StartUpProxyObj:

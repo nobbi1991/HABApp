@@ -60,7 +60,7 @@ def set_file_validator(filename: str, model: BaseModel | None) -> None:
     post_event(TOPIC_FILES, RequestFileLoadEvent(filename))
 
 
-def add_parameter(file: str, *keys, default_value):
+def add_parameter(file: str, *keys, default_value) -> None:
     save = False
 
     if file not in _PARAMETERS:

@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, NoReturn
 
 from HABApp.core.internals import EventFilterBase
 
@@ -10,7 +10,7 @@ class EventFilterBaseGroup(EventFilterBase):
     def trigger(self, event) -> bool:
         raise NotImplementedError()
 
-    def describe(self):
+    def describe(self) -> NoReturn:
         raise NotImplementedError()
 
 

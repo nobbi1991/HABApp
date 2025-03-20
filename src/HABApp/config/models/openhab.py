@@ -74,6 +74,7 @@ class Websocket(BaseModel):
     )
 
     @field_validator('max_msg_size')
+    @classmethod
     def validate_see_buffer(cls, value: ByteSize):
         valid_values = (
             '128kib', '256kib', '512kib',
@@ -102,6 +103,7 @@ class Connection(BaseModel):
     )
 
     @field_validator('url')
+    @classmethod
     def validate_url(cls, value: str):
         if value:
             TypeAdapter(AnyHttpUrl).validate_python(value)

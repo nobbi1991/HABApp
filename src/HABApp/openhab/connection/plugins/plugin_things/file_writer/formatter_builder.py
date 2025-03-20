@@ -33,7 +33,8 @@ class ValueFormatterBuilder(BuilderBase):
     def create_formatter(self, item_obj: UserItem) -> 'TYPE_FORMATTER':
         value = self.get_value(item_obj)
         if not isinstance(value, str):
-            raise ValueError('Expected str!')
+            msg = 'Expected str!'
+            raise ValueError(msg)
 
         value = value.strip()
         if not value:
@@ -50,9 +51,10 @@ class MultipleValueFormatterBuilder(ValueFormatterBuilder):
     def create_formatter(self, item_obj: UserItem) -> 'TYPE_FORMATTER':
         values = self.get_value(item_obj)
         if not isinstance(values, (list, set, tuple, frozenset)):
-            raise ValueError('Expected container!')
+            msg = 'Expected container!'
+            raise ValueError(msg)
 
-        values = map(lambda x: x.strip(), values)
+        values = (x.strip() for x in values)
 
         # remove all empty str and sort
         values = sorted(filter(None, values))
@@ -76,7 +78,7 @@ class LinkFormatter(BuilderBase):
         return ValueFormatter(value)
 
 
-def metadata_key_value(key: str, value: Any):
+def metadata_key_value(key: str, value: Any) -> str:
     return f'{key}={value}' if not isinstance(value, str) else f'{key}="{value}"'
 
 

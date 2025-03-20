@@ -32,7 +32,7 @@ class RuleManager:
 
         self.files: dict[str, RuleFile] = {}
 
-    async def setup(self):
+    async def setup(self) -> None:
 
         # shutdown
         shutdown.register(self.shutdown, msg='Cancel rule schedulers')
@@ -62,7 +62,7 @@ class RuleManager:
         # Initial loading of rules
         HABApp.core.internals.wrap_func(self.load_rules_on_startup, logger=log).run()
 
-    async def load_rules_on_startup(self):
+    async def load_rules_on_startup(self) -> None:
 
         if HABAPP_CONFIG.openhab.general.wait_for_openhab:
             c = Connections.get('openhab')
@@ -95,7 +95,8 @@ class RuleManager:
 
         # if we want a special one throw error
         if not found:
-            raise KeyError(f'No Rule with name "{rule_name}" found!')
+            msg = f'No Rule with name "{rule_name}" found!'
+            raise KeyError(msg)
         return found if len(found) > 1 else found[0]
 
     async def request_file_unload(self, name: str, path: Path) -> None:

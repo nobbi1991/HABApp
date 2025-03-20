@@ -63,17 +63,21 @@ class Fade:
         :param now: time.time() timestamp to sync multiple fades together
         """
         if start_value < self.min_value or start_value > self.max_value:
-            raise ValueError('Start value is out of range')
+            msg = 'Start value is out of range'
+            raise ValueError(msg)
         if stop_value < self.min_value or stop_value > self.max_value:
-            raise ValueError('Stop value is out of range')
+            msg = 'Stop value is out of range'
+            raise ValueError(msg)
 
         if isinstance(duration, timedelta):
             duration = duration.total_seconds()
-        assert isinstance(duration, (int, float)) and duration >= 1
+        assert isinstance(duration, (int, float))
+        assert duration >= 1
 
         diff = stop_value - start_value
         if not diff:
-            raise ValueError('Start value must be different than stop value')
+            msg = 'Start value must be different than stop value'
+            raise ValueError(msg)
 
         # If we have a running fade we have to cancel it before changing the used values
         self.stop_fade()
@@ -139,7 +143,7 @@ class Fade:
         self._fade_worker = FadeWorker(self, self._step_duration)
         return self
 
-    def stop_fade(self):
+    def stop_fade(self) -> None:
         """Stop the scheduled fade. This can be called multiple times without error"""
         if self._fade_worker is None:
             return None

@@ -9,7 +9,7 @@ from HABApp.core.logger import log_error
 from ._log import log_cfg as log
 
 
-def ensure_same_types(key: str, org, val):
+def ensure_same_types(key: str, org, val) -> None:
     t_org = type(org)
     t_val = type(val)
     if t_org is t_val:
@@ -20,7 +20,8 @@ def ensure_same_types(key: str, org, val):
 
     _b = str(t_val)
     _b = _b[7:-1] if _b.startswith('<class ') and _b[-1] == '>' else _b
-    raise ValueError(f"Datatype of parameter '{key}' must be {_a} but is {_b}: '{val}'")
+    msg = f"Datatype of parameter '{key}' must be {_a} but is {_b}: '{val}'"
+    raise ValueError(msg)
 
 
 re_ref = re.compile(r'\$(\w+)')
@@ -42,10 +43,9 @@ class ThingConfigChanger:
                 # and split up the bitmask entries accordingly
                 # 154 -> config_154_4
                 # 154_000000FF -> config_154_4_000000FF
-                if m.group(3) is not None:
-                    if f'config_{m.group(1)}_{m.group(2)}' in _in:
-                        c.alias[f'{m.group(1)}{m.group(3)}'] = k
-                        continue
+                if m.group(3) is not None and f'config_{m.group(1)}_{m.group(2)}' in _in:
+                    c.alias[f'{m.group(1)}{m.group(3)}'] = k
+                    continue
 
                 c.alias[int(m.group(1))] = k
                 continue
@@ -69,7 +69,8 @@ class ThingConfigChanger:
     def __setitem__(self, o_key, value) -> None:
         key = self.alias.get(o_key, o_key)
         if key not in self.org:
-            raise KeyError(f'Parameter "{o_key}" does not exist for {self.uid}!')
+            msg = f'Parameter "{o_key}" does not exist for {self.uid}!'
+            raise KeyError(msg)
 
         # Make it possible to substitue refs with $1
         if isinstance(value, str) and '$' in value:
@@ -86,7 +87,8 @@ class ThingConfigChanger:
                 try:
                     _ref_val = self.new.get(_ref_key, self.org[_ref_key])
                 except KeyError:
-                    raise KeyError(f'Reference "{ref}" in "{o_value}" does not exist for {self.uid}!') from None
+                    msg = f'Reference "{ref}" in "{o_value}" does not exist for {self.uid}!'
+                    raise KeyError(msg) from None
 
                 value = value.replace(f'${ref}', str(_ref_val))
 
@@ -111,7 +113,7 @@ class ThingConfigChanger:
             return default
 
     def keys(self):
-        return (self.alias.inverse.get(k, k) for k in self.org.keys())
+        return (self.alias.inverse.get(k, k) for k in self.org)
 
     def values(self):
         return self.org.values()
@@ -125,7 +127,7 @@ class ThingConfigChanger:
             r[k] = v
         return r
 
-    async def update_thing_cfg(self):
+    async def update_thing_cfg(self) -> None:
         if not self.new:
             log.debug(f'Config of {self.uid} is already correct!')
             return None

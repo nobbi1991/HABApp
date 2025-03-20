@@ -17,13 +17,14 @@ class MapTransformationRegistry(TransformationRegistryBase):
         try:
             data, default = self.objs[name]
         except KeyError:
-            raise MapTransformationNotFound(f'Map transformation "{name:s}" not found!') from None
+            msg = f'Map transformation "{name:s}" not found!'
+            raise MapTransformationNotFound(msg) from None
 
         if default:
             return MapTransformationWithDefault(data, name=name, default=default)
         return MapTransformation(data, name=name)
 
-    def set(self, name: str, configuration: dict[str, str]):
+    def set(self, name: str, configuration: dict[str, str]) -> None:
         data = load_map_file(configuration['function'])
         if not data:
             log.warning(f'Map transformation "{name:s}" is empty -> skipped!')

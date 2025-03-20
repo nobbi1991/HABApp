@@ -1,4 +1,5 @@
 import logging
+from typing import NoReturn
 
 import HABApp.core.events
 import HABApp.openhab.items
@@ -70,7 +71,7 @@ class SwitchItemValueMode(ValueMode):
     __set_enable = ValueMode.set_enabled
 
     # prevent direct calling
-    def set_enabled(self, value: bool, only_on_change: bool = False):
+    def set_enabled(self, value: bool, only_on_change: bool = False) -> NoReturn:
         """"""  # Empty docstring so this function doesn't show up in Sphinx
         msg = 'Enabled is controlled through the switch item!'
         raise PermissionError(msg)

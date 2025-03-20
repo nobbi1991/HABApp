@@ -65,8 +65,6 @@ class ContactItem(OpenhabItem):
         if isinstance(other, int):
             if other and self.is_open():
                 return True
-            if not other and self.is_closed():
-                return True
-            return False
+            return bool(not other and self.is_closed())
 
         return NotImplemented

@@ -34,12 +34,14 @@ class BaseFilter:
         try:
             self.alias = self.KEYS[key]
         except KeyError:
-            raise ValueError(f'Key {key} can not be used as a filter! Available: {", ".join(self.KEYS)}') from None
+            msg = f'Key {key} can not be used as a filter! Available: {", ".join(self.KEYS)}'
+            raise ValueError(msg) from None
 
         try:
             self.search = re.compile(regex, re.IGNORECASE)
         except re.error as e:
-            raise ValueError(f'Could not compile regex "{regex}": {e}') from None
+            msg = f'Could not compile regex "{regex}": {e}'
+            raise ValueError(msg) from None
 
     def matches(self, _dict: dict, test: bool) -> bool:
         v = _dict.get(self.alias)
@@ -67,7 +69,7 @@ class ChannelFilter(BaseFilter):
 
 
 def apply_filters(filters: list[BaseFilter], iterable: list[dict[str, str]], test: bool) -> Iterator[dict[str, Any]]:
-    return filter(lambda n: all(map(lambda filter: filter.matches(n, test), filters)), iterable)
+    return filter(lambda n: all(filter.matches(n, test) for filter in filters), iterable)
 
 
 def log_overview(data: list[dict], aliases: dict[str, str], heading='') -> None:

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import time
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import HABApp.openhab.events
 from HABApp.config.config import HABAPP_CONFIG
@@ -25,6 +24,10 @@ from .item_worker import cleanup_items, create_item
 from .thing_worker import update_thing_cfg
 
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
+
 class DuplicateItemError(Exception):
     pass
 
@@ -41,7 +44,7 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
         self.cache_ts: float = 0.0
         self.cache_cfg: list[dict[str, Any]] = []
 
-    async def on_setup(self):
+    async def on_setup(self) -> None:
         path = HABAPP_CONFIG.directories.config
         if path is None:
             return None
@@ -61,10 +64,10 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
         folder.add_file_type(HABAppThingConfigFile)
         self.watcher = folder.add_watch('.yml')
 
-    async def file_unload(self, prefix: str, path: Path):
+    async def file_unload(self, prefix: str, path: Path) -> None:
         return None
 
-    async def on_connected(self):
+    async def on_connected(self) -> None:
         if self.watcher is None:
             return None
 
@@ -84,7 +87,7 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
             self.cache_ts = time.time()
         return self.cache_cfg
 
-    async def file_load(self, name: str, path: Path):
+    async def file_load(self, name: str, path: Path) -> None:
         # we have to check the naming structure because we get file events for the whole folder
         _name = path.name.lower()
         if not _name.startswith('thing_') or not _name.endswith('.yml'):
@@ -125,7 +128,7 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
             return None
 
         # if one entry has test set we show an overview of all the things
-        if any(map(lambda x: x.test, cfg)):
+        if any(x.test for x in cfg):
             log_overview(data, THING_ALIAS, 'Thing overview')
 
         # process each thing part in the cfg
@@ -153,7 +156,8 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
                     for item_cfg in cfg_entry.get_items(thing_context):
                         name = item_cfg.name
                         if name in create_items:
-                            raise DuplicateItemError(f'Duplicate item: {name}')
+                            msg = f'Duplicate item: {name}'
+                            raise DuplicateItemError(msg)
                         create_items[name] = item_cfg
 
                     # Channel overview, only if we have something configured
@@ -175,7 +179,8 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
                                 name = item_cfg.name
 
                                 if name in create_items:
-                                    raise DuplicateItemError(f'Duplicate item: {name}')
+                                    msg = f'Duplicate item: {name}'
+                                    raise DuplicateItemError(msg)
                                 create_items[name] = item_cfg
 
                     # newline only if we create logs

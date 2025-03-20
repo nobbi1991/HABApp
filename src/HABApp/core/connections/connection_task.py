@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-import logging
-from collections.abc import Awaitable, Callable
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
 
 from HABApp.core.lib import SingleTask
+
+
+if TYPE_CHECKING:
+    import logging
+    from collections.abc import Awaitable, Callable
 
 
 class PluginTask(SingleTask):

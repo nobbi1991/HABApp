@@ -25,12 +25,10 @@ def _filter_items(i: ItemResp) -> bool:
         return False
 
     load_habapp_meta(i)
-    if not isinstance(i.metadata['HABApp'], HABAppThingPluginData):
-        return False
-    return True
+    return isinstance(i.metadata['HABApp'], HABAppThingPluginData)
 
 
-async def cleanup_items(keep_items: set[str]):
+async def cleanup_items(keep_items: set[str]) -> None:
     all_items = await async_get_items()
 
     to_delete: dict[str, HABAppThingPluginData] = {}

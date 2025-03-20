@@ -31,7 +31,9 @@ TYPE_FORMATTER = TypeVar('TYPE_FORMATTER', bound=ValueFormatter)
 
 class FormatterScope:
     def __init__(self, field_names: Iterable[str],
-                 skip_alignment: Iterable[str] = (), min_width: dict[str, int] = {}) -> None:
+                 skip_alignment: Iterable[str] = (), min_width: dict[str, int] | None = None) -> None:
+        if min_width is None:
+            min_width = {}
         self.lines: list[dict[str, TYPE_FORMATTER]] = []
         self.keys: Final = tuple(field_names)
 
@@ -55,7 +57,7 @@ class FormatterScope:
                     formatter = EmptyFormatter()
                 columns[key].append(formatter)
 
-        column_width = {key: max(map(lambda x: x.len(), column)) for key, column in columns.items()}
+        column_width = {key: max(x.len() for x in column) for key, column in columns.items()}
 
         for key, width in column_width.items():
             # indent to multiples of 4, if the entries are missing do not indent
