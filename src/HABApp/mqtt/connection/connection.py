@@ -43,7 +43,7 @@ class MqttConnection(BaseConnection):
         super().__init__('mqtt')
         self.context: CONTEXT_TYPE = None
 
-    def is_silent_exception(self, e: Exception):
+    def is_silent_exception(self, e: Exception) -> bool:
         return isinstance(e, MqttError)
 
 

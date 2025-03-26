@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import typing_extensions
 from typing_extensions import override
 
 from HABApp.core.asyncio import create_task
@@ -16,15 +17,18 @@ if TYPE_CHECKING:
 
 
 class WrappedSyncFunction(WrappedFunctionBase[P, R]):
-
-    def __init__(self, func: Callable,
-                 warn_too_long=True,
-                 name: str | None = None,
-                 logger: logging.Logger | None = None,
-                 context: Context | None = None) -> None:
-
+    def __init__(
+        self,
+        func: Callable,
+        warn_too_long: bool=True,
+        name: str | None = None,
+        logger: logging.Logger | None = None,
+        context: Context | None = None,
+    ) -> None:
         super().__init__(name=name, func=func, logger=logger, context=context)
-        assert callable(func)
+        if not callable(func):
+            msg = f'{func} is not callable'
+            raise TypeError(msg)
 
         self.func = func
         self.warn_too_long: bool = warn_too_long
@@ -35,7 +39,6 @@ class WrappedSyncFunction(WrappedFunctionBase[P, R]):
 
     @override
     async def async_run(self, *args: P.args, **kwargs: P.kwargs) -> R | None:
-
         try:
             return self.func(*args, **kwargs)
         except Exception as e:

@@ -1,6 +1,5 @@
 class ItemRegistryItem:
-    """ItemRegistryItem, all items that will be stored in the Item Registry must inherit from this
-    """
+    """ItemRegistryItem, all items that will be stored in the Item Registry must inherit from this"""
 
     def __init__(self, name: str, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -17,11 +16,9 @@ class ItemRegistryItem:
         return self._name
 
     def _on_item_added(self) -> None:
-        """This function gets automatically called when the item was added to the item registry
-        """
+        """This function gets automatically called when the item was added to the item registry"""
         raise NotImplementedError()
 
     def _on_item_removed(self) -> None:
-        """This function gets automatically called when the item was removed from the item registry
-        """
+        """This function gets automatically called when the item was removed from the item registry"""
         raise NotImplementedError()

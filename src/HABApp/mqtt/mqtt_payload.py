@@ -11,7 +11,7 @@ from HABApp.core.wrapper import process_exception
 log = logging.getLogger(f'{TOPIC_EVENTS}.mqtt')
 
 
-def get_msg_payload(msg: Message) -> tuple[str | None, Any]:
+def get_msg_payload(msg: Message) -> tuple[str | None, Any]:  # noqa: PLR0911
     try:
         topic = msg.topic.value
         raw = msg.payload

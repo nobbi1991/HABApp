@@ -19,9 +19,7 @@ def log_error(logger: logging.Logger, text: str) -> None:
     else:
         logger.error(text)
 
-    post_event(
-        _T_ERRORS, text
-    )
+    post_event(_T_ERRORS, text)
 
 
 def log_warning(logger: logging.Logger, text: str) -> None:
@@ -31,9 +29,7 @@ def log_warning(logger: logging.Logger, text: str) -> None:
     else:
         logger.warning(text)
 
-    post_event(
-        _T_WARNINGS, text
-    )
+    post_event(_T_WARNINGS, text)
 
 
 def log_info(logger: logging.Logger, text: str) -> None:
@@ -43,9 +39,7 @@ def log_info(logger: logging.Logger, text: str) -> None:
     else:
         logger.info(text)
 
-    post_event(
-        _T_INFOS, text
-    )
+    post_event(_T_INFOS, text)
 
 
 class HABAppLogger:
@@ -76,9 +70,7 @@ class HABAppLogger:
             for line in self.lines:
                 self.logger._log(self._LEVEL, line, ())
 
-        post_event(
-            self._TOPIC, '\n'.join(self.lines)
-        )
+        post_event(self._TOPIC, '\n'.join(self.lines))
         self.lines.clear()
         return True
 

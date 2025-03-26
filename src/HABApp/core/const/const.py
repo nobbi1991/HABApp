@@ -27,5 +27,6 @@ if PYTHON_311:
     # noinspection PyUnresolvedReferences
     from enum import StrEnum
 else:
+
     class StrEnum(str, Enum):
         pass

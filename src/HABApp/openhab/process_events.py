@@ -34,7 +34,7 @@ post_event = uses_post_event()
 get_item = uses_get_item()
 
 
-def on_openhab_event(event: OpenhabEvent) -> None:
+def on_openhab_event(event: OpenhabEvent) -> None:  # noqa: PLR0911
     try:
         # Update item in registry BEFORE posting to the event bus
         # so the items have the correct state when we process the event in a rule
@@ -110,7 +110,7 @@ async def item_event(event: ItemAddedEvent | ItemUpdatedEvent) -> None:
         add_to_registry(new_item)
         # Send Event to Event Bus
         post_event(TOPIC_ITEMS, event)
-        return None
     except Exception as e:
         process_exception(func=item_event, e=e)
-        return None
+
+    return None

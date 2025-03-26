@@ -98,7 +98,9 @@ class SubscriptionHandler(MqttPlugin):
         log = self.plugin_connection.log
 
         client = self.plugin_connection.context
-        assert client is not None
+        if client is None:
+            msg = 'Client is required'
+            raise ValueError(msg)
 
         target: dict[str, int] = {}
 
@@ -152,7 +154,9 @@ class SubscriptionHandler(MqttPlugin):
 
     async def mqtt_task(self) -> None:
         client = self.plugin_connection.context
-        assert client is not None
+        if client is None:
+            msg = 'Client is required'
+            raise ValueError(msg)
 
         async for message in client.messages:
             try:

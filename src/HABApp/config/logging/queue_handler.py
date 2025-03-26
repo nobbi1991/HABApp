@@ -13,6 +13,7 @@ log = logging.getLogger('HABApp.logging')
 
 
 LOCK = Lock()
+_MAX_QUEUE_SIZE = 1000
 
 
 class HABAppQueueHandler:
@@ -53,8 +54,11 @@ class HABAppQueueHandler:
         try:
             log.debug(f'{self._name} thread running')
 
+            if self._handler is None:
+                msg = 'handler is None'
+                raise  AssertionError(msg)
+
             try:
-                assert self._handler is not None
                 while True:
                     sleep(self.FLUSH_DELAY)
                     if self.process_queue():
@@ -100,13 +104,12 @@ class HABAppQueueHandler:
                 if rec is None:
                     return True
 
-                if skip_rem > 0:
+                if skip_rem > 0 and rec.levelno <= skip_level:
                     # skip everything including INFO, process rest
-                    if rec.levelno <= skip_level:
-                        skip_rem -= 1
-                        if skip_rem <= 0:
-                            log.warning(f'Event log buffer congested! Skipped {skip_total} messages.')
-                        continue
+                    skip_rem -= 1
+                    if skip_rem <= 0:
+                        log.warning(f'Event log buffer congested! Skipped {skip_total} messages.')
+                    continue
 
                 # handle record
                 handler.handle(rec)
@@ -116,7 +119,7 @@ class HABAppQueueHandler:
                     ctr = check_interval
                     if not skip_rem:
                         q_size = q.qsize()
-                        if q_size > 1000:
+                        if q_size > _MAX_QUEUE_SIZE:
                             skip_total = skip_rem = q_size - 750
 
         except Empty:

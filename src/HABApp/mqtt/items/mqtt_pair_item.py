@@ -1,4 +1,6 @@
 
+from typing import Any
+
 from HABApp.core.errors import ItemNotFoundException
 from HABApp.core.internals import uses_item_registry
 from HABApp.mqtt.interface_sync import publish
@@ -24,7 +26,7 @@ class MqttPairItem(MqttBaseItem):
     and a corresponding topic that is used to write values"""
 
     @classmethod
-    def get_create_item(cls, name: str, write_topic: str | None = None, initial_value=None) -> 'MqttPairItem':
+    def get_create_item(cls, name: str, write_topic: str | None = None, initial_value: float | str | None=None) -> 'MqttPairItem':
         """Creates a new item in HABApp and returns it or returns the already existing one with the given name.
         HABApp tries to automatically derive the write topic from the item name. In cases where this does not
         work it can be specified manually.
@@ -34,7 +36,9 @@ class MqttPairItem(MqttBaseItem):
         :param initial_value: state the item will have if it gets created
         :return: item
         """
-        assert isinstance(name, str), type(name)
+        if not isinstance(name, str):
+            msg = f'Expected a string, but got {type(name).__name__}'
+            raise TypeError(msg)
 
         # try to build write topic
         if write_topic is None:
@@ -45,14 +49,16 @@ class MqttPairItem(MqttBaseItem):
         except ItemNotFoundException:
             item = Items.add_item(cls(name, write_topic=write_topic, initial_value=initial_value))
 
-        assert isinstance(item, cls), f'{cls} != {type(item)}'
+        if not isinstance(item, cls):
+            msg = f'Expected {cls}, but got {type(item)}'
+            raise TypeError(msg)
         return item
 
-    def __init__(self, name: str, initial_value=None, write_topic: str | None = None) -> None:
+    def __init__(self, name: str, initial_value: Any=None, write_topic: str | None = None) -> None:
         super().__init__(name, initial_value)
         self.write_topic: str = write_topic
 
-    def publish(self, payload, qos: int | None = None, retain: bool | None = None):
+    def publish(self, payload: Any, qos: int | None = None, retain: bool | None = None) -> None:
         """
         Publish the payload under the write topic from the item.
 

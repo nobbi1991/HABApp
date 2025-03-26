@@ -29,10 +29,16 @@ log = logging.getLogger('HABApp.files')
 
 
 class FileTypeHandler:
-    def __init__(self, name: str, logger: logging.Logger, *,
-                 prefix: str, pattern: Pattern | None = None,
-                 on_load: Callable[[str, Path], Awaitable[None]],
-                 on_unload: Callable[[str, Path], Awaitable[None]]) -> None:
+    def __init__(
+        self,
+        name: str,
+        logger: logging.Logger,
+        *,
+        prefix: str,
+        pattern: Pattern | None = None,
+        on_load: Callable[[str, Path], Awaitable[None]],
+        on_unload: Callable[[str, Path], Awaitable[None]],
+    ) -> None:
         self.name: Final = name
         self.logger: Final = logger
 
@@ -71,8 +77,9 @@ class FileManager:
 
         self._event_received: bool = False
 
-    def add_folder(self, prefix: str, folder: Path, *,
-                   name: str, priority: int, pattern: Pattern | None = None) -> None:
+    def add_folder(
+        self, prefix: str, folder: Path, *, name: str, priority: int, pattern: Pattern | None = None
+    ) -> None:
         self._file_names.add_folder(prefix, folder, priority=priority, pattern=pattern)
         if self._watcher is not None:
             self._watcher.watch_folder(name, self.file_watcher_event, folder)
@@ -85,11 +92,16 @@ class FileManager:
     def get_folders(self):  # noqa: ANN201
         return self._file_names.get_folders()
 
-    def add_handler(self, name: str, logger: logging.Logger, *,
-                   prefix: str, pattern: Pattern | None = None,
-                   on_load: Callable[[str, Path], Awaitable[None]],
-                   on_unload: Callable[[str, Path], Awaitable[None]]) -> None:
-
+    def add_handler(
+        self,
+        name: str,
+        logger: logging.Logger,
+        *,
+        prefix: str,
+        pattern: Pattern | None = None,
+        on_load: Callable[[str, Path], Awaitable[None]],
+        on_unload: Callable[[str, Path], Awaitable[None]],
+    ) -> None:
         for h in self._file_handlers:
             if h.name == name:
                 msg = f'Handler {name:s} already exists!'
@@ -99,7 +111,7 @@ class FileManager:
                 raise ValueError(msg)
 
         new = FileTypeHandler(name, logger, prefix=prefix, pattern=pattern, on_load=on_load, on_unload=on_unload)
-        self._file_handlers += (new, )
+        self._file_handlers += (new,)
         log.debug(f'Added handler {new.name}')
 
     def get_file(self, name: str) -> HABAppFile | None:
@@ -271,14 +283,16 @@ class FileManager:
     def setup(self) -> None:
         HABApp.core.EventBus.add_listener(
             HABApp.core.internals.EventBusListener(
-                TOPIC_FILES, HABApp.core.internals.wrap_func(self.event_load),
-                HABApp.core.events.EventFilter(HABApp.core.events.habapp_events.RequestFileLoadEvent)
+                TOPIC_FILES,
+                HABApp.core.internals.wrap_func(self.event_load),
+                HABApp.core.events.EventFilter(HABApp.core.events.habapp_events.RequestFileLoadEvent),
             )
         )
 
         HABApp.core.EventBus.add_listener(
             HABApp.core.internals.EventBusListener(
-                TOPIC_FILES, HABApp.core.internals.wrap_func(self.event_unload),
-                HABApp.core.events.EventFilter(HABApp.core.events.habapp_events.RequestFileUnloadEvent)
+                TOPIC_FILES,
+                HABApp.core.internals.wrap_func(self.event_unload),
+                HABApp.core.events.EventFilter(HABApp.core.events.habapp_events.RequestFileUnloadEvent),
             )
         )

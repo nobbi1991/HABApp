@@ -1,12 +1,18 @@
-# noinspection PyProtectedMember
-from collections.abc import Callable
+from __future__ import annotations
+
 from sys import _getframe as sys_get_frame
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from HABApp.core.errors import ProxyObjHasNotBeenReplacedError
 
 
-PROXIES: list['StartUpProxyObj'] = []
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from HABApp.core.items import BaseItem
+
+
+PROXIES: list[StartUpProxyObj] = []
 
 
 class ProxyObjBase:
@@ -14,10 +20,10 @@ class ProxyObjBase:
     def to_replace_name(self) -> str:
         raise NotImplementedError()
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: BaseItem) -> None:
         raise ProxyObjHasNotBeenReplacedError(self)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> None:  # noqa: ARG002
         raise ProxyObjHasNotBeenReplacedError(self)
 
     def __repr__(self) -> str:
@@ -44,8 +50,10 @@ class StartUpProxyObj(ProxyObjBase):
     def to_replace_name(self) -> str:
         return str(getattr(self.to_replace, '__name__', self.to_replace))
 
-    def replace(self, replacements: dict[object, object], final: bool):
-        assert self.globals is not None
+    def replace(self, replacements: dict[object, object], final: bool) -> RestoreableObj | None:
+        if self.globals is None:
+            msg = 'globals is not set'
+            raise AttributeError(msg)
         replacement = replacements[self.to_replace]
 
         for name, value in self.globals.items():
@@ -70,7 +78,7 @@ def create_proxy(to_replace: Callable) -> StartUpProxyObj:
 
 
 class RestoreableObj:
-    def __init__(self, key: str, globals: dict, proxy: 'StartUpProxyObj') -> None:
+    def __init__(self, key: str, globals: dict, proxy: StartUpProxyObj) -> None:
         self.key = key
         self.globals = globals
         self.proxy = proxy

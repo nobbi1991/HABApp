@@ -33,6 +33,7 @@ class HABAppException:
     :ivar str traceback: traceback
     :ivar Exception exception: Exception
     """
+
     def __init__(self, func_name: str, exception: Exception, traceback: str) -> None:
         self.func_name: str = func_name
         self.exception: Exception = exception
@@ -52,6 +53,7 @@ class HABAppConnectionStateEvent:
     :ivar str connection: name of the connection
     :ivar str state: state of the connection
     """
+
     def __init__(self, connection: str, state: str) -> None:
         self.connection: Final = connection
         self.state: Final = state

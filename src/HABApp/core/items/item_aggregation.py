@@ -25,7 +25,6 @@ event_bus = uses_event_bus()
 
 
 class AggregationItem(BaseValueItem):
-
     @classmethod
     def get_create_item(cls, name: str) -> AggregationItem:
         """Creates a new AggregationItem in HABApp and returns it or returns the
@@ -46,7 +45,6 @@ class AggregationItem(BaseValueItem):
         if not isinstance(item, cls):
             raise WrongItemTypeError.from_item(item, cls)
         return item
-
 
     def __init__(self, name: str) -> None:
         super().__init__(name)
@@ -77,7 +75,10 @@ class AggregationItem(BaseValueItem):
         if isinstance(period, timedelta):
             period = period.total_seconds()
 
-        assert period > 0, period
+        if period <= 0:
+            msg = f'Period must be greater than 0, got {period}'
+            raise ValueError(msg)
+
         self.__period = period
 
         # Clean old items (e.g. if we made the period shorter)
@@ -87,8 +88,7 @@ class AggregationItem(BaseValueItem):
 
         return self
 
-    def aggregation_source(self, source: BaseValueItem | str,
-                           only_changes: bool = False) -> AggregationItem:
+    def aggregation_source(self, source: BaseValueItem | str, only_changes: bool = False) -> AggregationItem:
         """Set the source item which changes will be aggregated
 
         :param source: name or Item obj
@@ -103,7 +103,7 @@ class AggregationItem(BaseValueItem):
         self.__listener = EventBusListener(
             topic=source.name if isinstance(source, BaseValueItem) else source,
             callback=wrap_func(self._add_value, name=f'{self.name}.add_value'),
-            event_filter=EventFilter(ValueChangeEvent if only_changes else ValueUpdateEvent)
+            event_filter=EventFilter(ValueChangeEvent if only_changes else ValueUpdateEvent),
         )
         event_bus.add_listener(self.__listener)
         return self

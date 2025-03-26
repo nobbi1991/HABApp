@@ -53,7 +53,7 @@ class BaseWatch(AutoContextBoundObj):
                 self.name,
                 wrap_func(callback, context=context),
                 EventFilter(self.EVENT, seconds=self.fut.secs),
-                parent_ctx=context
+                parent_ctx=context,
             )
         )
 

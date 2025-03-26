@@ -3,6 +3,8 @@ from __future__ import annotations
 from asyncio import CancelledError
 from typing import TYPE_CHECKING, Final, Literal
 
+from typing_extensions import Self
+
 import HABApp.core.wrapper
 from HABApp.core.connections._definitions import ConnectionStatus, connection_log
 from HABApp.core.connections.status_transitions import StatusTransitions
@@ -30,7 +32,9 @@ class HandleExceptionInConnection:
     def __enter__(self) -> None:
         pass
 
-    def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None):
+    def __exit__(
+        self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
+    ) -> bool | None:
         # no exception -> we exit gracefully
         if exc_type is None and exc_val is None:
             return True
@@ -54,7 +58,8 @@ class BaseConnection:
         # Plugin handling
         self.plugins: list[BaseConnectionPlugin] = []
         self.plugin_callbacks: dict[ConnectionStatus, PriorityList[PluginCallbackHandler]] = {
-            name: PriorityList() for name in ConnectionStatus}
+            name: PriorityList() for name in ConnectionStatus
+        }
 
         # Tasks
         self.plugin_task: Final = SingleTask(self._task_plugin, f'{name.title():s}PluginTask')
@@ -87,7 +92,7 @@ class BaseConnection:
     def handle_exception(self, func: Callable) -> HandleExceptionInConnection:
         return HandleExceptionInConnection(self, func)
 
-    def is_silent_exception(self, e: Exception) -> bool:
+    def is_silent_exception(self, _e: Exception) -> bool:
         return False
 
     def process_exception(self, e: Exception, func: Callable | str | None) -> None:
@@ -104,7 +109,7 @@ class BaseConnection:
                 func = f'{self.name} connection'
             process_exception(func, e, self.log)
 
-    def register_plugin(self, obj: BaseConnectionPlugin, priority: int | Literal['first', 'last'] | None = None):
+    def register_plugin(self, obj: BaseConnectionPlugin, priority: int | Literal['first', 'last'] | None = None) -> Self:
         from .plugin_callback import get_plugin_callbacks
 
         # Possibility to specify default priority as a class variable
@@ -112,7 +117,9 @@ class BaseConnection:
             priority = getattr(obj, '_DEFAULT_PRIORITY', None)
 
         # Check that it's not already registered
-        assert not obj.plugin_callbacks
+        if obj.plugin_callbacks:
+            msg = 'Plugin callbacks are already registered'
+            raise ValueError(msg)
 
         for p in self.plugins:
             if p.plugin_name == obj.plugin_name:
@@ -147,14 +154,15 @@ class BaseConnection:
 
     async def _task_next_status(self) -> None:
         with HABApp.core.wrapper.ExceptionToHABApp(logger=self.log):
-
             # if we are currently running stop the task
             await self.plugin_task.cancel_wait()
 
             while (next_value := self.status.advance_status()) is not None:
                 self.log.debug(next_value.value)
 
-                assert not self.plugin_task.is_running
+                if self.plugin_task.is_running:
+                    msg = 'Plugin task is already running'
+                    raise RuntimeError(msg)
                 self.plugin_task.start()
                 await self.plugin_task.wait()
 
@@ -168,7 +176,6 @@ class BaseConnection:
 
         callbacks = self.plugin_callbacks[status_enum]
         for cb in callbacks:
-
             error = True
 
             try:
@@ -179,10 +186,9 @@ class BaseConnection:
             except Exception as e:
                 self.process_exception(e, cb.coro)
 
-            if error:
+            if error and status.is_connecting_or_connected():
                 # Fail fast during connection
-                if status.is_connecting_or_connected():
-                    break
+                break
 
         self.log.debug(f'Task {status_enum.value:s} done')
 
@@ -233,9 +239,12 @@ class BaseConnection:
             coros = []
             for obj in objs:
                 name = obj.coro.__name__
-                for replace in (f'on_{status.value.lower():s}', f'_on_{status.value.lower():s}', ):
+                for replace in (
+                    f'on_{status.value.lower():s}',
+                    f'_on_{status.value.lower():s}',
+                ):
                     if name.startswith(replace):
-                        name = name[len(replace):]
+                        name = name[len(replace) :]
                         break
                 coros.append(f'{obj.plugin.plugin_name}{"." if name else ""}{name}')
 

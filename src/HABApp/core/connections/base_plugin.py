@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Final, Generic, TypeVar
 
+from HABApp.core.connections.base_connection import BaseConnection
 from HABApp.core.lib import SingleTask
 
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
+
     from .plugin_callback import PluginCallbackHandler
 
-T = TypeVar('T', bound='BaseConnection')
+T = TypeVar('T', bound=BaseConnection)
 
 
 class BaseConnectionPlugin(Generic[T]):
@@ -30,8 +32,7 @@ class BaseConnectionPlugin(Generic[T]):
 
 
 class BaseConnectionPluginConnectedTask(BaseConnectionPlugin[T]):
-    def __init__(self, task_coro: Callable[[], Awaitable[Any]],
-                 task_name: str, name: str | None = None) -> None:
+    def __init__(self, task_coro: Callable[[], Awaitable[Any]], task_name: str, name: str | None = None) -> None:
         super().__init__(name)
         self.task: Final = SingleTask(task_coro, name=task_name)
 

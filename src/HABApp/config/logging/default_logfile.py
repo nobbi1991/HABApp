@@ -77,10 +77,10 @@ loggers:
 
         # With openhabian we typically use frontail
         if is_openhabian():
-            subs['FRONTAIL_FORMAT'] = "\n"\
-                "  Frontail_format:\n" \
-                "    format: '%(asctime)s.%(msecs)03d [%(levelname)-5s] [%(name)-36s] - %(message)s'\n" \
-                "    datefmt: '%Y-%m-%d %H:%M:%S'"
+            subs['FRONTAIL_FORMAT'] = ("\n"
+                "  Frontail_format:\n"
+                "    format: '%(asctime)s.%(msecs)03d [%(levelname)-5s] [%(name)-36s] - %(message)s'\n"
+                "    datefmt: '%Y-%m-%d %H:%M:%S'")
 
             subs['HABAPP_FILE_FORMAT'] = 'Frontail_format'
 

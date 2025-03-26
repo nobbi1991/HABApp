@@ -42,7 +42,8 @@ async def unload_file(name: str, path: Path) -> None:
 
 
 def save_file(file: str) -> None:
-    assert isinstance(file, str), type(file)
+    if not isinstance(file, str):
+        raise TypeError(f'Expected a string, but got {type(file).__name__}')
     path = HABAPP_CONFIG.directories.params
     if path is None:
         msg = 'Parameter files are disabled! Configure a folder to use them!'

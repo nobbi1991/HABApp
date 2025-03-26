@@ -8,9 +8,13 @@ from HABApp.core.const import LOOP
 
 # TODO: switch to time.monotonic for measurements instead of fixed sleep time
 
+
 class PendingFuture:
     def __init__(self, future: Callable[[], Awaitable[Any]], secs: float) -> None:
-        assert asyncio.iscoroutinefunction(future), type(future)
+        if not asyncio.iscoroutinefunction(future):
+            msg = f'Expected a coroutine function, got {type(future).__name__}'
+            raise TypeError(msg)
+
         if not isinstance(secs, (int, float)) or secs < 0:
             msg = f'Pending time must be int/float and >= 0! Is: {secs} ({type(secs)})'
             raise ValueError(msg)
@@ -30,7 +34,7 @@ class PendingFuture:
                 self.task.cancel()
             self.task = None
 
-    def reset(self, thread_safe=False) -> None:
+    def reset(self, thread_safe: bool = False) -> None:
         if self.is_canceled:
             return None
 

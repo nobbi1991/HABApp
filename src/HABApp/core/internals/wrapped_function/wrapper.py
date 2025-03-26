@@ -16,12 +16,13 @@ from HABApp.core.internals.wrapped_function.wrapped_thread import (
 )
 
 
-def wrap_func(func: Callable[P, R] | Callable[P, Coroutine[Any, Any, R]],
-              warn_too_long=True,
-              name: str | None = None,
-              logger: logging.Logger | None = None,
-              context: Context | None = None) -> WrappedFunctionBase[P, R]:
-
+def wrap_func(
+    func: Callable[P, R] | Callable[P, Coroutine[Any, Any, R]],
+    warn_too_long: bool=True,
+    name: str | None = None,
+    logger: logging.Logger | None = None,
+    context: Context | None = None,
+) -> WrappedFunctionBase[P, R]:
     # Check that it's actually a callable, so we fail fast and not when we try to run the function.
     # Some users pass the result of the function call (e.g. func()) by accident
     # which will inevitably fail once we try to run the function.

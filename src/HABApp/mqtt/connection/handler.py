@@ -56,13 +56,13 @@ class ConnectionHandler(BaseConnectionPlugin[MqttConnection]):
             identifier=config.identifier,
 
             tls_insecure=tls_insecure,
-            tls_params=None if not tls_enabled else TLSParameters(ca_certs=tls_ca_cert),
-
-            # clean_session=False
+            tls_params=None if not tls_enabled else TLSParameters(ca_certs=tls_ca_cert)
         )
 
     async def on_connecting(self, connection: MqttConnection, context: CONTEXT_TYPE) -> None:
-        assert context is not None
+        if context is None:
+            msg = 'Context is required and cannot be None'
+            raise ValueError(msg)
 
         connection.log.info(f'Connecting to {context._hostname}:{context._port}')
         await context.__aenter__()
@@ -70,7 +70,9 @@ class ConnectionHandler(BaseConnectionPlugin[MqttConnection]):
         connection.log.info('Connection successful')
 
     async def on_disconnected(self, connection: MqttConnection, context: CONTEXT_TYPE) -> None:
-        assert context is not None
+        if context is None:
+            msg = 'Context is required and cannot be None'
+            raise ValueError(msg)
 
         connection.log.info('Disconnected')
         await context.__aexit__(None, None, None)

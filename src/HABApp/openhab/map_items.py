@@ -42,13 +42,22 @@ _items: dict[str, HINT_TYPE_OPENHAB_ITEM] = {
 }
 
 
-def map_item(name: str, type: str, value: str | None,
-             label: str | None, tags: frozenset[str],
-             groups: frozenset[str], metadata: dict[str, dict[str, Any]] | None) -> \
-        OpenhabItem | None:
+def map_item(
+    name: str,
+    type: str,
+    value: str | None,
+    label: str | None,
+    tags: frozenset[str],
+    groups: frozenset[str],
+    metadata: dict[str, dict[str, Any]] | None,
+) -> OpenhabItem | None:
     try:
-        assert isinstance(type, str)
-        assert value is None or isinstance(value, str)
+        if not isinstance(type, str):
+            msg = 'Type must be a string'
+            raise TypeError(msg)
+        if value is not None and not isinstance(value, str):
+            msg = 'Value must be a string or None'
+            raise ValueError(msg)
 
         kwargs = {}
 

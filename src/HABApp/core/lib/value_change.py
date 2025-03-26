@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import typing
 from typing import Generic, TypeVar
+
+import typing_extensions
 
 from HABApp.core.const.const import MISSING, _MissingType
 
@@ -15,7 +18,7 @@ class ValueChange(Generic[T]):
         self._value: T | _MissingType = MISSING
         self.changed: bool = False
 
-    def set_value(self, value: T):
+    def set_value(self, value: T) -> typing_extensions.Self:
         current = self._value
 
         if value is MISSING and current is MISSING:
@@ -35,7 +38,7 @@ class ValueChange(Generic[T]):
         self.changed = False
         return self
 
-    def set_missing(self):
+    def set_missing(self) -> typing_extensions.Self:
         self.set_value(MISSING)
         return self
 

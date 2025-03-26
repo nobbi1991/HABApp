@@ -25,8 +25,11 @@ HABAPP_DISPATCHER_PREFIX: Final = 'HABAppInternal-'
 
 
 class FileWatcherDispatcherBase:
-
-    def __init__(self, name: str, coro: Callable[[str], Awaitable[Any]],) -> None:
+    def __init__(
+        self,
+        name: str,
+        coro: Callable[[str], Awaitable[Any]],
+    ) -> None:
         self._name: Final = name
         self._coro: Final = coro
 
@@ -113,8 +116,9 @@ class HABAppFileWatcher:
         else:
             self._stop_event.set()
 
-    def watch_folder(self, name: str, coro: Callable[[str], Awaitable[Any]], folder: Path, *,
-                   habapp_internal: bool = False) -> FolderDispatcher:
+    def watch_folder(
+        self, name: str, coro: Callable[[str], Awaitable[Any]], folder: Path, *, habapp_internal: bool = False
+    ) -> FolderDispatcher:
         d = FolderDispatcher(
             name if not habapp_internal else f'{HABAPP_DISPATCHER_PREFIX}{name}', coro, folder.as_posix()
         )
@@ -122,11 +126,10 @@ class HABAppFileWatcher:
         self.add_path(folder)
         return d
 
-    def watch_file(self, name: str, coro: Callable[[str], Awaitable[Any]], file: Path, *,
-                   habapp_internal: bool = False) -> FileDispatcher:
-        d = FileDispatcher(
-            name if not habapp_internal else f'{HABAPP_DISPATCHER_PREFIX}{name}', coro, file.as_posix()
-        )
+    def watch_file(
+        self, name: str, coro: Callable[[str], Awaitable[Any]], file: Path, *, habapp_internal: bool = False
+    ) -> FileDispatcher:
+        d = FileDispatcher(name if not habapp_internal else f'{HABAPP_DISPATCHER_PREFIX}{name}', coro, file.as_posix())
         self.add_dispatcher(d)
         self.add_path(file)
         return d
@@ -139,7 +142,7 @@ class HABAppFileWatcher:
             msg = f'Dispatcher with name "{dispatcher.name:s}" already exists'
             raise ValueError(msg)
 
-        self._dispatchers += (dispatcher, )
+        self._dispatchers += (dispatcher,)
         log.debug(f'Added dispatcher {dispatcher.name:s}')
         self.__notify_task()
 
@@ -151,13 +154,14 @@ class HABAppFileWatcher:
             msg = f'Path {path} does not exist'
             raise FileNotFoundError(msg)
 
-        self._paths += (path.as_posix(), )
+        self._paths += (path.as_posix(),)
         log.debug(f'Watching {path}')
 
         self.__notify_task()
 
-    def _watch_filter(self, change: Change | None, path: str, *,
-                      dispatchers: list[FileWatcherDispatcherBase] | None = None) -> bool:
+    def _watch_filter(
+        self, change: Change | None, path: str, *, dispatchers: list[FileWatcherDispatcherBase] | None = None
+    ) -> bool:
         if not DEFAULT_FILTER(change, path):
             return False
 
@@ -209,9 +213,13 @@ class HABAppFileWatcher:
             await task
         return None
 
-    async def load_files(self, name_include: Pattern | str | None = None, name_exclude: Pattern | str | None = None, *,
-                         exclude_habapp_config: bool = True) -> None:
-
+    async def load_files(  # noqa: PLR0912
+        self,
+        name_include: Pattern | str | None = None,
+        name_exclude: Pattern | str | None = None,
+        *,
+        exclude_habapp_config: bool = True,
+    ) -> None:
         if isinstance(name_include, str):
             name_include = re.compile(f'^{name_include}$')
         if isinstance(name_exclude, str):

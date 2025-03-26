@@ -18,7 +18,7 @@ class TransformationFactoryBase(Generic[T]):
         return self._registry.get(key)
 
 
-def sort_order(uid: str):
+def sort_order(uid: str) -> tuple[int, str, str]:
     # created through file
     if '.' in uid:
         name, ext = uid.rsplit('.', 1)

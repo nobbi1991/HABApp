@@ -1,4 +1,5 @@
-from typing import Any as _Any
+import typing
+from typing import Any
 
 from typing_extensions import Self as _Self
 
@@ -10,7 +11,7 @@ class HABAppException(Exception):
 
 
 class ProxyObjHasNotBeenReplacedError(HABAppException):
-    def __init__(self, obj) -> None:
+    def __init__(self, obj: 'ProxyObjBase') -> None:
         super().__init__(f'{obj} has not been replaced on startup!')
 
 
@@ -57,7 +58,7 @@ class ItemValueIsNoneError(HABAppValueError):
 
 class InvalidItemValueError(HABAppValueError):
     @classmethod
-    def from_item(cls, item: _HasNameAttr, value) -> _Self:
+    def from_item(cls, item: _HasNameAttr, value: Any) -> _Self:
         return cls(f'Invalid value for {item.__class__.__name__} {item.name:s}: {value}')
 
 
@@ -70,7 +71,7 @@ class HABAppTypeError(TypeError, HABAppException):
 
 class ItemNameNotOfTypeStrError(HABAppTypeError):
     @classmethod
-    def from_value(cls, value: _Any) -> _Self:
+    def from_value(cls, value: Any) -> _Self:
         return cls(f'Item name must be of type str, not {type(value)}')
 
 

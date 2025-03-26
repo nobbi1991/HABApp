@@ -20,14 +20,16 @@ class MqttItem(MqttBaseItem):
     """A simple item that represents a topic and a value"""
 
     @classmethod
-    def get_create_item(cls, name: str, initial_value=None) -> 'MqttItem':
+    def get_create_item(cls, name: str, initial_value: str | float | None =None) -> 'MqttItem':
         """Creates a new item in HABApp and returns it or returns the already existing one with the given name
 
         :param name: item name
         :param initial_value: state the item will have if it gets created
         :return: item
         """
-        assert isinstance(name, str), type(name)
+        if not isinstance(name, str):
+            msg = f'Expected a string, but got {type(name).__name__}'
+            raise TypeError(msg)
 
         try:
             item = get_item(name)
@@ -35,10 +37,12 @@ class MqttItem(MqttBaseItem):
             item = cls(name, initial_value)
             item_registry.add_item(item)
 
-        assert isinstance(item, cls), f'{cls} != {type(item)}'
+        if not isinstance(item, cls):
+            msg = f'Expected instance of {cls.__name__}, but got {type(item).__name__}'
+            raise TypeError(msg)
         return item
 
-    def publish(self, payload, qos: int | None = None, retain: bool | None = None):
+    def publish(self, payload: Any, qos: int | None = None, retain: bool | None = None) -> None:
         """
         Publish the payload under the topic from the item.
 

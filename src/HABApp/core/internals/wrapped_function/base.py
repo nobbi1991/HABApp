@@ -23,10 +23,13 @@ R = TypeVar('R')
 
 
 class WrappedFunctionBase(ContextProvidingObj, Generic[P, R]):
-
-    def __init__(self, func: Callable, name: str | None = None, logger: logging.Logger | None = None,
-                 context: Context | None = None) -> None:
-
+    def __init__(
+        self,
+        func: Callable,
+        name: str | None = None,
+        logger: logging.Logger | None = None,
+        context: Context | None = None,
+    ) -> None:
         # Allow setting of the rule context
         super().__init__(context)
 
@@ -47,8 +50,7 @@ class WrappedFunctionBase(ContextProvidingObj, Generic[P, R]):
     async def async_run(self, *args: P.args, **kwargs: P.kwargs) -> R | None:
         raise NotImplementedError()
 
-    def process_exception(self, e: Exception, *args: Any, **kwargs: Any) -> None:
-
+    def process_exception(self, e: Exception, *args: Any, **kwargs: Any) -> None:  # noqa: ARG002
         lines = format_exception(e)
 
         # Log Exception

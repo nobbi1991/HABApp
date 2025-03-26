@@ -94,8 +94,7 @@ class ColorItem(BaseValueItem):
         return f'<Color hue: {self.hue}°, saturation: {self.saturation}%, brightness: {self.brightness}%>'
 
     @classmethod
-    def get_create_item(cls, name: str,
-                        initial_value: RGB | HSB | tuple[float, float, float] | None = None) -> Self:
+    def get_create_item(cls, name: str, initial_value: RGB | HSB | tuple[float, float, float] | None = None) -> Self:
         """Creates a new item in HABApp and returns it or returns the already existing one with the given name
 
         :param name: item name

@@ -11,9 +11,13 @@ if TYPE_CHECKING:
 
 
 class PluginTask(SingleTask):
-    def __init__(self, coro: Callable[[], Awaitable[Any]], name: str | None,
-                 logger: logging.Logger | None,
-                 exception_handler: Callable[[Exception, Callable | str | None], Any]) -> None:
+    def __init__(
+        self,
+        coro: Callable[[], Awaitable[Any]],
+        name: str | None,
+        logger: logging.Logger | None,
+        exception_handler: Callable[[Exception, Callable | str | None], Any],
+    ) -> None:
         super().__init__(coro, name)
 
         self.log: Final = logger

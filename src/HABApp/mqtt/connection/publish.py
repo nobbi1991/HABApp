@@ -22,11 +22,15 @@ class PublishHandler(MqttPlugin):
         connection = self.plugin_connection
         with connection.handle_exception(self.mqtt_task):
             client = self.plugin_connection.context
-            assert client is not None
+            if client is None:
+                msg = 'Client is required'
+                raise ValueError(msg)
 
             cfg = HABAPP_CONFIG.mqtt.publish
             queue = QUEUE
-            assert queue is not None
+            if queue is None:
+                msg = 'Queue is required and cannot be None'
+                raise ValueError(msg)
 
             # worker to publish things
             while True:

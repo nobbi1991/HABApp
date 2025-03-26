@@ -5,10 +5,12 @@ from typing import Final
 from typing_extensions import Self
 
 
+KILO_BYTE = 1024
+
 class RawType:
     __slots__ = ('_type', '_data')  # noqa: RUF023
 
-    def __init__(self, type: str, data: bytes) -> None:  # noqa: A002
+    def __init__(self, type: str, data: bytes) -> None:
         self._type: Final = type
         self._data: Final = data
 
@@ -24,11 +26,11 @@ class RawType:
         data = self._data
 
         unit = 'kiB'
-        size = len(self.data) / 1024
-        if size > 1024:
+        size = len(self.data) / KILO_BYTE
+        if size > KILO_BYTE:
             unit = 'MiB'
-            size /= 1024
-        fmt = '.1f' if size < 10 else '.0f'
+            size /= KILO_BYTE
+        fmt = '.1f' if size < 10 else '.0f'  # noqa: PLR2004
         return (f'{self.__class__.__name__}(type={self._type:s} '
                 f'data={data[:5].hex():s}..{data[-5:].hex():s} ({size:{fmt:s}}{unit}))')
 

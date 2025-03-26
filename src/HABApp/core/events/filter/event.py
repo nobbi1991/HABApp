@@ -7,12 +7,19 @@ from HABApp.core.const.hints import TYPE_ANY_CLASS_TYPE
 from HABApp.core.internals import EventFilterBase
 
 
+_MAX_EVENT_FILTER_ARGS = 3
+
 class EventFilter(EventFilterBase):
     """Triggers on event types and optionally on their values, too"""
 
     def __init__(self, event_class: TYPE_ANY_CLASS_TYPE, **kwargs) -> None:
-        assert len(kwargs) < 3, 'EventFilter only allows up to two args that will be used to filter'
-        assert isclass(event_class), f'Class for event required! Passed {event_class} ({type(event_class)})'
+        if len(kwargs) >= _MAX_EVENT_FILTER_ARGS:
+            msg = 'EventFilter only allows up to two args that will be used to filter'
+            raise ValueError(msg)
+
+        if not isinstance(event_class, type):
+            msg = f'Class for event required! Passed {event_class} ({type(event_class).__name__})'
+            raise TypeError(msg)
 
         self.event_class: Final = event_class
 
@@ -57,7 +64,6 @@ class EventFilter(EventFilterBase):
         return True
 
     def describe(self) -> str:
-
         values = ''
         if self.attr_name1 is not None:
             values += f', {self.attr_name1}={self.attr_value1}'
@@ -71,7 +77,6 @@ class TypeBoundEventFilter(EventFilter):
     """Class to inherit from if the filter criteria always is a hardcoded instance check"""
 
     def describe(self) -> str:
-
         values = ''
         if self.attr_name1 is not None:
             values += f'{self.attr_name1}={self.attr_value1}'

@@ -13,9 +13,14 @@ from HABApp.core import internals, logger, wrapper
 
 # isort: split
 
+from typing import TYPE_CHECKING
+
 import HABApp.core.events
 import HABApp.core.files
-import HABApp.core.items
+
+
+if TYPE_CHECKING:
+    import HABApp.core.items
 
 
 # isort: split

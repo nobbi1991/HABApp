@@ -2,9 +2,22 @@ from __future__ import annotations
 
 from colorsys import hsv_to_rgb as _hsv_to_rgb
 from colorsys import rgb_to_hsv as _rgb_to_hsv
+from enum import IntEnum
 from typing import Final
 
 from typing_extensions import Self
+
+
+class _HSBColorIndex(IntEnum):
+    HUE = 0
+    SATURATION = 1
+    BRIGHTNESS = 2
+
+
+class _RGBColorIndex(IntEnum):
+    RED = 0
+    GREEN = 1
+    BLUE = 2
 
 
 class ColorType:
@@ -14,7 +27,7 @@ class ColorType:
 class RGB(ColorType):
     __slots__ = ('_r', '_g', '_b')  # noqa: RUF023
 
-    _RGB_MAX: int = 2 ** 8 - 1
+    _RGB_MAX: int = 2**8 - 1
 
     def __init__(self, r: int, g: int, b: int) -> None:
         max_value = self._RGB_MAX
@@ -55,8 +68,15 @@ class RGB(ColorType):
         """blue value"""
         return self._b
 
-    def replace(self, r: int | None = None, g: int | None = None, b: int | None = None,
-                red: int | None = None, green: int | None = None, blue: int | None = None) -> Self:
+    def replace(
+        self,
+        r: int | None = None,
+        g: int | None = None,
+        b: int | None = None,
+        red: int | None = None,
+        green: int | None = None,
+        blue: int | None = None,
+    ) -> Self:
         """Create a new object with (optionally) replaced values.
 
         :param r: new red value
@@ -100,11 +120,11 @@ class RGB(ColorType):
 
     def __getitem__(self, item: int | str) -> int:
         if isinstance(item, int):
-            if item == 0:
+            if item == _RGBColorIndex.RED:
                 return self._r
-            if item == 1:
+            if item == _RGBColorIndex.GREEN:
                 return self._g
-            if item == 2:
+            if item == _RGBColorIndex.BLUE:
                 return self._b
             raise IndexError()
 
@@ -145,15 +165,15 @@ class RGB(ColorType):
 
 
 class RGB16(RGB):
-    _RGB_MAX: int = 2 ** 16 - 1
+    _RGB_MAX: int = 2**16 - 1
 
 
 class RGB24(RGB):
-    _RGB_MAX: int = 2 ** 32 - 1
+    _RGB_MAX: int = 2**32 - 1
 
 
 class RGB32(RGB):
-    _RGB_MAX: int = 2 ** 32 - 1
+    _RGB_MAX: int = 2**32 - 1
 
 
 HUE_FACTOR: Final = 360
@@ -201,9 +221,15 @@ class HSB(ColorType):
         """brightness value"""
         return self._brightness
 
-    def replace(self, h: float | None = None, s: float | None = None, b: float | None = None,
-                hue: float | None = None, saturation: float | None = None,
-                brightness: float | None = None) -> Self:
+    def replace(
+        self,
+        h: float | None = None,
+        s: float | None = None,
+        b: float | None = None,
+        hue: float | None = None,
+        saturation: float | None = None,
+        brightness: float | None = None,
+    ) -> Self:
         """Create a new object with (optionally) replaced values.
 
         :param h: New hue value
@@ -240,18 +266,20 @@ class HSB(ColorType):
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
-            return self._hue == other._hue and \
-                self._saturation == other._saturation and \
-                self._brightness == other._brightness
+            return (
+                self._hue == other._hue
+                and self._saturation == other._saturation
+                and self._brightness == other._brightness
+            )
         return NotImplemented
 
     def __getitem__(self, item: int | str) -> float:
         if isinstance(item, int):
-            if item == 0:
+            if item == _HSBColorIndex.HUE:
                 return self._hue
-            if item == 1:
+            if item == _HSBColorIndex.SATURATION:
                 return self._saturation
-            if item == 2:
+            if item == _HSBColorIndex.BRIGHTNESS:
                 return self._brightness
             raise IndexError()
 

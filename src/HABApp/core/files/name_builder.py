@@ -5,8 +5,7 @@ from typing import Final
 
 
 class FileNameBuilderRule:
-    def __init__(self, prefix: str, folder: str, *,
-                 priority: int, pattern: Pattern | None = None) -> None:
+    def __init__(self, prefix: str, folder: str, *, priority: int, pattern: Pattern | None = None) -> None:
         self.prefix: Final = prefix
         self.folder: Final = folder
         self.priority: Final = priority
@@ -37,8 +36,7 @@ class FileNameBuilder:
     def __init__(self) -> None:
         self._builders: tuple[FileNameBuilderRule, ...] = ()
 
-    def add_folder(self, prefix: str, folder: Path, *,
-                   priority: int, pattern: Pattern | None = None) -> None:
+    def add_folder(self, prefix: str, folder: Path, *, priority: int, pattern: Pattern | None = None) -> None:
         for b in self._builders:
             if b.priority == priority:
                 msg = f'Priority {priority} already exists for {b.prefix}!'

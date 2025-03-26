@@ -18,12 +18,34 @@ from .const import PRE_INDENT, SEPARATOR_VARIABLES
 
 # don't show these types in the traceback
 SKIPPED_TYPES = (
-    bool, bytearray, bytes, complex, dict, float, frozenset, int, list, memoryview, set, str, tuple, type(None),
-    datetime.date, datetime.datetime, datetime.time, datetime.timedelta,
-    Map, Path,
+    bool,
+    bytearray,
+    bytes,
+    complex,
+    dict,
+    float,
+    frozenset,
+    int,
+    list,
+    memoryview,
+    set,
+    str,
+    tuple,
+    type(None),
+    datetime.date,
+    datetime.datetime,
+    datetime.time,
+    datetime.timedelta,
+    Map,
+    Path,
     whenever.Instant,
-    whenever.SystemDateTime, whenever.LocalDateTime, whenever.ZonedDateTime, whenever.OffsetDateTime,
-    whenever.TimeDelta, whenever.DateDelta, whenever.DateTimeDelta
+    whenever.SystemDateTime,
+    whenever.LocalDateTime,
+    whenever.ZonedDateTime,
+    whenever.OffsetDateTime,
+    whenever.TimeDelta,
+    whenever.DateDelta,
+    whenever.DateTimeDelta,
 )
 
 
@@ -47,17 +69,15 @@ def is_type_hint_or_type(value: Any) -> bool:
     return False
 
 
-def _filter_expressions(name: str, value: Any) -> bool:
+def _filter_expressions(name: str, _value: Any) -> bool:
     # a is None = True
     return bool(name.endswith(' is None'))
 
 
-SKIPPED_OBJS: Final[tuple[str, ...]] = (
-    'HABApp.core.Items',
-)
+SKIPPED_OBJS: Final[tuple[str, ...]] = ('HABApp.core.Items',)
 
 
-def _skip_objs(name: str, value: Any) -> bool:
+def _skip_objs(value: Any) -> bool:
     for dotted_path in SKIPPED_OBJS:
         path = dotted_path.split('.')
         obj = importlib.import_module('.'.join(path[:-1]))
@@ -68,24 +88,18 @@ def _skip_objs(name: str, value: Any) -> bool:
 
 SKIP_VARIABLE: tuple[Callable[[str, Any], bool], ...] = (
     # module imports
-    lambda name, value: ismodule(value),
-
+    lambda _name, value: ismodule(value),
     # type hints and type tuples
-    lambda name, value: is_type_hint_or_type(value),
-
+    lambda _name, value: is_type_hint_or_type(value),
     # functions
-    lambda name, value: value is dump_json or value is load_json,
-
+    lambda _name, value: value is dump_json or value is load_json,
     # config value objs
-    lambda name, value: isinstance(value, ConfigObj),
-
+    lambda _name, value: isinstance(value, ConfigObj),
     # Expressions
     _filter_expressions,
 )
 
-ORDER_VARIABLE: tuple[Callable[[Variable], bool], ...] = (
-    lambda x: isclass(x.value),
-)
+ORDER_VARIABLE: tuple[Callable[[Variable], bool], ...] = (lambda x: isclass(x.value),)
 
 
 def skip_variable(var: Variable) -> bool:
@@ -102,7 +116,7 @@ def format_frame_variables(tb: list[str], stack_variables: list[Variable]) -> No
     used_vars: set[Variable] = {v for v in stack_variables if not skip_variable(v)}
 
     # remove objs and attributes
-    rem_obj_names = {v.name for v in used_vars if _skip_objs(v.name, v.value)}
+    rem_obj_names = {v.name for v in used_vars if _skip_objs(v.value)}
     rem_objs = {v for v in used_vars for rem_name in rem_obj_names if v.name.startswith(rem_name)}
     used_vars -= rem_objs
 
@@ -110,11 +124,14 @@ def format_frame_variables(tb: list[str], stack_variables: list[Variable]) -> No
     dotted_names: set[str] = {n.name.split('.')[0] for n in used_vars if '.' in n.name}
 
     # Sort output
-    used_vars = sorted(used_vars, key=lambda x: (
-        isinstance(x.nodes[0], ast.Compare),                                        # Compare objects last
-        not any(x.name == y or x.name.startswith(y + '.') for y in dotted_names),    # Classes with attributes
-        x.name.lower()                                                              # Name lowercase
-    ))
+    used_vars = sorted(
+        used_vars,
+        key=lambda x: (
+            isinstance(x.nodes[0], ast.Compare),  # Compare objects last
+            not any(x.name == y or x.name.startswith(y + '.') for y in dotted_names),  # Classes with attributes
+            x.name.lower(),  # Name lowercase
+        ),
+    )
 
     variables = {}
 
@@ -143,8 +160,8 @@ def format_frame_variables(tb: list[str], stack_variables: list[Variable]) -> No
         # -> try to format it nicely
 
         name_lines = name.splitlines()
-        for line in name_lines[:-1]:
-            tb.append(f'{" " * (PRE_INDENT + 1):s}{line:s}')
+        tb = []
+        tb.extend(f'{" " * (PRE_INDENT + 1):s}{line:s}' for line in name_lines[:-1])
 
         last_name_line = name_lines[-1]
         for nr, line in enumerate(repr(value).splitlines()):

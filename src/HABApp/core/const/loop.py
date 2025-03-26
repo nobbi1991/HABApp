@@ -8,6 +8,7 @@ import sys
 # but not both. For testing, it makes sense to use mqtt support as a default
 if (sys.platform.lower() == 'win32' or os.name.lower() == 'nt') and os.environ.get('HABAPP_NO_MQTT') is None:
     from asyncio import WindowsSelectorEventLoopPolicy, set_event_loop_policy
+
     set_event_loop_policy(WindowsSelectorEventLoopPolicy())
 
 LOOP = asyncio.new_event_loop()

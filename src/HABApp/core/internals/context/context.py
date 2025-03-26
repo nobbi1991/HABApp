@@ -12,7 +12,9 @@ class ContextBoundObj:
             parent_ctx.add_obj(self)
 
     def _ctx_link(self, parent_ctx: 'Context') -> None:
-        assert isinstance(parent_ctx, Context)
+        if not isinstance(parent_ctx, Context):
+            msg = f'{parent_ctx} is not a Context'
+            raise TypeError(msg)
         if self._parent_ctx is not None:
             raise ContextBoundObjectIsAlreadyLinkedError()
 
@@ -35,16 +37,21 @@ class Context:
         self.objs: set[ContextBoundObj] = set()
 
     def add_obj(self, obj: ContextBoundObj) -> None:
-        assert isinstance(obj, ContextBoundObj)
+        if not isinstance(obj, ContextBoundObj):
+            msg = f'Expected ContextBoundObj, got {type(obj).__name__}'
+            raise TypeError(msg)
         self.objs.add(obj)
 
     def remove_obj(self, obj: ContextBoundObj) -> None:
-        assert isinstance(obj, ContextBoundObj)
+        if not isinstance(obj, ContextBoundObj):
+            msg = f'Expected ContextBoundObj, got {type(obj).__name__}'
+            raise TypeError(msg)
         self.objs.remove(obj)
 
     def link(self, obj: HINT_CONTEXT_BOUND_OBJ) -> HINT_CONTEXT_BOUND_OBJ:
-        assert isinstance(obj, ContextBoundObj)
-        # noinspection PyProtectedMember
+        if not isinstance(obj, ContextBoundObj):
+            msg = f'Expected ContextBoundObj, got {type(obj).__name__}'
+            raise TypeError(msg)
         obj._ctx_link(self)
         return obj
 

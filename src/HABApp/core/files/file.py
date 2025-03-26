@@ -38,7 +38,6 @@ class FileState(Enum):
 
 
 class HABAppFile:
-
     @staticmethod
     def create_checksum(text: str) -> bytes:
         b = blake2b()
@@ -65,7 +64,7 @@ class HABAppFile:
     def _check_circ_refs(self, stack: tuple[str, ...], prop: str, manager: FileManager) -> None:
         c: list[str] = getattr(self.properties, prop)
         for f in c:
-            _stack = stack + (f, )
+            _stack = stack + (f,)
             if f in stack:
                 raise CircularReferenceError(_stack)
 
@@ -78,16 +77,20 @@ class HABAppFile:
         missing = {name for name in self.properties.depends_on if manager.get_file(name) is None}
         if missing:
             one = len(missing) == 1
-            msg = (f'File {self.path} depends on file{"" if one else "s"} that '
-                   f'do{"es" if one else ""}n\'t exist: {", ".join(sorted(missing))}')
+            msg = (
+                f'File {self.path} depends on file{"" if one else "s"} that '
+                f"do{'es' if one else ''}n't exist: {', '.join(sorted(missing))}"
+            )
             raise DependencyDoesNotExistError(msg)
 
         # check reload
         missing = {name for name in self.properties.reloads_on if manager.get_file(name) is None}
         if missing:
             one = len(missing) == 1
-            log.warning(f'File {self.path} reloads on file{"" if one else "s"} that '
-                        f'do{"es" if one else ""}n\'t exist: {", ".join(sorted(missing))}')
+            log.warning(
+                f'File {self.path} reloads on file{"" if one else "s"} that '
+                f"do{'es' if one else ''}n't exist: {', '.join(sorted(missing))}"
+            )
 
     def check_properties(self, manager: FileManager, log: logging.Logger, *, log_msg: bool = False) -> None:
         if self._state is not FileState.PENDING and self._state is not FileState.DEPENDENCIES_ERROR:
@@ -102,8 +105,8 @@ class HABAppFile:
 
         try:
             # check for circular references
-            self._check_circ_refs((self.name, ), 'depends_on', manager)
-            self._check_circ_refs((self.name, ), 'reloads_on', manager)
+            self._check_circ_refs((self.name,), 'depends_on', manager)
+            self._check_circ_refs((self.name,), 'reloads_on', manager)
         except CircularReferenceError as e:
             log.error(f'Circular reference: {" -> ".join(e.stack)}')
             return self.set_state(FileState.DEPENDENCIES_ERROR, manager)

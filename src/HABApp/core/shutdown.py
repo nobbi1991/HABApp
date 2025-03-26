@@ -75,9 +75,9 @@ def register(func: Callable[[], Any | Awaitable[Any]], *, last: bool = False, ms
             return None
 
     if iscoroutinefunction(func):
-        _REGISTERED += (ShutdownAwaitable(func=func, last=last, msg=msg), )
+        _REGISTERED += (ShutdownAwaitable(func=func, last=last, msg=msg),)
     elif isinstance(func, (FunctionType, MethodType, BuiltinMethodType)):
-        _REGISTERED += (ShutdownFunction(func=func, last=last, msg=msg), )
+        _REGISTERED += (ShutdownFunction(func=func, last=last, msg=msg),)
     else:
         raise TypeError()
 
@@ -96,7 +96,7 @@ async def _shutdown() -> None:
         *(obj for obj in _REGISTERED if obj.last),
         # shutdown of the event loop has to be the last thing that is done
         # since stopping of the loop exits the program
-        ShutdownFunction(func=LOOP.stop, msg='Stopping asyncio loop', last=True)
+        ShutdownFunction(func=LOOP.stop, msg='Stopping asyncio loop', last=True),
     )
 
     for obj in objs:
@@ -123,7 +123,7 @@ def is_requested() -> bool:
 
 
 def register_signal_handler() -> None:
-    def shutdown_handler(sig, frame) -> None:
+    def shutdown_handler(_sig: int, _frame: object) -> None:
         print('Shutting down ...')
         request()
 

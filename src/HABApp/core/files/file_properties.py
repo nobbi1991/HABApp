@@ -16,7 +16,6 @@ RE_START = re.compile(r'^(\s*#\s*)HABApp\s*:', re.IGNORECASE)
 
 
 def get_file_properties(_str: str) -> FileProperties:
-
     cfg = []
     cut = 0
 
@@ -41,7 +40,7 @@ def get_file_properties(_str: str) -> FileProperties:
         else:
             # If we would cut away characters it's not the yaml definition any more
             # Here it's cut + 1 because it must be indented
-            if line[:cut + 1].strip() not in ('', '#'):
+            if line[: cut + 1].strip() not in ('', '#'):
                 break
             cfg.append(line[cut:])
 

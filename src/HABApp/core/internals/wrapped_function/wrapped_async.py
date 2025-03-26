@@ -10,12 +10,13 @@ from HABApp.core.internals.wrapped_function.base import P, R, WrappedFunctionBas
 
 
 class WrappedAsyncFunction(WrappedFunctionBase[P, R]):
-
-    def __init__(self, coro: Callable[P, Coroutine[Any, Any, R]],
-                 name: str | None = None,
-                 logger: logging.Logger | None = None,
-                 context: Context | None = None) -> None:
-
+    def __init__(
+        self,
+        coro: Callable[P, Coroutine[Any, Any, R]],
+        name: str | None = None,
+        logger: logging.Logger | None = None,
+        context: Context | None = None,
+    ) -> None:
         super().__init__(name=name, func=coro, logger=logger, context=context)
 
         self.coro: Final = coro
@@ -26,7 +27,6 @@ class WrappedAsyncFunction(WrappedFunctionBase[P, R]):
 
     @override
     async def async_run(self, *args: P.args, **kwargs: P.kwargs) -> R | None:
-
         try:
             return await self.coro(*args, **kwargs)
         except Exception as e:

@@ -17,7 +17,7 @@ class WaitBetweenConnects:
 
     async def wait(self) -> None:
         wait = self.wait_time
-        wait = wait * 2 if wait <= 16 else wait * 1.5
+        wait = wait * 2 if wait <= 16 else wait * 1.5  # noqa: PLR2004
         wait = max(1, min(wait, self.wait_max))
 
         self.wait_time = wait

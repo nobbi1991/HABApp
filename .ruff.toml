@@ -14,6 +14,35 @@ extend-exclude = ["src/__test_*.py"]
 select = ["ALL"]
 
 ignore = [
+    ####
+    # real ignores
+    "FBT003",
+    "ANN002",
+    "ANN003",
+    "ANN101",
+    "ANN102",
+    "FBT001",
+    "FBT002",
+    "PLR0913",
+    "E501",
+
+    # should be activated and fixed!
+    "A002",
+    "A005",
+    "N999",
+    "N812",
+    "N818",
+    "C901",
+
+    "TD002",
+    "TD003",
+    "FIX002",
+
+
+
+    ###
+
+
     "D",        # https://docs.astral.sh/ruff/rules/#pydocstyle-d
     "T20",      # https://docs.astral.sh/ruff/rules/#flake8-print-t20
     "DTZ",      # https://docs.astral.sh/ruff/rules/#flake8-datetimez-dtz

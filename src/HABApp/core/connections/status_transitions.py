@@ -28,18 +28,24 @@ class StatusTransitions:
         return self.status in (ConnectionStatus.CONNECTING, ConnectionStatus.CONNECTED, ConnectionStatus.ONLINE)
 
     def _set_manual(self, status: ConnectionStatus) -> None:
-        assert self.manual is None
+        if self.manual is not None:
+            msg = 'Manual mode is already set'
+            raise RuntimeError(msg)
         self.manual = status
 
     def from_setup_to_disabled(self) -> None:
-        assert self.status == ConnectionStatus.SETUP
+        if self.status != ConnectionStatus.SETUP:
+            msg = f'Expected connection status to be SETUP, but got {self.status}'
+            raise RuntimeError(msg)
         self._set_manual(ConnectionStatus.DISABLED)
 
     def from_connected_to_disconnected(self) -> None:
-        assert self.status == ConnectionStatus.CONNECTED
+        if self.status != ConnectionStatus.CONNECTED:
+            msg = f'Expected connection status to be CONNECTED, but got {self.status}'
+            raise RuntimeError(msg)
         self._set_manual(ConnectionStatus.DISCONNECTED)
 
-    def _next_step(self) -> ConnectionStatus:
+    def _next_step(self) -> ConnectionStatus:  # noqa: PLR0911
         status = self.status
 
         if self.error:
@@ -69,17 +75,17 @@ class StatusTransitions:
         transitions = {
             ConnectionStatus.CONNECTING: ConnectionStatus.CONNECTED,
             ConnectionStatus.CONNECTED: ConnectionStatus.ONLINE,
-
             ConnectionStatus.DISCONNECTED: ConnectionStatus.OFFLINE,
-
             ConnectionStatus.SETUP: ConnectionStatus.CONNECTING,
         }
         return transitions.get(status)
 
     def __repr__(self) -> str:
-        return (f'<{self.__class__.__name__} {self.status} '
-                f'[{"x" if self.error else " "}] Error, '
-                f'[{"x" if self.setup else " "}] Setup>')
+        return (
+            f'<{self.__class__.__name__} {self.status} '
+            f'[{"x" if self.error else " "}] Error, '
+            f'[{"x" if self.setup else " "}] Setup>'
+        )
 
     def __eq__(self, other: ConnectionStatus) -> bool:
         if not isinstance(other, ConnectionStatus):

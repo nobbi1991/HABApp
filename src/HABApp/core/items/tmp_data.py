@@ -5,10 +5,11 @@ from datetime import datetime, timedelta
 import HABApp.core.logger
 from HABApp.core.lib import PendingFuture
 
+from .base_item_watch import BaseWatch
+
 
 if typing.TYPE_CHECKING:
     from .base_item import BaseItem
-    from .base_item_watch import BaseWatch
 
 
 TMP_DATA: dict[str, 'TmpItemData'] = {}
@@ -20,7 +21,7 @@ class TmpItemData:
         self.update: set[BaseWatch] = set()
         self.change: set[BaseWatch] = set()
 
-    def add_tasks(self, update, change) -> None:
+    def add_tasks(self, update: list[BaseWatch], change: list[BaseWatch]) -> None:
         self.ts = datetime.now()
         self.update.update(update)
         self.change.update(change)

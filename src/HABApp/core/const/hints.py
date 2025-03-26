@@ -14,5 +14,4 @@ TYPE_EVENT_CALLBACK: TypeAlias = __Callable[[__Any], __Any]
 # noinspection PyPropertyDefinition
 class HasNameAttr(__Protocol):
     @property
-    def name(self) -> str:
-        ...
+    def name(self) -> str: ...

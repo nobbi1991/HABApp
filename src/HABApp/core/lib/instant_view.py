@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class InstantView:
-    __slots__ = ('_instant', )
+    __slots__ = ('_instant',)
 
     def __init__(self, instant: Instant) -> None:
         self._instant: Final = instant
@@ -63,7 +63,6 @@ class InstantView:
         return f'InstantView({self._instant.to_system_tz()})'
 
     def _cmp(self, op: Callable[[Any, Any], bool], obj: HINT_OBJ | None, **kwargs: float) -> bool:
-
         td: TimeDelta | None = None
 
         match obj:

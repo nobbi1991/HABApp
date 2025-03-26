@@ -12,16 +12,12 @@ SUPPRESSED_HABAPP_PATHS = (
     re.compile(r'[/\\]HABApp[/\\]core[/\\]lib[/\\]exceptions[/\\]'),
     # Wrapper which usually generates this traceback
     re.compile(r'[/\\]HABApp[/\\]core[/\\]wrapper.py'),
-
     # Rule file loader
     re.compile(r'[/\\]HABApp[/\\]rule_manager[/\\]'),
-
     # Worker functions
     re.compile(r'[/\\]HABApp[/\\]core[/\\]internals[/\\]wrapped_function[/\\]'),
-
     # Item registry
     re.compile(r'[/\\]HABApp[/\\]core[/\\]internals[/\\]item_registry[/\\]'),
-
     # Connection wrappers
     re.compile(r'[/\\]HABApp[/\\]core[/\\]connections[/\\]'),
 )
@@ -38,7 +34,7 @@ def is_lib_file(name: str) -> bool:
     return bool(name.startswith(PYTHON_INSTALLATION_PATHS))
 
 
-def format_frame_info(tb: list[str], frame_info: FrameInfo, is_last=False) -> bool:
+def format_frame_info(tb: list[str], frame_info: FrameInfo, is_last: bool = False) -> bool:
     filename = frame_info.filename
 
     # always skip system and python libraries
@@ -60,9 +56,9 @@ def format_frame_info(tb: list[str], frame_info: FrameInfo, is_last=False) -> bo
     tb.append(SEPARATOR_NEW_FRAME)
     for line in frame_info.lines:
         if line is LINE_GAP:
-            tb.append(f"{' ' * (PRE_INDENT + indent - 1)}(...)")
+            tb.append(f'{" " * (PRE_INDENT + indent - 1)}(...)')
         else:
-            tb.append(f"{'-->' if line.is_current else '':{PRE_INDENT}s}{line.lineno:{indent}d} | {line.render()}")
+            tb.append(f'{"-->" if line.is_current else "":{PRE_INDENT}s}{line.lineno:{indent}d} | {line.render()}')
 
     format_frame_variables(tb, frame_info.variables)
     tb.append('')

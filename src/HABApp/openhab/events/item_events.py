@@ -135,7 +135,7 @@ class ItemStatePredictedEvent(OpenhabEvent):
     value: Any
     is_confirmation: bool
 
-    def __init__(self, name: str, value: Any, is_confirmation: bool) -> None:  # noqa: FBT001
+    def __init__(self, name: str, value: Any, is_confirmation: bool) -> None:
         super().__init__()
         self.name: Final = name
         self.value: Final = value

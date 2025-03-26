@@ -56,7 +56,7 @@ def format_exception(e: HINT_EXCEPTION) -> list[str]:
         tb.append(SEPARATOR_NEW_FRAME)
         append_short_traceback(tb, e)
 
-    except Exception as e:
-        return fallback_format(e, tb)
+    except Exception as exc:
+        return fallback_format(exc, tb)
 
     return tb

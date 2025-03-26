@@ -28,7 +28,7 @@ def get_plugin_callbacks(obj: BaseConnectionPlugin) -> list[tuple[ConnectionStat
         if not m_name.lower().startswith('on_'):
             continue
 
-        if m_name in ('on_application_shutdown', ):
+        if m_name in ('on_application_shutdown',):
             continue
 
         if (m := name_regex.fullmatch(m_name)) is None:
@@ -49,7 +49,7 @@ class PluginCallbackHandler:
     coro: Callable[[...], Awaitable]
     kwargs: tuple[str, ...]
 
-    async def run(self, connection: BaseConnection, context: Any):
+    async def run(self, connection: BaseConnection, context: Any) -> Any:
         kwargs = {}
         if self.kwargs:
             if 'connection' in self.kwargs:

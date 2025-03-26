@@ -7,7 +7,7 @@ from logging import Logger
 # noinspection PyProtectedMember
 from sys import _getframe as sys_get_frame
 from types import TracebackType
-from typing import ParamSpec, TypeVar, overload
+from typing import Any, ParamSpec, TypeVar, overload
 
 from HABApp.core.asyncio import thread_context
 from HABApp.core.const.topics import TOPIC_ERRORS, TOPIC_WARNINGS
@@ -25,8 +25,7 @@ T = TypeVar('T')  # the callable/awaitable return type
 P = ParamSpec('P')  # the callable parameters
 
 
-def process_exception(func: Callable | str, e: Exception,
-                      do_print=False, logger: logging.Logger = log) -> None:
+def process_exception(func: Callable | str, e: Exception, do_print: bool = False, logger: logging.Logger = log) -> None:
     lines = format_exception(e)
 
     func_name = func if isinstance(func, str) else get_obj_name(func)
@@ -52,11 +51,12 @@ def log_exception(func: Callable[P, T]) -> Callable[P, T]: ...
 def log_exception(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]: ...
 
 
-def log_exception(func):
+def log_exception(func: Callable[..., Any]) -> Callable[..., Any]:
     # return async wrapper
     if asyncio.iscoroutinefunction(func):
+
         @functools.wraps(func)
-        async def a(*args, **kwargs):
+        async def a(*args, **kwargs) -> Any:
             try:
                 return await func(*args, **kwargs)
             except Exception as e:
@@ -67,7 +67,7 @@ def log_exception(func):
         return a
 
     @functools.wraps(func)
-    def f(*args, **kwargs):
+    def f(*args, **kwargs) -> Any:
         try:
             return func(*args, **kwargs)
         except Exception as e:
@@ -86,11 +86,12 @@ def ignore_exception(func: Callable[P, T]) -> Callable[P, T]: ...
 def ignore_exception(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]: ...
 
 
-def ignore_exception(func):
+def ignore_exception(func: Callable[..., Any]) -> Callable[..., Any]:
     # return async wrapper
     if asyncio.iscoroutinefunction(func):
+
         @functools.wraps(func)
-        async def a(*args, **kwargs):
+        async def a(*args, **kwargs) -> Any:
             try:
                 return await func(*args, **kwargs)
             except Exception as e:
@@ -100,12 +101,13 @@ def ignore_exception(func):
         return a
 
     @functools.wraps(func)
-    def f(*args, **kwargs):
+    def f(*args, **kwargs) -> Any:
         try:
             return func(*args, **kwargs)
         except Exception as e:
             process_exception(func, e)
             return None
+
     return f
 
 
@@ -125,12 +127,14 @@ def in_thread(func: Callable[P, T]) -> Callable[P, T]:
             return None
         finally:
             thread_context.reset(ctx)
+
     return f
 
 
 class ExceptionToHABApp:
-    def __init__(self, logger: Logger | None = None, log_level: int = logging.ERROR, *,
-                 ignore_exception: bool = True) -> None:
+    def __init__(
+        self, logger: Logger | None = None, log_level: int = logging.ERROR, *, ignore_exception: bool = True
+    ) -> None:
         self.log: Logger | None = logger
         self.log_level = log_level
         self.ignore_exception: bool = ignore_exception
@@ -142,9 +146,9 @@ class ExceptionToHABApp:
     def __enter__(self) -> None:
         self.raised_exception = False
 
-    def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None,
-                 exc_tb: TracebackType | None):
-
+    def __exit__(
+        self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
+    ) -> bool:
         # no exception -> we exit gracefully
         if exc_type is None and exc_val is None:
             return True
@@ -172,6 +176,6 @@ class ExceptionToHABApp:
         # send Error to internal event bus so we can reprocess it and notify the user
         post_event(
             TOPIC_WARNINGS if self.log_level == logging.WARNING else TOPIC_ERRORS,
-            HABAppException(func_name=f_name, exception=exc_val, traceback='\n'.join(tb))
+            HABAppException(func_name=f_name, exception=exc_val, traceback='\n'.join(tb)),
         )
         return self.ignore_exception

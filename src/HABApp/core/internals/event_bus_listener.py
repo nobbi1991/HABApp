@@ -14,7 +14,9 @@ class EventBusListener(EventBusBaseListener):
     def __init__(self, topic: str, callback: WrappedFunctionBase, event_filter: EventFilterBase, **kwargs: Any) -> None:
         super().__init__(topic, **kwargs)
 
-        assert isinstance(callback, WrappedFunctionBase)
+        if not isinstance(callback, WrappedFunctionBase):
+            msg = f'callback must be an instance of WrappedFunctionBase, got {type(callback).__name__}'
+            raise TypeError(msg)
         self.func: WrappedFunctionBase = callback
         self.filter: EventFilterBase = event_filter
 
@@ -31,9 +33,8 @@ class EventBusListener(EventBusBaseListener):
 
 
 class ContextBoundEventBusListener(EventBusListener, AutoContextBoundObj):
-
     @override
-    def _ctx_unlink(self):
+    def _ctx_unlink(self) -> None:
         event_bus.remove_listener(self)
         return super()._ctx_unlink()
 

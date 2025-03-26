@@ -24,6 +24,7 @@ class DirectoriesConfig(BaseModel):
     lib: Path | None = Field(Path('lib'), description='Folder where additional libraries can be placed')
 
     @field_validator('logging', 'rules', 'params', 'config', 'lib')
+    @classmethod
     def ensure_folder(cls, value: Path | None) -> Path | None:
         import HABApp.__cmd_args__
 

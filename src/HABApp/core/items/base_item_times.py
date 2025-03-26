@@ -20,7 +20,7 @@ class ItemTimes(Generic[WATCH_OBJ]):
         self.instant: Instant = instant
         self.tasks: list[WATCH_OBJ] = []
 
-    def set(self, instant: Instant, events=True) -> None:
+    def set(self, instant: Instant, events: bool=True) -> None:
         self.instant = instant
         if not self.tasks:
             return

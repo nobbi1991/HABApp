@@ -2,7 +2,7 @@ from typing import Any
 
 
 class EventFilterBase:
-    def trigger(self, event: Any) -> bool:
+    def trigger(self, event) -> bool:
         raise NotImplementedError()
 
     def describe(self) -> str:

@@ -1,3 +1,5 @@
+from typing import Any
+
 from HABApp.core.errors import ItemNameNotOfTypeStrError, ItemNotFoundException, WrongItemTypeError
 from HABApp.core.internals import uses_get_item, uses_item_registry
 from HABApp.core.items import BaseValueItem
@@ -11,7 +13,7 @@ class Item(BaseValueItem):
     """Simple item, used to store values in HABApp"""
 
     @classmethod
-    def get_create_item(cls, name: str, initial_value=None) -> 'Item':
+    def get_create_item(cls, name: str, initial_value: Any | None = None) -> 'Item':
         """Creates a new item in HABApp and returns it or returns the already existing one with the given name
 
         :param name: item name

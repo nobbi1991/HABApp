@@ -60,12 +60,10 @@ class ItemRegistry:
         return item
 
     @overload
-    def pop_item(self, name: ITEM_TYPE) -> ITEM_TYPE:
-        ...
+    def pop_item(self, name: ITEM_TYPE) -> ITEM_TYPE: ...
 
     @overload
-    def pop_item(self, name: str) -> ItemRegistryItem:
-        ...
+    def pop_item(self, name: str) -> ItemRegistryItem: ...
 
     def pop_item(self, name: str | ItemRegistryItem) -> ItemRegistryItem:
         if not isinstance(name, str):

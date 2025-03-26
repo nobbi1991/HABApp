@@ -1,8 +1,8 @@
 import logging
-from datetime import datetime
 from math import ceil, floor
 from typing import TYPE_CHECKING, Any
 
+from typing_extensions import Self
 from whenever import Instant
 
 from HABApp.core.const import MISSING
@@ -10,10 +10,6 @@ from HABApp.core.events import ValueChangeEvent, ValueCommandEvent, ValueUpdateE
 from HABApp.core.internals import uses_post_event
 from HABApp.core.items.base_item import BaseItem
 from HABApp.core.lib.funcs import compare as _compare
-
-
-if TYPE_CHECKING:
-    datetime = datetime
 
 
 log = logging.getLogger('HABApp')
@@ -30,7 +26,7 @@ class BaseValueItem(BaseItem):
     :ivar datetime last_update: Timestamp of the last time when the item has updated the value (read only)
     """
 
-    def __init__(self, name: str, initial_value=None) -> None:
+    def __init__(self, name: str, initial_value: Any=None) -> None:
         super().__init__(name)
 
         self.value: Any = initial_value
@@ -64,9 +60,7 @@ class BaseValueItem(BaseItem):
         # create events
         post_event(self._name, ValueUpdateEvent(self._name, self.value))
         if state_changed:
-            post_event(
-                self._name, ValueChangeEvent(self._name, value=self.value, old_value=old_value)
-            )
+            post_event(self._name, ValueChangeEvent(self._name, value=self.value, old_value=old_value))
         return state_changed
 
     def command_value(self, value: Any) -> None:
@@ -78,10 +72,25 @@ class BaseValueItem(BaseItem):
         """
         post_event(self._name, ValueCommandEvent(self._name, value))
 
-    def post_value_if(self, new_value, *, equal=MISSING, eq=MISSING, not_equal=MISSING, ne=MISSING,
-                      lower_than=MISSING, lt=MISSING, lower_equal=MISSING, le=MISSING,
-                      greater_than=MISSING, gt=MISSING, greater_equal=MISSING, ge=MISSING,
-                      is_=MISSING, is_not=MISSING) -> bool:
+    def post_value_if(
+        self,
+        new_value: Any,
+        *,
+        equal: Any = MISSING,
+        eq: Any = MISSING,
+        not_equal: Any = MISSING,
+        ne: Any = MISSING,
+        lower_than: Any = MISSING,
+        lt: Any = MISSING,
+        lower_equal: Any = MISSING,
+        le: Any = MISSING,
+        greater_than: Any = MISSING,
+        gt: Any = MISSING,
+        greater_equal: Any = MISSING,
+        ge: Any = MISSING,
+        is_: Any = MISSING,
+        is_not: Any = MISSING,
+    ) -> bool:
         """
         Post a value depending on the current state of the item. If one of the comparisons is true the new state
         will be posted.
@@ -105,14 +114,28 @@ class BaseValueItem(BaseItem):
         :return: `True` if the new value was posted else `False`
         """
 
-        if _compare(self.value, equal=equal, eq=eq, not_equal=not_equal, ne=ne,
-                    lower_than=lower_than, lt=lt, lower_equal=lower_equal, le=le,
-                    greater_than=greater_than, gt=gt, greater_equal=greater_equal, ge=ge, is_=is_, is_not=is_not):
+        if _compare(
+            self.value,
+            equal=equal,
+            eq=eq,
+            not_equal=not_equal,
+            ne=ne,
+            lower_than=lower_than,
+            lt=lt,
+            lower_equal=lower_equal,
+            le=le,
+            greater_than=greater_than,
+            gt=gt,
+            greater_equal=greater_equal,
+            ge=ge,
+            is_=is_,
+            is_not=is_not,
+        ):
             self.post_value(new_value)
             return True
         return False
 
-    def get_value(self, default_value=None) -> Any:
+    def get_value(self, default_value: Any | None = None) -> Any:
         """Return the value of the item. This is a helper function that returns a default
         in case the item value is None.
 
@@ -152,87 +175,87 @@ class BaseValueItem(BaseItem):
 
     # https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
     # These methods are called to implement the binary arithmetic operations
-    def __add__(self, other):
+    def __add__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__add__(other.value)
         return self.value.__add__(other)
 
-    def __sub__(self, other):
+    def __sub__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__sub__(other.value)
         return self.value.__sub__(other)
 
-    def __mul__(self, other):
+    def __mul__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__mul__(other.value)
         return self.value.__mul__(other)
 
-    def __matmul__(self, other):
+    def __matmul__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__matmul__(other.value)
         return self.value.__matmul__(other)
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__truediv__(other.value)
         return self.value.__truediv__(other)
 
-    def __floordiv__(self, other):
+    def __floordiv__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__floordiv__(other.value)
         return self.value.__floordiv__(other)
 
-    def __mod__(self, other):
+    def __mod__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__mod__(other.value)
         return self.value.__mod__(other)
 
-    def __divmod__(self, other):
+    def __divmod__(self, other: object) -> tuple[float, float]:
         if isinstance(other, BaseValueItem):
             return self.value.__divmod__(other.value)
         return self.value.__divmod__(other)
 
-    def __pow__(self, other):
+    def __pow__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__pow__(other.value)
         return self.value.__pow__(other)
 
-    def __lshift__(self, other):
+    def __lshift__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__lshift__(other.value)
         return self.value.__lshift__(other)
 
-    def __rshift__(self, other):
+    def __rshift__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__rshift__(other.value)
         return self.value.__rshift__(other)
 
-    def __and__(self, other):
+    def __and__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__and__(other.value)
         return self.value.__and__(other)
 
-    def __xor__(self, other):
+    def __xor__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__xor__(other.value)
         return self.value.__xor__(other)
 
-    def __or__(self, other):
+    def __or__(self, other: object) -> float | int:
         if isinstance(other, BaseValueItem):
             return self.value.__or__(other.value)
         return self.value.__or__(other)
 
     # Unary arithmetic operations (-, +, abs() and ~).
-    def __neg__(self):
+    def __neg__(self) -> float | int:
         return self.value.__neg__()
 
-    def __pos__(self):
+    def __pos__(self) -> float | int:
         return self.value.__pos__()
 
-    def __abs__(self):
+    def __abs__(self) -> int:
         return self.value.__abs__()
 
-    def __invert__(self):
+    def __invert__(self) -> float | int:
         return self.value.__invert__()
 
     # built-in functions complex(), int() and float().
@@ -246,55 +269,68 @@ class BaseValueItem(BaseItem):
         return self.value.__float__()
 
     # built-in function round() and math functions trunc(), floor() and ceil().
-    def __round__(self, ndigits=None):
+    def __round__(self, ndigits: int | None = None) -> float | int:
         return self.value.__round__(ndigits)
 
-    def __trunc__(self):
+    def __trunc__(self) -> int:
         return self.value.__trunc__()
 
-    def __floor__(self):
+    def __floor__(self) -> int:
         return floor(self.value)
 
-    def __ceil__(self):
+    def __ceil__(self) -> int:
         return ceil(self.value)
 
     # we don't support modification in place! We have to override this because otherwise
     # python falls back to the methods above
-    def __iadd__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __iadd__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __isub__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __isub__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __imul__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __imul__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __imatmul__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __imatmul__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __itruediv__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __itruediv__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __ifloordiv__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __ifloordiv__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __imod__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __imod__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __ipow__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __ipow__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __ilshift__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __ilshift__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __irshift__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __irshift__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __iand__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __iand__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __ixor__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __ixor__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)
 
-    def __ior__(self, other):
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+    def __ior__(self, other: object) -> Self:
+        msg = 'Call not allowed! Use "set_value" or "post_value"'
+        raise PermissionError(msg)

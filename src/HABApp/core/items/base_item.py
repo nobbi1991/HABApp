@@ -24,8 +24,7 @@ item_registry = uses_item_registry()
 
 
 class BaseItem(ItemRegistryItem):
-    """BaseItem, all items must inherit from this class
-    """
+    """BaseItem, all items must inherit from this class"""
 
     @classmethod
     def get_item(cls, name: str) -> Self:
@@ -88,8 +87,9 @@ class BaseItem(ItemRegistryItem):
         secs = round(get_pos_timedelta_secs(secs), 1)
         return self._last_update.add_watch(secs)
 
-    def listen_event(self, callback: TYPE_EVENT_CALLBACK,
-                     event_filter: EventFilterBase | None = None) -> EventBusListener:
+    def listen_event(
+        self, callback: TYPE_EVENT_CALLBACK, event_filter: EventFilterBase | None = None
+    ) -> EventBusListener:
         """
         Register an event listener which listens to all event that the item receives
 
@@ -103,11 +103,9 @@ class BaseItem(ItemRegistryItem):
         return get_current_context().rule.listen_event(self._name, callback=callback, event_filter=event_filter)
 
     def _on_item_added(self) -> None:
-        """This function gets automatically called when the item is added to the item registry
-        """
+        """This function gets automatically called when the item is added to the item registry"""
         _restore_tmp_data(self)
 
     def _on_item_removed(self) -> None:
-        """This function gets automatically called when the item is removed from the item registry
-        """
+        """This function gets automatically called when the item is removed from the item registry"""
         _add_tmp_data(self)

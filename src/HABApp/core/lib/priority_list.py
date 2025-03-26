@@ -13,10 +13,12 @@ T_PRIO: TypeAlias = Literal['first', 'last'] | int
 T_ENTRY: TypeAlias = tuple[T_PRIO, T]
 
 
-def sort_func(obj: T_ENTRY):
+def sort_func(obj: T_ENTRY) -> tuple[int, T_PRIO]:
     prio = {'first': 0, 'last': 2}
     key = obj[0]
-    assert isinstance(key, int) or key in prio
+    if not isinstance(key, int) and key not in prio:
+        msg = 'Key must be an integer or a value in prio'
+        raise TypeError(msg)
     return prio.get(key, 1), key
 
 
@@ -27,7 +29,10 @@ class PriorityList(Generic[T]):
 
     def append(self, obj: T, priority: T_PRIO) -> None:
         for o in self._objs:
-            assert o[0] != priority, priority
+            if o[0] == priority:
+                msg = f'Priority {priority} already exists'
+                raise ValueError(msg)
+
         self._objs.append((priority, obj))
         self._objs.sort(key=sort_func)
 
