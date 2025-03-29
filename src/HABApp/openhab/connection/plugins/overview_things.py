@@ -25,7 +25,7 @@ class ThingOverviewPlugin(BaseConnectionPlugin[OpenhabConnection]):
         self.do_run = True
 
     @HABApp.core.wrapper.log_exception
-    async def on_online(self):
+    async def on_online(self) -> None:
         if not self.do_run:
             return None
 

@@ -13,7 +13,7 @@ from HABApp.core.internals.wrapped_function.base import P, R, WrappedFunctionBas
 class WrappedSyncFunction(WrappedFunctionBase[P, R]):
 
     def __init__(self, func: Callable,
-                 warn_too_long=True,
+                 warn_too_long: bool=True,
                  name: str | None = None,
                  logger: logging.Logger | None = None,
                  context: Context | None = None) -> None:

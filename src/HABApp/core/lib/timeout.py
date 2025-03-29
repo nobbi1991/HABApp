@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from time import monotonic
 
+from typing_extensions import Self
+
 
 class TimeoutNotRunningError(Exception):
     pass
@@ -18,7 +20,6 @@ class Timeout:
         self._started: float | None = None if not start else monotonic()
 
     def __repr__(self) -> str:
-
         decimals = 1 if self._timeout < 10 else 0
 
         if self._started is None:
@@ -29,24 +30,24 @@ class Timeout:
             time = self._timeout
         return f'<Timeout {time:.{decimals:d}f}/{self._timeout:.{decimals:d}f}s>'
 
-    def reset(self):
+    def reset(self) -> Self:
         """Reset the timeout if it is running"""
         if self._started is not None:
             self._started = monotonic()
         return self
 
-    def start(self):
+    def start(self) -> Self:
         """Start the timeout if it is not running"""
         if self._started is None:
             self._started = monotonic()
         return self
 
-    def stop(self):
+    def stop(self) -> Self:
         """Stop the timeout"""
         self._started = None
         return self
 
-    def set_timeout(self, timeout: float):
+    def set_timeout(self, timeout: float) -> Self:
         """Set the timeout
 
         :param timeout: Timeout in seconds
@@ -57,7 +58,7 @@ class Timeout:
         return self
 
     def is_running(self) -> bool:
-        """ Return whether the timeout is running.
+        """Return whether the timeout is running.
 
         :return: True if running or False
         """

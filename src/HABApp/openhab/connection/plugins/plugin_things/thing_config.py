@@ -5,11 +5,10 @@ import bidict
 
 import HABApp
 from HABApp.core.logger import log_error
+from HABApp.openhab.connection.plugins.plugin_things._log import log_cfg as log
 
-from ._log import log_cfg as log
 
-
-def ensure_same_types(key: str, org, val):
+def ensure_same_types(key: str, org, val) -> None:
     t_org = type(org)
     t_val = type(val)
     if t_org is t_val:
@@ -116,7 +115,7 @@ class ThingConfigChanger:
     def values(self):
         return self.org.values()
 
-    def get_dict(self, filter=False, new=False):
+    def get_dict(self, filter:bool=False, new: bool=False) -> dict[str, typing.Any]:
         r = {}
         for k, v in (self.org if not new else self.new).items():
             if filter and (k.startswith('action_') or k in ('node_id', 'wakeup_node')):
@@ -125,7 +124,7 @@ class ThingConfigChanger:
             r[k] = v
         return r
 
-    async def update_thing_cfg(self):
+    async def update_thing_cfg(self) -> None:
         if not self.new:
             log.debug(f'Config of {self.uid} is already correct!')
             return None

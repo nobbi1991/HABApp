@@ -36,7 +36,7 @@ class RollershutterItem(OpenhabItem, UpDownCommand, PercentCommand):
         'RollershutterItem', UpDownTypeModel, StopMoveTypeModel, PercentTypeModel, RefreshTypeModel)
     _state_from_oh_str: Final = staticmethod(PercentTypeModel.get_value_from_state)
 
-    def set_value(self, new_value) -> bool:
+    def set_value(self, new_value: int | float | None) -> bool:
 
         # Position is 0 ... 100
         if isinstance(new_value, (int, float)) and (0 <= new_value <= 100):

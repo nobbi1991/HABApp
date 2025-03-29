@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import typing
 import warnings
 from datetime import datetime
 from typing import Any
@@ -36,9 +37,12 @@ from HABApp.openhab.errors import (
     ThingNotFoundError,
     TransformationsRequestError,
 )
-
 from . import convert_to_oh_str
 from .handler import delete, get, post, put
+
+if typing.TYPE_CHECKING:
+    from HABApp.openhab.definitions.rest.systeminfo import SystemInfoResp
+    from HABApp.openhab.definitions.rest.habapp_data import HABAppThingPluginData
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -67,7 +71,7 @@ async def async_get_uuid() -> str:
 # ----------------------------------------------------------------------------------------------------------------------
 # /systeminfo
 # ----------------------------------------------------------------------------------------------------------------------
-async def async_get_system_info():
+async def async_get_system_info() -> SystemInfoResp | None:
     resp = await get('/rest/systeminfo', log_404=False)
     if resp.status == 404 or resp.status == 500:
         return None
@@ -83,7 +87,6 @@ async def async_get_system_info():
 # /items
 # ----------------------------------------------------------------------------------------------------------------------
 async def async_get_items() -> tuple[ItemResp, ...]:
-
     resp = await get('/rest/items', params={'metadata': '.+'})
     body = await resp.read()
 
@@ -118,7 +121,7 @@ async def async_item_exists(item: str | ItemRegistryItem) -> bool:
     return ret.status == 200
 
 
-async def async_remove_item(item: str | ItemRegistryItem):
+async def async_remove_item(item: str | ItemRegistryItem) -> bool:
     # noinspection PyProtectedMember
     item = item if isinstance(item, str) else item._name
 
@@ -132,13 +135,17 @@ async def async_remove_item(item: str | ItemRegistryItem):
     return ret.status < 300
 
 
-async def async_create_item(item_type: str, name: str,
-                            label: str | None = None, category: str | None = None,
-                            tags: list[str] | None = None, groups: list[str] | None = None,
-                            group_type: str | None = None,
-                            group_function: str | None = None,
-                            group_function_params: list[str] | None = None) -> bool:
-
+async def async_create_item(
+    item_type: str,
+    name: str,
+    label: str | None = None,
+    category: str | None = None,
+    tags: list[str] | None = None,
+    groups: list[str] | None = None,
+    group_type: str | None = None,
+    group_function: str | None = None,
+    group_function_params: list[str] | None = None,
+) -> bool:
     payload = {'type': item_type, 'name': name}
     if label:
         payload['label'] = label
@@ -151,7 +158,7 @@ async def async_create_item(item_type: str, name: str,
 
     # we create a group
     if group_type:
-        payload['groupType'] = group_type   # CamelCase!
+        payload['groupType'] = group_type  # CamelCase!
     if group_function:
         payload['function'] = {}
         payload['function']['name'] = group_function
@@ -186,10 +193,7 @@ async def async_set_metadata(item: str | ItemRegistryItem, namespace: str, value
     # noinspection PyProtectedMember
     item = item if isinstance(item, str) else item._name
 
-    payload = {
-        'value': value,
-        'config': config
-    }
+    payload = {'value': value, 'config': config}
     ret = await put(f'/rest/items/{item:s}/metadata/{namespace:s}', json=payload)
     if ret is None:
         return False
@@ -223,7 +227,7 @@ async def async_get_thing(thing: str | ItemRegistryItem) -> ThingResp:
     return ThingResp.model_validate_json(body)
 
 
-async def async_set_thing_cfg(thing: str | ItemRegistryItem, cfg: dict[str, Any]):
+async def async_set_thing_cfg(thing: str | ItemRegistryItem, cfg: dict[str, Any]) -> int | None:
     # noinspection PyProtectedMember
     thing = thing if isinstance(thing, str) else thing._name
 
@@ -240,7 +244,7 @@ async def async_set_thing_cfg(thing: str | ItemRegistryItem, cfg: dict[str, Any]
     return ret.status
 
 
-async def async_set_thing_enabled(thing: str | ItemRegistryItem, enabled: bool):
+async def async_set_thing_enabled(thing: str | ItemRegistryItem, enabled: bool) -> int | None:
     # noinspection PyProtectedMember
     thing = thing if isinstance(thing, str) else thing._name
 
@@ -261,7 +265,7 @@ async def async_set_thing_enabled(thing: str | ItemRegistryItem, enabled: bool):
 # ----------------------------------------------------------------------------------------------------------------------
 # /links
 # ----------------------------------------------------------------------------------------------------------------------
-async def async_purge_links():
+async def async_purge_links() -> None:
     resp = await post('/rest/purge')
     if resp.status != 200:
         msg = 'Unexpected error'
@@ -284,7 +288,6 @@ async def async_remove_obj_links(name: str | ItemRegistryItem) -> bool:
 
 
 async def async_get_links() -> tuple[ItemChannelLinkResp, ...]:
-
     resp = await get('/rest/links')
     if resp.status != 200:
         msg = 'Unexpected error'
@@ -305,7 +308,6 @@ def __get_item_link_url(item: str | ItemRegistryItem, channel: str) -> str:
 
 
 async def async_get_link(item: str | ItemRegistryItem, channel: str) -> ItemChannelLinkResp:
-
     resp = await get(__get_item_link_url(item, channel), log_404=False)
     if resp.status == 200:
         body = await resp.read()
@@ -319,7 +321,8 @@ async def async_get_link(item: str | ItemRegistryItem, channel: str) -> ItemChan
 
 
 async def async_create_link(
-        item: str | ItemRegistryItem, channel: str, configuration: dict[str, Any] | None = None) -> bool:
+    item: str | ItemRegistryItem, channel: str, configuration: dict[str, Any] | None = None
+) -> bool:
     # noinspection PyProtectedMember
     item = item if isinstance(item, str) else item._name
 
@@ -345,8 +348,7 @@ async def async_create_link(
     raise LinkRequestError(msg)
 
 
-async def async_remove_link(item: str | ItemRegistryItem, channel: str):
-
+async def async_remove_link(item: str | ItemRegistryItem, channel: str) -> None:
     if (resp := await delete(__get_item_link_url(item, channel), log_404=False)) is None:
         return None
     if resp.status == 200:
@@ -385,9 +387,9 @@ async def async_get_persistence_services() -> tuple[PersistenceServiceResp, ...]
     return PersistenceServiceRespList.validate_json(body)
 
 
-async def async_get_persistence_data(item: str | ItemRegistryItem, persistence: str | None,
-                                     start_time: datetime | None,
-                                     end_time: datetime | None) -> ItemHistoryResp:
+async def async_get_persistence_data(
+    item: str | ItemRegistryItem, persistence: str | None, start_time: datetime | None, end_time: datetime | None
+) -> ItemHistoryResp:
     # noinspection PyProtectedMember
     item = item if isinstance(item, str) else item._name
 
@@ -409,14 +411,17 @@ async def async_get_persistence_data(item: str | ItemRegistryItem, persistence: 
     return ItemHistoryResp.model_validate_json(body)
 
 
-async def async_set_persistence_data(item: str | ItemRegistryItem, persistence: str | None,
-                                     time: datetime, state: Any):
+async def async_set_persistence_data(
+    item: str | ItemRegistryItem, persistence: str | None, time: datetime, state: Any
+) -> None:
     # noinspection PyProtectedMember
     item = item if isinstance(item, str) else item._name
 
     # This does only work for some persistence services (as of OH 3.4)
-    warnings.warn(f'{async_set_persistence_data.__name__} calls a part of the openHAB API which is buggy!',
-                  category=ResourceWarning)
+    warnings.warn(
+        f'{async_set_persistence_data.__name__} calls a part of the openHAB API which is buggy!',
+        category=ResourceWarning,
+    )
 
     params = {
         'time': convert_to_oh_str(time),
@@ -437,11 +442,11 @@ async def async_set_persistence_data(item: str | ItemRegistryItem, persistence: 
 # ---------------------------------------------------------------------------------------------------------------------
 # Funcs for handling HABApp Metadata
 # ---------------------------------------------------------------------------------------------------------------------
-async def async_remove_habapp_metadata(item: str):
+async def async_remove_habapp_metadata(item: str) -> bool:
     return await async_remove_metadata(item, 'HABApp')
 
 
-async def async_set_habapp_metadata(item: str, obj):
+async def async_set_habapp_metadata(item: str, obj: HABAppThingPluginData) -> bool:
     val, cfg = get_api_vals(obj)
     return await async_set_metadata(item, 'HABApp', val, cfg)
 

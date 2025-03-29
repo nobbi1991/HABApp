@@ -1,3 +1,5 @@
+from typing_extensions import Self
+
 from HABApp.core.errors import HABAppException
 
 
@@ -24,30 +26,26 @@ class OpenhabCredentialsInvalidError(HABAppOpenhabError):
 # OpenHAB errors
 # ----------------------------------------------------------------------------------------------------------------------
 class ItemNotFoundError(HABAppOpenhabError):
-
     @classmethod
-    def from_name(cls, name: str):
+    def from_name(cls, name: str) -> Self:
         return cls(f'Item "{name}" not found!')
 
 
 class ItemNotEditableError(HABAppOpenhabError):
-
     @classmethod
-    def from_name(cls, name: str):
+    def from_name(cls, name: str) -> Self:
         return cls(f'Item "{name}" is not editable!')
 
 
 class ThingNotFoundError(HABAppOpenhabError):
-
     @classmethod
-    def from_uid(cls, uid: str):
+    def from_uid(cls, uid: str) -> Self:
         return cls(f'Thing "{uid}" not found!')
 
 
 class ThingNotEditableError(HABAppOpenhabError):
-
     @classmethod
-    def from_uid(cls, uid: str):
+    def from_uid(cls, uid: str) -> Self:
         return cls(f'Thing "{uid}" is not editable!')
 
 
@@ -55,9 +53,8 @@ class ThingNotEditableError(HABAppOpenhabError):
 # RestAPI Errors
 # ----------------------------------------------------------------------------------------------------------------------
 class MetadataNotEditableError(HABAppOpenhabError):
-
     @classmethod
-    def create_text(cls, item: str, namespace: str):
+    def create_text(cls, item: str, namespace: str) -> Self:
         return cls(f'Metadata {namespace} for {item} is not editable!')
 
 
@@ -92,11 +89,11 @@ class LinkRequestError(HABAppOpenhabError):
 
 class LinkNotFoundError(HABAppOpenhabError):
     @classmethod
-    def from_names(cls, item: str, channel: str):
+    def from_names(cls, item: str, channel: str) -> Self:
         return cls(f'Link {item:s} <-> {channel:s} not found!')
 
 
 class LinkNotEditableError(HABAppOpenhabError):
     @classmethod
-    def from_names(cls, item: str, channel: str):
+    def from_names(cls, item: str, channel: str) -> Self:
         return cls(f'Link {item:s} <-> {channel:s} is not editable!')

@@ -39,10 +39,10 @@ class EventTypeFilterEnum(str, Enum):
     AUTO = 'AUTO'
     CONFIG = 'CONFIG'
 
-    def is_auto(self):
+    def is_auto(self) -> bool:
         return self == EventTypeFilterEnum.AUTO
 
-    def is_config(self):
+    def is_config(self) -> bool:
         return self == EventTypeFilterEnum.CONFIG
 
 
@@ -74,7 +74,8 @@ class Websocket(BaseModel):
     )
 
     @field_validator('max_msg_size')
-    def validate_see_buffer(cls, value: ByteSize):
+    @classmethod
+    def validate_see_buffer(cls, value: ByteSize) -> ByteSize:
         valid_values = (
             '128kib', '256kib', '512kib',
             '1Mib', '2Mib', '4Mib', '8Mib', '16Mib', '32Mib', '64Mib', '128Mib'
@@ -102,7 +103,8 @@ class Connection(BaseModel):
     )
 
     @field_validator('url')
-    def validate_url(cls, value: str):
+    @classmethod
+    def validate_url(cls, value: str) -> str:
         if value:
             TypeAdapter(AnyHttpUrl).validate_python(value)
         return value

@@ -33,7 +33,7 @@ class EventBusListener(EventBusBaseListener):
 class ContextBoundEventBusListener(EventBusListener, AutoContextBoundObj):
 
     @override
-    def _ctx_unlink(self):
+    def _ctx_unlink(self) -> None:
         event_bus.remove_listener(self)
         return super()._ctx_unlink()
 

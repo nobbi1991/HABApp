@@ -5,7 +5,6 @@ from typing import Final
 
 from HABApp.core.errors import ProxyObjHasNotBeenReplacedError
 
-
 PROXIES: list['StartUpProxyObj'] = []
 
 
@@ -14,10 +13,10 @@ class ProxyObjBase:
     def to_replace_name(self) -> str:
         raise NotImplementedError()
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: object) -> None:
         raise ProxyObjHasNotBeenReplacedError(self)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> None:
         raise ProxyObjHasNotBeenReplacedError(self)
 
     def __repr__(self) -> str:
@@ -32,6 +31,17 @@ class ConstProxyObj(ProxyObjBase):
     def to_replace_name(self) -> str:
         return self.name
 
+class RestoreableObj:
+    def __init__(self, key: str, globals: dict, proxy: 'StartUpProxyObj') -> None:
+        self.key = key
+        self.globals = globals
+        self.proxy = proxy
+
+    def restore(self) -> None:
+        self.globals[self.key] = self.proxy
+        self.globals = None
+        self.key = None
+        self.proxy = None
 
 class StartUpProxyObj(ProxyObjBase):
     def __init__(self, to_replace: Callable, globals: dict) -> None:
@@ -44,7 +54,7 @@ class StartUpProxyObj(ProxyObjBase):
     def to_replace_name(self) -> str:
         return str(getattr(self.to_replace, '__name__', self.to_replace))
 
-    def replace(self, replacements: dict[object, object], final: bool):
+    def replace(self, replacements: dict[object, object], final: bool) -> RestoreableObj | None:
         assert self.globals is not None
         replacement = replacements[self.to_replace]
 
@@ -68,17 +78,7 @@ def create_proxy(to_replace: Callable) -> StartUpProxyObj:
     return StartUpProxyObj(to_replace, frm.f_globals)
 
 
-class RestoreableObj:
-    def __init__(self, key: str, globals: dict, proxy: 'StartUpProxyObj') -> None:
-        self.key = key
-        self.globals = globals
-        self.proxy = proxy
 
-    def restore(self) -> None:
-        self.globals[self.key] = self.proxy
-        self.globals = None
-        self.key = None
-        self.proxy = None
 
 
 def replace_proxies(replacements: dict[object, object], final: bool) -> list[RestoreableObj]:

@@ -5,13 +5,13 @@ from collections.abc import Callable
 from types import TracebackType
 from typing import TYPE_CHECKING, Final, Literal
 
+from typing_extensions import Self
+
 import HABApp
 from HABApp.core.connections._definitions import ConnectionStatus, connection_log
 from HABApp.core.connections.status_transitions import StatusTransitions
 from HABApp.core.lib import PriorityList, SingleTask
-
-from ..wrapper import process_exception
-
+from HABApp.core.wrapper import process_exception
 
 if TYPE_CHECKING:
     from .base_plugin import BaseConnectionPlugin
@@ -30,7 +30,9 @@ class HandleExceptionInConnection:
     def __enter__(self) -> None:
         pass
 
-    def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None):
+    def __exit__(
+        self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
+    ) -> bool | None:
         # no exception -> we exit gracefully
         if exc_type is None and exc_val is None:
             return True
@@ -54,7 +56,8 @@ class BaseConnection:
         # Plugin handling
         self.plugins: list[BaseConnectionPlugin] = []
         self.plugin_callbacks: dict[ConnectionStatus, PriorityList[PluginCallbackHandler]] = {
-            name: PriorityList() for name in ConnectionStatus}
+            name: PriorityList() for name in ConnectionStatus
+        }
 
         # Tasks
         self.plugin_task: Final = SingleTask(self._task_plugin, f'{name.title():s}PluginTask')
@@ -104,7 +107,9 @@ class BaseConnection:
                 func = f'{self.name} connection'
             process_exception(func, e, self.log)
 
-    def register_plugin(self, obj: BaseConnectionPlugin, priority: int | Literal['first', 'last'] | None = None):
+    def register_plugin(
+        self, obj: BaseConnectionPlugin, priority: int | Literal['first', 'last'] | None = None
+    ) -> Self:
         from .plugin_callback import get_plugin_callbacks
 
         # Possibility to specify default priority as a class variable
@@ -147,7 +152,6 @@ class BaseConnection:
 
     async def _task_next_status(self) -> None:
         with HABApp.core.wrapper.ExceptionToHABApp(logger=self.log):
-
             # if we are currently running stop the task
             await self.plugin_task.cancel_wait()
 
@@ -168,7 +172,6 @@ class BaseConnection:
 
         callbacks = self.plugin_callbacks[status_enum]
         for cb in callbacks:
-
             error = True
 
             try:
@@ -233,9 +236,12 @@ class BaseConnection:
             coros = []
             for obj in objs:
                 name = obj.coro.__name__
-                for replace in (f'on_{status.value.lower():s}', f'_on_{status.value.lower():s}', ):
+                for replace in (
+                    f'on_{status.value.lower():s}',
+                    f'_on_{status.value.lower():s}',
+                ):
                     if name.startswith(replace):
-                        name = name[len(replace):]
+                        name = name[len(replace) :]
                         break
                 coros.append(f'{obj.plugin.plugin_name}{"." if name else ""}{name}')
 

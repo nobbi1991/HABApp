@@ -76,7 +76,7 @@ class LinkFormatter(BuilderBase):
         return ValueFormatter(value)
 
 
-def metadata_key_value(key: str, value: Any):
+def metadata_key_value(key: str, value: Any) -> str:
     return f'{key}={value}' if not isinstance(value, str) else f'{key}="{value}"'
 
 

@@ -24,7 +24,7 @@ class MapTransformationRegistry(TransformationRegistryBase):
         else:
             return MapTransformation(data, name=name)
 
-    def set(self, name: str, configuration: dict[str, str]):
+    def set(self, name: str, configuration: dict[str, str]) -> None:
         data = load_map_file(configuration['function'])
         if not data:
             log.warning(f'Map transformation "{name:s}" is empty -> skipped!')

@@ -48,7 +48,7 @@ class AutoReconnectPlugin(BaseConnectionPlugin):
     async def on_online(self) -> None:
         self.waiter.reset_wait()
 
-    async def on_offline(self, connection: BaseConnection):
+    async def on_offline(self, connection: BaseConnection) -> None:
         if connection.is_shutdown:
             return None
 

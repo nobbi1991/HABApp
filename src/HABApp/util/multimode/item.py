@@ -54,7 +54,7 @@ class MultiModeItem(Item):
         msg = f'Mode {name} is missing!'
         raise RuntimeError(msg)
 
-    def __sort_modes(self):
+    def __sort_modes(self) -> None:
         # sort by priority and make lower prio known to the mode
         modes = sorted(self.__values_by_prio.items())
         self.__values_by_prio.clear()

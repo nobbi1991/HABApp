@@ -40,14 +40,14 @@ class Thing(BaseItem):
         # https://github.com/openhab/openhab-core/issues/3055
         return self.status_detail != 'DISABLED'
 
-    def __update_timestamps(self, changed: bool):
+    def __update_timestamps(self, changed: bool) -> None:
         _now = Instant.now()
         self._last_update.set(_now)
         if changed:
             self._last_change.set(_now)
         return None
 
-    def process_event(self, event):
+    def process_event(self, event: ThingStatusInfoEvent | ThingUpdatedEvent | ThingConfigStatusInfoEvent) -> None:
 
         if isinstance(event, ThingStatusInfoEvent):
             old_status = self.status
@@ -81,7 +81,7 @@ class Thing(BaseItem):
 
         return None
 
-    def set_enabled(self, enable: bool = True):
+    def set_enabled(self, enable: bool = True) -> int | None:
         """Enable/disable the thing
 
         :param enable: True to enable, False to disable the thing

@@ -140,7 +140,7 @@ class Fade:
         self._fade_worker = FadeWorker(self, self._step_duration)
         return self
 
-    def stop_fade(self):
+    def stop_fade(self) -> None:
         """Stop the scheduled fade. This can be called multiple times without error"""
         if self._fade_worker is None:
             return None

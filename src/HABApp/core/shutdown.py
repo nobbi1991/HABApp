@@ -123,7 +123,7 @@ def is_requested() -> bool:
 
 
 def register_signal_handler() -> None:
-    def shutdown_handler(sig, frame) -> None:
+    def shutdown_handler(_sig: int, _frame: int) -> None:
         print('Shutting down ...')
         request()
 

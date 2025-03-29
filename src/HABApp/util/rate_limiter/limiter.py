@@ -17,7 +17,7 @@ _LITERAL_FIXED_WINDOW_ELASTIC_EXPIRY = Literal['fixed_window_elastic_expiry']
 LIMITER_ALGORITHM_HINT: TypeAlias = Literal[_LITERAL_LEAKY_BUCKET, _LITERAL_FIXED_WINDOW_ELASTIC_EXPIRY]
 
 
-def _check_arg(name: str, value, allow_0=False):
+def _check_arg(name: str, value: int, allow_0: bool = False) -> None:
     if not isinstance(value, int) or ((value <= 0) if not allow_0 else (value < 0)):
         msg = f'Parameter {name:s} must be an int >{"=" if allow_0 else ""} 0, is {value} ({type(value)})'
         raise ValueError(msg)
@@ -38,9 +38,9 @@ class Limiter:
     def __repr__(self) -> str:
         return f'<{self.__class__.__name__} {self._name:s}>'
 
-    def add_limit(self, allowed: int, interval: int, *,
-                  initial_hits: int = 0,
-                  algorithm: LIMITER_ALGORITHM_HINT = 'leaky_bucket') -> 'Limiter':
+    def add_limit(
+        self, allowed: int, interval: int, *, initial_hits: int = 0, algorithm: LIMITER_ALGORITHM_HINT = 'leaky_bucket'
+    ) -> 'Limiter':
         """Add a new rate limit
 
         :param allowed: How many hits are allowed
@@ -72,9 +72,9 @@ class Limiter:
         self._limits = tuple(sorted([*self._limits, limit], key=lambda x: x.interval))
         return self
 
-    def parse_limits(self, *text: str,
-                     initial_hits: int = 0,
-                     algorithm: LIMITER_ALGORITHM_HINT = 'leaky_bucket') -> 'Limiter':
+    def parse_limits(
+        self, *text: str, initial_hits: int = 0, algorithm: LIMITER_ALGORITHM_HINT = 'leaky_bucket'
+    ) -> 'Limiter':
         """Add one or more limits in textual form, e.g. ``5 in 60s``, ``10 per hour`` or ``10/15 mins``.
         If the limit does already exist it will not be added again.
 
@@ -136,12 +136,10 @@ class Limiter:
         return True
 
     def info(self) -> 'LimiterInfo':
-        """Get some info about the limiter and the defined windows
-        """
+        """Get some info about the limiter and the defined windows"""
 
         return LimiterInfo(
-            skips=self._skips, total_skips=self._skips_total,
-            limits=[limit.info() for limit in self._limits]
+            skips=self._skips, total_skips=self._skips_total, limits=[limit.info() for limit in self._limits]
         )
 
     def reset(self) -> 'Limiter':
@@ -152,6 +150,6 @@ class Limiter:
 
 @dataclass
 class LimiterInfo:
-    skips: int          #: How many entries were skipped in the active interval(s)
+    skips: int  #: How many entries were skipped in the active interval(s)
     total_skips: int    #: How many entries were skipped in total
     limits: list[FixedWindowElasticExpiryLimitInfo | LeakyBucketLimitInfo]    #: Info for every limit

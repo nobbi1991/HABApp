@@ -1,6 +1,6 @@
-from typing import Any as _Any
+from typing import Any
 
-from typing_extensions import Self as _Self
+from typing_extensions import Self
 
 from HABApp.core.const.hints import HasNameAttr as _HasNameAttr
 
@@ -10,7 +10,7 @@ class HABAppException(Exception):
 
 
 class ProxyObjHasNotBeenReplacedError(HABAppException):
-    def __init__(self, obj) -> None:
+    def __init__(self, obj: object) -> None:
         super().__init__(f'{obj} has not been replaced on startup!')
 
 
@@ -51,13 +51,13 @@ class HABAppValueError(ValueError, HABAppException):
 
 class ItemValueIsNoneError(HABAppValueError):
     @classmethod
-    def from_item(cls, item: _HasNameAttr) -> _Self:
+    def from_item(cls, item: _HasNameAttr) -> Self:
         return cls(f'Item value is None (item "{item.name:s}")')
 
 
 class InvalidItemValueError(HABAppValueError):
     @classmethod
-    def from_item(cls, item: _HasNameAttr, value) -> _Self:
+    def from_item(cls, item: _HasNameAttr, value: Any) -> Self:
         return cls(f'Invalid value for {item.__class__.__name__} {item.name:s}: {value}')
 
 
@@ -70,11 +70,11 @@ class HABAppTypeError(TypeError, HABAppException):
 
 class ItemNameNotOfTypeStrError(HABAppTypeError):
     @classmethod
-    def from_value(cls, value: _Any) -> _Self:
+    def from_value(cls, value: Any) -> Self:
         return cls(f'Item name must be of type str, not {type(value)}')
 
 
 class WrongItemTypeError(HABAppTypeError):
     @classmethod
-    def from_item(cls, item: _HasNameAttr, expected: type[object]) -> _Self:
+    def from_item(cls, item: _HasNameAttr, expected: type[object]) -> Self:
         return cls(f'Item must be {expected.__name__}, not {item.__class__.__name__}')

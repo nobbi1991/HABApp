@@ -15,11 +15,7 @@ from .formatter_builder import (
 )
 
 
-if not PYTHON_311:
-    from typing_extensions import Self
-else:
-    from typing import Self
-
+from typing_extensions import Self
 
 FIELD_ORDER = (
     'type', 'name', 'label', 'icon', 'groups', 'tags', 'bracket_open', 'link', 'metadata', 'bracket_close'

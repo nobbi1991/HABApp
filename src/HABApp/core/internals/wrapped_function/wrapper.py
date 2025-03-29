@@ -17,7 +17,7 @@ from HABApp.core.internals.wrapped_function.wrapped_thread import (
 
 
 def wrap_func(func: Callable[P, R] | Callable[P, Coroutine[Any, Any, R]],
-              warn_too_long=True,
+              warn_too_long: bool=True,
               name: str | None = None,
               logger: logging.Logger | None = None,
               context: Context | None = None) -> WrappedFunctionBase[P, R]:

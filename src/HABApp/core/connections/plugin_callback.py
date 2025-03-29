@@ -49,7 +49,7 @@ class PluginCallbackHandler:
     coro: Callable[[...], Awaitable]
     kwargs: tuple[str, ...]
 
-    async def run(self, connection: BaseConnection, context: Any):
+    async def run(self, connection: BaseConnection, context: Any) -> Awaitable:
         kwargs = {}
         if self.kwargs:
             if 'connection' in self.kwargs:

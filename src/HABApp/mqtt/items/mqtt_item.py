@@ -20,7 +20,7 @@ class MqttItem(MqttBaseItem):
     """A simple item that represents a topic and a value"""
 
     @classmethod
-    def get_create_item(cls, name: str, initial_value=None) -> 'MqttItem':
+    def get_create_item(cls, name: str, initial_value: Any | None=None) -> 'MqttItem':
         """Creates a new item in HABApp and returns it or returns the already existing one with the given name
 
         :param name: item name
@@ -38,7 +38,7 @@ class MqttItem(MqttBaseItem):
         assert isinstance(item, cls), f'{cls} != {type(item)}'
         return item
 
-    def publish(self, payload, qos: int | None = None, retain: bool | None = None):
+    def publish(self, payload: Any, qos: int | None = None, retain: bool | None = None) -> None:
         """
         Publish the payload under the topic from the item.
 

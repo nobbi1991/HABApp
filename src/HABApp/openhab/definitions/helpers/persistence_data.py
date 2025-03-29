@@ -23,7 +23,7 @@ class OpenhabPersistenceData:
             c.data[time] = try_real(entry.state)
         return c
 
-    def get_data(self, start_date: OPTIONAL_DT = None, end_date: OPTIONAL_DT = None):
+    def get_data(self, start_date: OPTIONAL_DT = None, end_date: OPTIONAL_DT = None) -> dict[float, int | float | str]:
         if start_date is None and end_date is None:
             return self.data
 

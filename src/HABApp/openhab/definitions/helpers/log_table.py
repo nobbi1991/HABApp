@@ -35,7 +35,7 @@ class Column:
             ret.append(f.format(val))
         return ret
 
-    def add(self, val) -> None:
+    def add(self, val: Any) -> None:
         _res = []
         if isinstance(val, (list, set, tuple)):
             _len = 0

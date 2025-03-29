@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import re
 import typing
@@ -16,6 +18,9 @@ from HABApp.core.logger import log_warning
 from HABApp.core.wrapper import log_exception
 from HABApp.rule_manager.rule_file import RuleFile
 
+if typing.TYPE_CHECKING:
+    import HABApp.runtime.Runtime
+
 
 log = logging.getLogger('HABApp.Rules')
 
@@ -24,20 +29,19 @@ file_manager = uses_file_manager()
 
 
 class RuleManager:
-
-    def __init__(self, parent) -> None:
+    def __init__(self, parent: HABApp.runtime.Runtime) -> None:
         assert isinstance(parent, HABApp.runtime.Runtime)
         self.runtime = parent
 
         self.files: typing.Dict[str, RuleFile] = {}
 
-    async def setup(self):
-
+    async def setup(self) -> None:
         # shutdown
         shutdown.register(self.shutdown, msg='Cancel rule schedulers')
 
         if cmd_args.DO_BENCH:
             from HABApp.rule_manager.benchmark import BenchFile
+
             self.files['bench'] = file = BenchFile(self)
             ok = await wrap_func(file.load).async_run()
             if not ok:
@@ -51,8 +55,11 @@ class RuleManager:
         prefix = 'rules/'
 
         file_manager.add_handler(
-            self.__class__.__name__, log, prefix=prefix,
-            on_load=self.request_file_load, on_unload=self.request_file_unload
+            self.__class__.__name__,
+            log,
+            prefix=prefix,
+            on_load=self.request_file_load,
+            on_unload=self.request_file_unload,
         )
         file_manager.add_folder(
             prefix, path, priority=0, pattern=re.compile(r'.py$', re.IGNORECASE), name='rules-python'
@@ -61,8 +68,7 @@ class RuleManager:
         # Initial loading of rules
         HABApp.core.internals.wrap_func(self.load_rules_on_startup, logger=log).run()
 
-    async def load_rules_on_startup(self):
-
+    async def load_rules_on_startup(self) -> None:
         if HABApp.CONFIG.openhab.general.wait_for_openhab:
             c = Connections.get('openhab')
             while not (c.is_shutdown or c.is_disabled or c.is_online):
@@ -79,7 +85,7 @@ class RuleManager:
         return None
 
     @log_exception
-    def get_rule(self, rule_name):
+    def get_rule(self, rule_name: None | str) -> HABApp.Rule | list[HABApp.Rule]:
         found = []
         for file in self.files.values():
             if rule_name is None:

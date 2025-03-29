@@ -22,7 +22,7 @@ class BrokenLinksPlugin(BaseConnectionPlugin[OpenhabConnection]):
         super().__init__(name)
         self.do_run = True
 
-    async def on_online(self):
+    async def on_online(self) -> None:
         if not self.do_run:
             return None
         self.do_run = False

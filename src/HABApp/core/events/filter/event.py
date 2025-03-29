@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import typing
 from inspect import isclass
 from typing import Final
 from typing import get_type_hints as typing_get_type_hints
@@ -5,6 +8,15 @@ from typing import get_type_hints as typing_get_type_hints
 from HABApp.core.const import MISSING
 from HABApp.core.const.hints import TYPE_ANY_CLASS_TYPE
 from HABApp.core.internals import EventFilterBase
+
+if typing.TYPE_CHECKING:
+    from HABApp.core.events import (
+        ValueUpdateEvent,
+        ValueChangeEvent,
+        ValueCommandEvent,
+        ItemNoChangeEvent,
+        ItemNoUpdateEvent,
+    )
 
 
 class EventFilter(EventFilterBase):
@@ -42,7 +54,15 @@ class EventFilter(EventFilterBase):
                 msg = 'Not implemented for more than 2 values!'
                 raise ValueError(msg)
 
-    def trigger(self, event) -> bool:
+    def trigger(
+        self,
+        event: ValueUpdateEvent
+        | ValueUpdateEvent
+        | ValueChangeEvent
+        | ValueCommandEvent
+        | ItemNoChangeEvent
+        | ItemNoUpdateEvent,
+    ) -> bool:
         if not isinstance(event, self.event_class):
             return False
 
@@ -58,7 +78,6 @@ class EventFilter(EventFilterBase):
         return True
 
     def describe(self) -> str:
-
         values = ''
         if self.attr_name1 is not None:
             values += f', {self.attr_name1}={self.attr_value1}'
@@ -72,7 +91,6 @@ class TypeBoundEventFilter(EventFilter):
     """Class to inherit from if the filter criteria always is a hardcoded instance check"""
 
     def describe(self) -> str:
-
         values = ''
         if self.attr_name1 is not None:
             values += f'{self.attr_name1}={self.attr_value1}'

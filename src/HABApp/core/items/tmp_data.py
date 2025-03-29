@@ -18,10 +18,10 @@ TMP_DATA: typing.Dict[str, 'TmpItemData'] = {}
 class TmpItemData:
     def __init__(self) -> None:
         self.ts = datetime.now()
-        self.update: typing.Set[BaseWatch] = set()
-        self.change: typing.Set[BaseWatch] = set()
+        self.update: set[BaseWatch] = set()
+        self.change: set[BaseWatch] = set()
 
-    def add_tasks(self, update, change) -> None:
+    def add_tasks(self, update: list[BaseWatch], change: list[BaseWatch]) -> None:
         self.ts = datetime.now()
         self.update.update(update)
         self.change.update(change)
@@ -36,7 +36,7 @@ class TmpItemData:
                 obj.remove(p)
 
 
-def add_tmp_data(item: 'BaseItem'):
+def add_tmp_data(item: 'BaseItem') -> None:
     if not item._last_update.tasks and not item._last_change.tasks:
         return None
 
@@ -46,7 +46,7 @@ def add_tmp_data(item: 'BaseItem'):
     CLEANUP.reset(thread_safe=True)
 
 
-def restore_tmp_data(item: 'BaseItem'):
+def restore_tmp_data(item: 'BaseItem') -> None:
     data = TMP_DATA.pop(item.name, None)
     if data is None:
         return None

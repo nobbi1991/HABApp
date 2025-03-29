@@ -1,6 +1,6 @@
 import datetime
 from collections.abc import Mapping
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, NoReturn
 
 from immutables import Map
 from typing_extensions import Self, override
@@ -9,6 +9,7 @@ from HABApp.core.const import MISSING
 from HABApp.core.items import BaseValueItem
 from HABApp.core.lib.funcs import compare as _compare
 from HABApp.openhab.connection.plugins import send_websocket_event
+from HABApp.openhab.definitions.helpers import OpenhabPersistenceData
 from HABApp.openhab.interface_sync import get_persistence_data
 from HABApp.openhab.items._event_builder import OutgoingCommandEvent, OutgoingStateEvent
 
@@ -32,9 +33,15 @@ class OpenhabItem(BaseValueItem):
     _update_to_oh: OutgoingStateEvent
     _command_to_oh: OutgoingCommandEvent
 
-    def __init__(self, name: str, initial_value: Any = None,
-                 label: str | None = None, tags: frozenset[str] = frozenset(), groups: frozenset[str] = frozenset(),
-                 metadata: Mapping[str, MetaData] = Map()) -> None:
+    def __init__(
+        self,
+        name: str,
+        initial_value: Any = None,
+        label: str | None = None,
+        tags: frozenset[str] = frozenset(),
+        groups: frozenset[str] = frozenset(),
+        metadata: Mapping[str, MetaData] = Map(),
+    ) -> None:
         super().__init__(name, initial_value)
         self.label: str | None = label
         self.tags: frozenset[str] = tags
@@ -48,15 +55,22 @@ class OpenhabItem(BaseValueItem):
         self.metadata = item.metadata
 
     @classmethod
-    def from_oh(cls, name: str, value: Any = None,
-                label: str | None = None, tags: frozenset[str] = frozenset(), groups: frozenset[str] = frozenset(),
-                metadata: Mapping[str, MetaData] = Map(), **kwargs: Any) -> Self:
+    def from_oh(
+        cls,
+        name: str,
+        value: Any = None,
+        label: str | None = None,
+        tags: frozenset[str] = frozenset(),
+        groups: frozenset[str] = frozenset(),
+        metadata: Mapping[str, MetaData] = Map(),
+        **kwargs: Any,
+    ) -> Self:
         if value is not None:
             value = cls._state_from_oh_str(value)
         return cls(name, value, label=label, tags=tags, groups=groups, metadata=metadata, **kwargs)
 
     @staticmethod
-    def _state_from_oh_str(state: str):
+    def _state_from_oh_str(state: str) -> NoReturn:
         """Gets called to convert the state if it is not None"""
         raise NotImplementedError()
 
@@ -86,10 +100,25 @@ class OpenhabItem(BaseValueItem):
         new_value = self.value if value is MISSING else value
         send_websocket_event(self._update_to_oh.create_event(self._name, new_value))
 
-    def oh_post_update_if(self, new_value, *, equal=MISSING, eq=MISSING, not_equal=MISSING, ne=MISSING,
-                          lower_than=MISSING, lt=MISSING, lower_equal=MISSING, le=MISSING,
-                          greater_than=MISSING, gt=MISSING, greater_equal=MISSING, ge=MISSING,
-                          is_=MISSING, is_not=MISSING) -> bool:
+    def oh_post_update_if(
+        self,
+        new_value: Any,
+        *,
+        equal: Any = MISSING,
+        eq: Any = MISSING,
+        not_equal: Any = MISSING,
+        ne: Any = MISSING,
+        lower_than: Any = MISSING,
+        lt: Any = MISSING,
+        lower_equal: Any = MISSING,
+        le: Any = MISSING,
+        greater_than: Any = MISSING,
+        gt: Any = MISSING,
+        greater_equal: Any = MISSING,
+        ge: Any = MISSING,
+        is_: Any = MISSING,
+        is_not: Any = MISSING,
+    ) -> bool:
         """
         Post a value depending on the current state of the item. If one of the comparisons is true the new state
         will be posted.
@@ -113,16 +142,33 @@ class OpenhabItem(BaseValueItem):
         :return: `True` if the new value was posted else `False`
         """
 
-        if _compare(self.value, equal=equal, eq=eq, not_equal=not_equal, ne=ne,
-                    lower_than=lower_than, lt=lt, lower_equal=lower_equal, le=le,
-                    greater_than=greater_than, gt=gt, greater_equal=greater_equal, ge=ge, is_=is_, is_not=is_not):
+        if _compare(
+            self.value,
+            equal=equal,
+            eq=eq,
+            not_equal=not_equal,
+            ne=ne,
+            lower_than=lower_than,
+            lt=lt,
+            lower_equal=lower_equal,
+            le=le,
+            greater_than=greater_than,
+            gt=gt,
+            greater_equal=greater_equal,
+            ge=ge,
+            is_=is_,
+            is_not=is_not,
+        ):
             self.oh_post_update(new_value)
             return True
         return False
 
-    def get_persistence_data(self, persistence: str | None = None,
-                             start_time: datetime.datetime | None = None,
-                             end_time: datetime.datetime | None = None):
+    def get_persistence_data(
+        self,
+        persistence: str | None = None,
+        start_time: datetime.datetime | None = None,
+        end_time: datetime.datetime | None = None,
+    ) -> OpenhabPersistenceData:
         """Query historical data from the OpenHAB persistence service
 
         :param persistence: name of the persistence service (e.g. ``rrd4j``, ``mapdb``). If not set default will be used
@@ -130,9 +176,7 @@ class OpenhabItem(BaseValueItem):
         :param end_time: return only items which are older than this
         """
 
-        return get_persistence_data(
-            self._name, persistence, start_time, end_time
-        )
+        return get_persistence_data(self._name, persistence, start_time, end_time)
 
 
 HINT_TYPE_OPENHAB_ITEM = type[OpenhabItem]

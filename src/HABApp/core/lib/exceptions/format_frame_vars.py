@@ -97,7 +97,7 @@ def skip_variable(var: Variable) -> bool:
     return any(func(name, value) for func in SKIP_VARIABLE)
 
 
-def format_frame_variables(tb: list[str], stack_variables: list[Variable]):
+def format_frame_variables(tb: list[str], stack_variables: list[Variable]) -> None:
     if not stack_variables:
         return None
 

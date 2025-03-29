@@ -14,7 +14,8 @@ class Statistics:
     :ivar last_value: last added value
     :ivar last_change: timestamp the last time a value was added
     """
-    def __init__(self, max_age=None, max_samples=None) -> None:
+
+    def __init__(self, max_age: float | None = None, max_samples: int | None = None) -> None:
         """
         :param max_age:     Maximum age of values in seconds
         :param max_samples: Maximum amount of samples which will be kept
@@ -38,7 +39,7 @@ class Statistics:
         self.last_value: float = None
         self.last_change: float = None
 
-    def _remove_old(self):
+    def _remove_old(self) -> None:
         if self._max_age is None:
             return None
 
@@ -74,7 +75,7 @@ class Statistics:
         else:
             self.last_change = None
 
-    def add_value(self, value) -> None:
+    def add_value(self, value: float) -> None:
         """Add a new value and recalculate statistical values
 
         :param value: new value
@@ -89,5 +90,7 @@ class Statistics:
         self.update()
 
     def __repr__(self) -> str:
-        return f'<Statistics sum: {self.sum:.1f}, min: {self.min:.2f}, max: {self.max:.2f}, ' \
-               f'mean: {self.mean:.2f}, median: {self.median:.2f}>'
+        return (
+            f'<Statistics sum: {self.sum:.1f}, min: {self.min:.2f}, max: {self.max:.2f}, '
+            f'mean: {self.mean:.2f}, median: {self.median:.2f}>'
+        )

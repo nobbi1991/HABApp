@@ -16,7 +16,7 @@ HINT_EXEC_ARGS: TypeAlias = str | Path
 HINT_PYTHON_PATH: TypeAlias = Iterable[str | Path] | None
 
 
-def _ensure_str_objs(objs: Iterable[HINT_EXEC_ARGS], key: str, enforce_abs=False) -> list[str]:
+def _ensure_str_objs(objs: Iterable[HINT_EXEC_ARGS], key: str, enforce_abs: bool = False) -> list[str]:
     new_args: list[str] = []
 
     # args must be str, but we support str and Path
@@ -40,10 +40,9 @@ def _ensure_str_objs(objs: Iterable[HINT_EXEC_ARGS], key: str, enforce_abs=False
     return new_args
 
 
-def build_exec_params(*args: HINT_EXEC_ARGS,
-                      _capture_output: bool = True,
-                      _additional_python_path: HINT_PYTHON_PATH = None,
-                      **kwargs: Any) -> tuple[Iterable[str], dict[str, Any]]:
+def build_exec_params(
+    *args: HINT_EXEC_ARGS, _capture_output: bool = True, _additional_python_path: HINT_PYTHON_PATH = None, **kwargs: Any
+) -> tuple[Iterable[str], dict[str, Any]]:
     # convenience for easy capturing
     if _capture_output:
         if 'stdout' in kwargs:
@@ -96,22 +95,21 @@ class FinishedProcessInfo:
     def __repr__(self) -> str:
         return f'<ProcessInfo: returncode: {self.returncode}, stdout: {self.stdout}, stderr: {self.stderr}>'
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, FinishedProcessInfo):
             return self.returncode == other.returncode and self.stdout == other.stdout and self.stderr == other.stderr
 
-        return NotImplementedError
+        raise NotImplementedError(f'Can not compare {type(self).__name__} with {type(other).__name__}')
 
 
 HINT_PROCESS_CB_FULL: TypeAlias = Callable[[FinishedProcessInfo], Any]
 HINT_PROCESS_CB_SIMPLE: TypeAlias = Callable[[str], Any]
 
 
-async def async_subprocess_exec(callback, *args, calling_func, raw_info: bool, **kwargs):
+async def async_subprocess_exec(callback, *args, calling_func, raw_info: bool, **kwargs) -> None:
     call_str = ''
 
     try:
-
         proc = None
         stdout = None
         stderr = None

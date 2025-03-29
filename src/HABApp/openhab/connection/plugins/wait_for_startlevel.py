@@ -110,7 +110,7 @@ class WaitForStartlevelPlugin(BaseConnectionPlugin[OpenhabConnection]):
             return None
         log.info('openHAB startup complete')
 
-    async def __on_connected_old(self, context: OpenhabContext, connection: OpenhabConnection):
+    async def __on_connected_old(self, context: OpenhabContext, connection: OpenhabConnection) -> None:
 
         level_reached, level = await _start_level_reached()
 

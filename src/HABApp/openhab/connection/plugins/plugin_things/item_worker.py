@@ -31,7 +31,7 @@ def _filter_items(i: ItemResp) -> bool:
     return True
 
 
-async def cleanup_items(keep_items: set[str]):
+async def cleanup_items(keep_items: set[str]) -> None:
     all_items = await async_get_items()
 
     to_delete: dict[str, HABAppThingPluginData] = {}

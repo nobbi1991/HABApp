@@ -1,11 +1,10 @@
+from datetime import datetime
 from datetime import timedelta
 from time import monotonic, sleep
 
-from HABAppTests import OpenhabTmpItem, TestBaseRule
-
 from HABApp.core.events import ValueUpdateEventFilter
-from HABApp.core.items.base_valueitem import datetime
 from HABApp.openhab.items import DatetimeItem
+from HABAppTests import OpenhabTmpItem, TestBaseRule
 
 
 class TestSchedulerOhInteraction(TestBaseRule):
@@ -19,7 +18,6 @@ class TestSchedulerOhInteraction(TestBaseRule):
 
     @OpenhabTmpItem.create('DateTime', arg_name='tmp_item')
     def test_scheduler_once(self, tmp_item: OpenhabTmpItem) -> None:
-
         item_states = []
         item = DatetimeItem.get_item(tmp_item.name)
         listener = item.listen_event(lambda x: item_states.append(x), ValueUpdateEventFilter())
@@ -27,7 +25,7 @@ class TestSchedulerOhInteraction(TestBaseRule):
         next_hour = datetime.now().replace(second=0, microsecond=0) + timedelta(hours=1)
 
         try:
-            job = self.run.once(next_hour, lambda: 1/0)
+            job = self.run.once(next_hour, lambda: 1 / 0)
             job.to_item(item)
             job.cancel()
             sleep(0.2)
@@ -38,7 +36,6 @@ class TestSchedulerOhInteraction(TestBaseRule):
 
     @OpenhabTmpItem.create('DateTime', arg_name='tmp_item')
     def test_scheduler_every(self, tmp_item: OpenhabTmpItem) -> None:
-
         item_states = []
         item = DatetimeItem.get_item(tmp_item.name)
         listener = item.listen_event(lambda x: item_states.append(x), ValueUpdateEventFilter())
@@ -46,7 +43,7 @@ class TestSchedulerOhInteraction(TestBaseRule):
         next_hour = datetime.now().replace(second=0, microsecond=0) + timedelta(hours=1)
 
         try:
-            job = self.run.at(self.run.trigger.interval(next_hour, 7200), lambda: 1/0)
+            job = self.run.at(self.run.trigger.interval(next_hour, 7200), lambda: 1 / 0)
             job.to_item(item)
             job.pause()
             job.resume()
@@ -59,7 +56,6 @@ class TestSchedulerOhInteraction(TestBaseRule):
 
     @OpenhabTmpItem.create('DateTime', arg_name='tmp_item')
     def test_scheduler_countdown(self, tmp_item: OpenhabTmpItem, cb_async: bool) -> None:
-
         calls = []
         item_states = []
 

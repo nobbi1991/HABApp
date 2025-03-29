@@ -1,11 +1,11 @@
 import typing
+from typing import Any
 
 from pydantic import BaseModel
 
 from HABApp.core.const.topics import TOPIC_FILES
 from HABApp.core.events.habapp_events import RequestFileLoadEvent
 from HABApp.core.internals import uses_post_event
-
 
 post_event = uses_post_event()
 
@@ -17,7 +17,7 @@ def remove_parameter_file(file) -> None:
     _PARAMETERS.pop(file)
 
 
-def set_parameter_file(file: str, value) -> None:
+def set_parameter_file(file: str, value: dict | list | BaseModel) -> None:
     # validate the parameters, this will raise an exception
     if model := _VALIDATORS.get(file):
         # validate and dump so we get the defaults
@@ -26,7 +26,7 @@ def set_parameter_file(file: str, value) -> None:
     _PARAMETERS[file] = value
 
 
-def get_parameter_file(file: str):
+def get_parameter_file(file: str) -> dict | list | BaseModel:
     return _PARAMETERS[file]
 
 
@@ -60,7 +60,7 @@ def set_file_validator(filename: str, model: BaseModel | None) -> None:
     post_event(TOPIC_FILES, RequestFileLoadEvent(filename))
 
 
-def add_parameter(file: str, *keys, default_value):
+def add_parameter(file: str, *keys, default_value: Any) -> None:
     save = False
 
     if file not in _PARAMETERS:

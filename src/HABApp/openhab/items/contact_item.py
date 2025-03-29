@@ -29,7 +29,7 @@ class ContactItem(OpenhabItem):
     _command_to_oh: Final = OutgoingCommandEvent('ContactItem', 'Refresh')
     _state_from_oh_str = staticmethod(OpenClosedTypeModel.get_value_from_state)
 
-    def set_value(self, new_value) -> bool:
+    def set_value(self, new_value: str | None) -> bool:
 
         if new_value not in ('OPEN', 'CLOSED', None):
             raise InvalidItemValueError.from_item(self, new_value)
@@ -55,7 +55,7 @@ class ContactItem(OpenhabItem):
     def __str__(self) -> str:
         return str(self.value)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, ContactItem):
             return self.value == other.value
 

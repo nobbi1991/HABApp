@@ -41,7 +41,7 @@ def is_lib_file(name: str) -> bool:
     return bool(name.startswith(PYTHON_INSTALLATION_PATHS))
 
 
-def format_frame_info(tb: list[str], frame_info: FrameInfo, is_last=False) -> bool:
+def format_frame_info(tb: list[str], frame_info: FrameInfo, is_last:bool=False) -> bool:
     filename = frame_info.filename
 
     # always skip system and python libraries

@@ -41,7 +41,7 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
         self.cache_ts: float = 0.0
         self.cache_cfg: list[dict[str, Any]] = []
 
-    async def on_setup(self):
+    async def on_setup(self) -> None:
         path = HABApp.CONFIG.directories.config
         if path is None:
             return None
@@ -61,10 +61,10 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
         folder.add_file_type(HABAppThingConfigFile)
         self.watcher = folder.add_watch('.yml')
 
-    async def file_unload(self, prefix: str, path: Path):
+    async def file_unload(self, prefix: str, path: Path) -> None:
         return None
 
-    async def on_connected(self):
+    async def on_connected(self) -> None:
         if self.watcher is None:
             return None
 
@@ -84,7 +84,7 @@ class TextualThingConfigPlugin(BaseConnectionPlugin[OpenhabConnection]):
             self.cache_ts = time.time()
         return self.cache_cfg
 
-    async def file_load(self, name: str, path: Path):
+    async def file_load(self, name: str, path: Path) -> None:
         # we have to check the naming structure because we get file events for the whole folder
         _name = path.name.lower()
         if not _name.startswith('thing_') or not _name.endswith('.yml'):

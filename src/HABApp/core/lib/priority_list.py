@@ -10,7 +10,18 @@ T_PRIO: TypeAlias = Literal['first', 'last'] | int
 T_ENTRY: TypeAlias = tuple[T_PRIO, T]
 
 
-def sort_func(obj: T_ENTRY):
+def _sort_func(obj: T_ENTRY) -> tuple[int, T_PRIO]:
+    """Sorting function for the priority list.
+
+    Returns a tuple of (prio, obj) where prio is an int that defines the order
+    of the items in the list. The first element in the tuple is used for sorting
+    and the second element is the original object.
+
+    If the priority is not set, it is set to 1.
+
+    :param obj: A tuple of (priority, object)
+    :return: A tuple of (prio, obj)
+    """
     prio = {'first': 0, 'last': 2}
     key = obj[0]
     assert isinstance(key, int) or key in prio
@@ -26,9 +37,9 @@ class PriorityList(Generic[T]):
         for o in self._objs:
             assert o[0] != priority, priority
         self._objs.append((priority, obj))
-        self._objs.sort(key=sort_func)
+        self._objs.sort(key=_sort_func)
 
-    def remove(self, obj: T):
+    def remove(self, obj: T) -> None:
         for i, (_, existing) in self._objs:
             if existing is obj:
                 self._objs.pop(i)

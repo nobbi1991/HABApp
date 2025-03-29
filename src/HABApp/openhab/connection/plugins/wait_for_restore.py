@@ -27,7 +27,7 @@ def count_none_items() -> int:
 
 class WaitForPersistenceRestore(BaseConnectionPlugin[OpenhabConnection]):
 
-    async def on_connected(self, context: OpenhabContext):
+    async def on_connected(self, context: OpenhabContext) -> None:
         if not context.waited_for_openhab:
             log.debug('Openhab has already been running -> complete')
             return None

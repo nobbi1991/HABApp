@@ -40,7 +40,7 @@ async def unload_file(name: str, path: Path) -> None:
     log.debug(f'Removed {user_name}!')
 
 
-def save_file(file: str):
+def save_file(file: str) -> None:
     assert isinstance(file, str), type(file)
     path = HABApp.CONFIG.directories.params
     if path is None:

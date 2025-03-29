@@ -35,7 +35,7 @@ class OpenhabBenchRule(BenchBaseRule):
 
         self.load_listener = []
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         self.stop_load()
 
         all_items = set(HABApp.core.Items.get_item_names())
@@ -174,7 +174,7 @@ class OpenhabBenchRule(BenchBaseRule):
         self.load_listener.clear()
         time.sleep(3)
 
-    def run_rtt(self, test_name: str, do_async=False) -> None:
+    def run_rtt(self, test_name: str, do_async:bool=False) -> None:
         for _ in range(5_000):
             self.item_values.append(random.randint(0, 99_999_999))
 
@@ -198,7 +198,7 @@ class OpenhabBenchRule(BenchBaseRule):
 
         print('.', end='')
 
-    def proceed_item_val(self, event: ValueUpdateEvent):
+    def proceed_item_val(self, event: ValueUpdateEvent) -> None:
         if event.value != self.item_values[0]:
             return None
 

@@ -72,6 +72,7 @@ class UserItemCfg(BaseModel):
     metadata: dict[str, MetadataCfg] | None = None
 
     @field_validator('type')
+    @classmethod
     def validate_item_type(cls, v):
         if v in ITEM_TYPES:
             return v
@@ -82,6 +83,7 @@ class UserItemCfg(BaseModel):
             raise ValueError(msg) from None
 
     @field_validator('metadata', mode='before')
+    @classmethod
     def make_meta_cfg(cls, v):
         if not isinstance(v, dict):
             return v
@@ -128,6 +130,7 @@ class UserChannelCfg(BaseModel):
     model_config = ConfigDict(populate_by_name=True, arbitrary_types_allowed=True)
 
     @field_validator('filter', mode='before')
+    @classmethod
     def validate_filter(cls, v):
         return create_filters(ChannelFilter, v)
 
@@ -147,6 +150,7 @@ class UserThingCfg(BaseModel):
     model_config = ConfigDict(populate_by_name=True, arbitrary_types_allowed=True)
 
     @field_validator('filter', mode='before')
+    @classmethod
     def validate_filter(cls, v):
         return create_filters(ThingFilter, v)
 

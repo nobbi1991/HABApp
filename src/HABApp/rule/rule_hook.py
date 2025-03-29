@@ -39,7 +39,7 @@ class HABAppRuleHook:
     def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None) -> None:
         self.closed = True
 
-    def register_rule(self, rule: 'HABApp.rule.Rule'):
+    def register_rule(self, rule: 'HABApp.rule.Rule') -> Any:
         if self.closed:
             # if we keep adding rules dynamically they will always get attached to the file and never unloaded
             log.warning(f'Added another rule of type {rule.__class__.__name__:s} '

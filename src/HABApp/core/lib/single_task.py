@@ -41,7 +41,7 @@ class SingleTask:
             except CancelledError:
                 pass
 
-    async def wait(self):
+    async def wait(self) -> None:
         if self.task is None:
             return None
 

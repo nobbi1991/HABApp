@@ -60,7 +60,7 @@ class HABAppBenchRule(BenchBaseRule):
         time.sleep(0.1)
         self.bench_times_container.show()
 
-    def run_rtt(self, test_name, do_async=False) -> None:
+    def run_rtt(self, test_name, do_async: bool = False) -> None:
         self.name = self.name_list[0]
         self.openhab.create_item('String', self.name, label='MyLabel')
 
@@ -86,7 +86,7 @@ class HABAppBenchRule(BenchBaseRule):
 
         print('.', end='')
 
-    def post_next_event_val(self, value):
+    def post_next_event_val(self, value) -> None:
         if value != self.values[0]:
             return None
 

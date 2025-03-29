@@ -20,7 +20,7 @@ class ItemTimes(Generic[WATCH_OBJ]):
         self.instant: Instant = instant
         self.tasks: list[WATCH_OBJ] = []
 
-    def set(self, instant: Instant, events=True):
+    def set(self, instant: Instant, events: bool=True) -> None:
         self.instant = instant
         if not self.tasks:
             return
@@ -41,7 +41,7 @@ class ItemTimes(Generic[WATCH_OBJ]):
         log.debug(f'Added {self.WATCH.__name__} ({w.fut.secs}s) for {self.name}')
         return w
 
-    def __async_schedule_events(self):
+    def __async_schedule_events(self) -> None:
         canceled = []
         for t in self.tasks:
             if t.fut.is_canceled:

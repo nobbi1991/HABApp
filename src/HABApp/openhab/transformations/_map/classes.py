@@ -1,4 +1,4 @@
-from typing import NoReturn
+from typing import NoReturn, Any
 
 from HABApp.openhab.errors import MapTransformationError
 
@@ -13,15 +13,15 @@ class MapTransformation(dict):
 
 
 class MapTransformationWithDefault(MapTransformation):
-    def __init__(self, *args, default, **kwargs) -> None:
+    def __init__(self, *args, default: Any, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._default = default
 
-    def __missing__(self, key):
+    def __missing__(self, key: str) -> Any:
         return self._default
 
     def __repr__(self, additional: str = '') -> str:
         return super().__repr__(f', default={self._default}{additional}')
 
-    def get(self, key, default=None) -> NoReturn:
+    def get(self, key: str, default: Any | None = None) -> NoReturn:
         raise MapTransformationError(f'Mapping is already defined with a default: "{self._default}"')

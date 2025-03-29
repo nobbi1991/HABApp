@@ -29,7 +29,7 @@ class LocationItem(OpenhabItem):
     _command_to_oh: Final = OutgoingCommandEvent('LocationItem', PointTypeModel, 'Refresh')
     _state_from_oh_str: Final = staticmethod(PointTypeModel.get_value_from_state)
 
-    def set_value(self, new_value) -> bool:
+    def set_value(self, new_value: Point | tuple[int, int] | tuple[int, int, int] | None) -> bool:
         if isinstance(new_value, Point):
             return super().set_value(new_value)
 

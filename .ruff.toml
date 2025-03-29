@@ -11,7 +11,14 @@ extend-exclude = ["src/__test_*.py"]
 
 
 [lint]
-select = ["ALL"]
+select = [
+    "ANN001",
+    "ANN201",
+    "ANN202",
+    "ANN204",
+    "ANN205",
+    "ANN206",
+]
 
 ignore = [
     "D",        # https://docs.astral.sh/ruff/rules/#pydocstyle-d

@@ -9,23 +9,27 @@ class ValueMode(BaseMode):
     """ValueMode
 
     :ivar datetime.datetime last_update: Timestamp of the last update/enable of this value
-    :ivar typing.Optional[datetime.timedelta] auto_disable_after: Automatically disable this mode after
+    :ivar auto_disable_after: Automatically disable this mode after
                                                                     a given timedelta on the next recalculation
-    :vartype auto_disable_func: typing.Optional[typing.Callable[[typing.Any, typing.Any], bool]]
     :ivar    auto_disable_func: Function which can be used to disable this mode. Any function that accepts two
                                   Arguments can be used. First arg is value with lower priority,
                                   second argument is own value. Return ``True`` to disable this mode.
-    :vartype calc_value_func: typing.Optional[typing.Callable[[typing.Any, typing.Any], typing.Any]]
     :ivar    calc_value_func: Function to calculate the new value (e.g. ``min`` or ``max``). Any function that accepts
                                 two Arguments can be used. First arg is value with lower priority,
                                 second argument is own value.
     """
 
-    def __init__(self, name: str,
-                 initial_value=None, enabled: bool | None = None, enable_on_value: bool = True,
-                 logger: logging.Logger | None = None,
-                 auto_disable_after=None, auto_disable_func=None,
-                 calc_value_func=None) -> None:
+    def __init__(
+        self,
+        name: str,
+        initial_value=None,
+        enabled: bool | None = None,
+        enable_on_value: bool = True,
+        logger: logging.Logger | None = None,
+        auto_disable_after: timedelta | None = None,
+        auto_disable_func: typing.Callable[[typing.Any, typing.Any], bool] | None = None,
+        calc_value_func: typing.Callable[[typing.Any, typing.Any], typing.Any] | None = None,
+    ) -> None:
         """
 
         :param name: Name of the mode
@@ -139,7 +143,6 @@ class ValueMode(BaseMode):
         return self.__low_prio_value
 
     def calculate_value(self, value_with_lower_priority: typing.Any) -> typing.Any:
-
         # helper for self.calculate_lower_priority_value
         self.__low_prio_value = value_with_lower_priority
 
@@ -153,8 +156,9 @@ class ValueMode(BaseMode):
                 self.__enabled = False
                 self.last_update = datetime.now()
                 if self.logger is not None:
-                    self.logger.info(f'[{"x" if self.__enabled else " "}] {self.name} '
-                                     f'(after {self.auto_disable_after})!')
+                    self.logger.info(
+                        f'[{"x" if self.__enabled else " "}] {self.name} (after {self.auto_disable_after})!'
+                    )
 
         # provide user function which can disable a mode
         if self.auto_disable_func is not None:

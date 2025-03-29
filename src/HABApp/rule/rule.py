@@ -42,10 +42,16 @@ log = logging.getLogger('HABApp.Rule')
 
 
 # Func to log deprecation warnings
-def send_warnings_to_log(message, category, filename, lineno, file=None, line=None) -> None:
+def send_warnings_to_log(
+    message: warnings.WarningMessage,
+    category: type[Warning],
+    filename: str,
+    lineno: int,
+    file: object | None = None,
+    line: str | None = None,
+) -> None:
     log.warning(f'{filename}:{lineno}: {category.__name__}:{message}')
     return
-
 
 
 # Setup deprecation warnings
@@ -61,7 +67,6 @@ ITEM_TYPE = TypeVar('ITEM_TYPE', bound=BaseItem)
 
 
 class Rule(ContextProvidingObj):
-
     def __init__(self) -> None:
         super().__init__(context=HABApp.rule_ctx.HABAppRuleContext(self))
 
@@ -118,15 +123,11 @@ class Rule(ContextProvidingObj):
         :return:
         """
         assert isinstance(name, (str, BaseValueItem)), type(name)
-        return post_event(
-            name.name if isinstance(name, BaseValueItem) else name,
-            event
-        )
+        return post_event(name.name if isinstance(name, BaseValueItem) else name, event)
 
-    def listen_event(self, name: BaseItem | str,
-                     callback: TYPE_EVENT_CALLBACK,
-                     event_filter: EventFilterBase | None = None
-                     ) -> EventBusListener:
+    def listen_event(
+        self, name: BaseItem | str, callback: TYPE_EVENT_CALLBACK, event_filter: EventFilterBase | None = None
+    ) -> EventBusListener:
         """
         Register an event listener
 
@@ -151,20 +152,39 @@ class Rule(ContextProvidingObj):
         return self._habapp_ctx.add_event_listener(listener)
 
     @overload
-    def execute_subprocess(self, callback: HINT_PROCESS_CB_SIMPLE, program: HINT_EXEC_ARGS, *args: HINT_EXEC_ARGS,
-                           additional_python_path: HINT_PYTHON_PATH = None, capture_output: bool = True,
-                           raw_info: Literal[False], **kwargs) -> None:
-        ...
+    def execute_subprocess(
+        self,
+        callback: HINT_PROCESS_CB_SIMPLE,
+        program: HINT_EXEC_ARGS,
+        *args: HINT_EXEC_ARGS,
+        additional_python_path: HINT_PYTHON_PATH = None,
+        capture_output: bool = True,
+        raw_info: Literal[False],
+        **kwargs,
+    ) -> None: ...
 
     @overload
-    def execute_subprocess(self, callback: HINT_PROCESS_CB_FULL, program: HINT_EXEC_ARGS, *args: HINT_EXEC_ARGS,
-                           additional_python_path: HINT_PYTHON_PATH = None, capture_output: bool = True,
-                           raw_info: Literal[True], **kwargs) -> None:
-        ...
+    def execute_subprocess(
+        self,
+        callback: HINT_PROCESS_CB_FULL,
+        program: HINT_EXEC_ARGS,
+        *args: HINT_EXEC_ARGS,
+        additional_python_path: HINT_PYTHON_PATH = None,
+        capture_output: bool = True,
+        raw_info: Literal[True],
+        **kwargs,
+    ) -> None: ...
 
-    def execute_subprocess(self, callback, program: HINT_EXEC_ARGS, *args: HINT_EXEC_ARGS,
-                           additional_python_path: HINT_PYTHON_PATH = None, capture_output: bool = True,
-                           raw_info: bool = False, **kwargs):
+    def execute_subprocess(
+        self,
+        callback,
+        program: HINT_EXEC_ARGS,
+        *args: HINT_EXEC_ARGS,
+        additional_python_path: HINT_PYTHON_PATH = None,
+        capture_output: bool = True,
+        raw_info: bool = False,
+        **kwargs,
+    ):
         """Run another program
 
         :param callback: Function that will be called when the process has finished.
@@ -191,24 +211,44 @@ class Rule(ContextProvidingObj):
         )
         return create_task(
             async_subprocess_exec(
-                cb.run, *call_args, raw_info=raw_info, calling_func=self.execute_python, **call_kwargs)
+                cb.run, *call_args, raw_info=raw_info, calling_func=self.execute_python, **call_kwargs
+            )
         )
 
     @overload
-    def execute_python(self, callback: HINT_PROCESS_CB_SIMPLE, module_or_package: HINT_EXEC_ARGS, *args: HINT_EXEC_ARGS,
-                       additional_python_path: HINT_PYTHON_PATH = None, capture_output: bool = True,
-                       raw_info: Literal[False], **kwargs) -> None:
-        ...
+    def execute_python(
+        self,
+        callback: HINT_PROCESS_CB_SIMPLE,
+        module_or_package: HINT_EXEC_ARGS,
+        *args: HINT_EXEC_ARGS,
+        additional_python_path: HINT_PYTHON_PATH = None,
+        capture_output: bool = True,
+        raw_info: Literal[False],
+        **kwargs,
+    ) -> None: ...
 
     @overload
-    def execute_python(self, callback: HINT_PROCESS_CB_FULL, module_or_package: HINT_EXEC_ARGS, *args: HINT_EXEC_ARGS,
-                       additional_python_path: HINT_PYTHON_PATH = None, capture_output: bool = True,
-                       raw_info: Literal[True], **kwargs) -> None:
-        ...
+    def execute_python(
+        self,
+        callback: HINT_PROCESS_CB_FULL,
+        module_or_package: HINT_EXEC_ARGS,
+        *args: HINT_EXEC_ARGS,
+        additional_python_path: HINT_PYTHON_PATH = None,
+        capture_output: bool = True,
+        raw_info: Literal[True],
+        **kwargs,
+    ) -> None: ...
 
-    def execute_python(self, callback, module_or_package: HINT_EXEC_ARGS, *args: HINT_EXEC_ARGS,
-                       additional_python_path: HINT_PYTHON_PATH = None, capture_output: bool = True,
-                       raw_info: bool = False, **kwargs):
+    def execute_python(
+        self,
+        callback,
+        module_or_package: HINT_EXEC_ARGS,
+        *args: HINT_EXEC_ARGS,
+        additional_python_path: HINT_PYTHON_PATH = None,
+        capture_output: bool = True,
+        raw_info: bool = False,
+        **kwargs,
+    ):
         """Run a python module or package as a new process. The python environment that is used to run HABApp will be
         to run the module or package.
 
@@ -248,14 +288,17 @@ class Rule(ContextProvidingObj):
 
         cb = wrap_func(callback, context=self._habapp_ctx)
         call_args, call_kwargs = build_exec_params(
-            sys.executable, *new_args,
-            _capture_output=capture_output, _additional_python_path=additional_python_path,
-            **kwargs
+            sys.executable,
+            *new_args,
+            _capture_output=capture_output,
+            _additional_python_path=additional_python_path,
+            **kwargs,
         )
 
         return create_task(
             async_subprocess_exec(
-                cb.run, *call_args, raw_info=raw_info, calling_func=self.execute_python, **call_kwargs)
+                cb.run, *call_args, raw_info=raw_info, calling_func=self.execute_python, **call_kwargs
+            )
         )
 
     def get_rule(self, rule_name: str) -> 'Rule | list[Rule]':
@@ -263,13 +306,14 @@ class Rule(ContextProvidingObj):
         return self.__runtime.rule_manager.get_rule(rule_name)
 
     @staticmethod
-    def get_items(type: tuple[type[ITEM_TYPE], ...] | type[ITEM_TYPE] | None = None,
-                  name: str | Pattern[str] | None = None,
-                  tags: str | Iterable[str] | None = None,
-                  groups: str | Iterable[str] | None = None,
-                  metadata: str | Pattern[str] | None = None,
-                  metadata_value: str | Pattern[str] | None = None,
-                  ) -> list[ITEM_TYPE] | list[BaseItem]:
+    def get_items(
+        type: tuple[type[ITEM_TYPE], ...] | type[ITEM_TYPE] | None = None,
+        name: str | Pattern[str] | None = None,
+        tags: str | Iterable[str] | None = None,
+        groups: str | Iterable[str] | None = None,
+        metadata: str | Pattern[str] | None = None,
+        metadata_value: str | Pattern[str] | None = None,
+    ) -> list[ITEM_TYPE] | list[BaseItem]:
         """Search the HABApp item registry and return the found items.
 
         :param type: item has to be an instance of this class
@@ -321,7 +365,8 @@ class Rule(ContextProvidingObj):
                 continue
 
             if metadata_value is not None and not any(
-                    map(metadata_value.search, map(lambda x: x[0], item.metadata.values()))):
+                map(metadata_value.search, map(lambda x: x[0], item.metadata.values()))
+            ):
                 continue
 
             ret.append(item)

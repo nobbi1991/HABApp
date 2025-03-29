@@ -8,9 +8,9 @@ class RestBase(BaseModel):
         extra = Extra.forbid
 
 
-def none_is_empty_str(v) -> str:
+def none_is_empty_str(v: str) -> str | None:
     return None if v == 'NONE' else v
 
 
-def make_none_empty_str(*name: str):
+def make_none_empty_str(*name: str) -> str | None:
     return validator(*name, allow_reuse=True)(none_is_empty_str)

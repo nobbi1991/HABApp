@@ -17,10 +17,10 @@ class BenchFile(RuleFile):
         hook = HABAppRuleHook(created_rules.append, self.suggest_rule_name, self.rule_manager.runtime, self)
         hook.in_dict(globals())
 
-        rule_ha = rule = HABAppBenchRule()
+        rule_ha = HABAppBenchRule()
         if HABApp.CONFIG.mqtt.connection.host:
-            rule = rule.link_rule(MqttBenchRule())
+            rule_ha = rule_ha.link_rule(MqttBenchRule())
         if HABApp.CONFIG.openhab.connection.url:
-            rule = rule.link_rule(OpenhabBenchRule())
+            rule_ha = rule_ha.link_rule(OpenhabBenchRule())
 
         rule_ha.run.at(5, rule_ha.do_bench_start)

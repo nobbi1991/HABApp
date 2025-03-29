@@ -29,7 +29,7 @@ class PendingFuture:
                 self.task.cancel()
             self.task = None
 
-    def reset(self, thread_safe=False):
+    def reset(self, thread_safe: bool=False) -> None:
         if self.is_canceled:
             return None
 

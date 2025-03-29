@@ -11,7 +11,7 @@ class ContextBoundObj:
         if parent_ctx is not None:
             parent_ctx.add_obj(self)
 
-    def _ctx_link(self, parent_ctx: 'Context'):
+    def _ctx_link(self, parent_ctx: 'Context') -> None:
         assert isinstance(parent_ctx, Context)
         if self._parent_ctx is not None:
             raise ContextBoundObjectIsAlreadyLinkedError()
@@ -19,7 +19,7 @@ class ContextBoundObj:
         self._parent_ctx = parent_ctx
         parent_ctx.add_obj(self)
 
-    def _ctx_unlink(self):
+    def _ctx_unlink(self) -> None:
         if self._parent_ctx is None:
             raise ContextBoundObjectIsAlreadyUnlinkedError()
 

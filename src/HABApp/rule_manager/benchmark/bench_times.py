@@ -42,18 +42,19 @@ class BenchContainer:
 
 
 class BenchTime:
-
     @classmethod
-    def show_table(cls, indent_name=0) -> None:
-        print(f'{"":{indent_name}s} | {format_duration("dur")} | {"per sec":7s} | {format_duration("median")} | '
-              f'{format_duration("min")} | {format_duration("max")} | {format_duration("mean")}')
+    def show_table(cls, indent_name: float=0.0) -> None:
+        print(
+            f'{"":{indent_name}s} | {format_duration("dur")} | {"per sec":7s} | {format_duration("median")} | '
+            f'{format_duration("min")} | {format_duration("max")} | {format_duration("mean")}'
+        )
 
     def __init__(self, name: str, factor: int = 1) -> None:
         self.name = name
         self.times = []
         self.factor = factor
 
-    def show(self, indent_name=0) -> None:
+    def show(self, indent_name: float = 0.0) -> None:
         total = sum(self.times)
         count = len(self.times)
         _mean = mean(self.times) if self.times else 0
@@ -68,8 +69,10 @@ class BenchTime:
             per_sec /= 1000
             unit = 'm'
 
-        print(f'{self.name:>{indent_name}s} | {format_duration(total)} | '
-              f'{per_sec:{7 - len(unit)}.{3 - len(unit)}f}{unit} | '
-              f'{format_duration(_medi)} | {format_duration(min(self.times, default=0))} | '
-              f'{format_duration(max(self.times, default=0))} | '
-              f'{format_duration(_mean)}')
+        print(
+            f'{self.name:>{indent_name}s} | {format_duration(total)} | '
+            f'{per_sec:{7 - len(unit)}.{3 - len(unit)}f}{unit} | '
+            f'{format_duration(_medi)} | {format_duration(min(self.times, default=0))} | '
+            f'{format_duration(max(self.times, default=0))} | '
+            f'{format_duration(_mean)}'
+        )

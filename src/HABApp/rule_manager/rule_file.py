@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import collections
 import logging
 import runpy
@@ -8,12 +10,15 @@ import HABApp
 from HABApp.core.internals import get_current_context
 from HABApp.rule.rule_hook import HABAppRuleHook
 
+if typing.TYPE_CHECKING:
+    from HABApp.rule_manager.rule_manager import RuleManager
+
 
 log = logging.getLogger('HABApp.Rules')
 
 
 class RuleFile:
-    def __init__(self, rule_manager, name: str, path: Path) -> None:
+    def __init__(self, rule_manager: RuleManager, name: str, path: Path) -> None:
         from .rule_manager import RuleManager
 
         assert isinstance(rule_manager, RuleManager)
@@ -27,7 +32,6 @@ class RuleFile:
         self.class_ctr: typing.Dict[str, int] = collections.defaultdict(lambda: 1)
 
     def suggest_rule_name(self, obj: 'HABApp.Rule') -> str:
-
         # if there is already a name set we make no suggestion
         if getattr(obj, 'rule_name', '') != '':
             return obj.rule_name.replace('ü', 'ue').replace('ö', 'oe').replace('ä', 'ae')
@@ -43,7 +47,6 @@ class RuleFile:
             await get_current_context(rule).check_rule()
 
     async def unload(self) -> None:
-
         # If we don't have any rules we can not unload
         if not self.rules:
             return None
@@ -55,12 +58,11 @@ class RuleFile:
         log.debug(f'File {self.name} successfully unloaded!')
         return None
 
-    def __process_tc(self, tb: list):
+    def __process_tc(self, tb: list) -> list:
         tb.insert(0, f'Could not load {self.path}!')
         return [line.replace('<module>', self.path.name) for line in tb]
 
     def create_rules(self, created_rules: list) -> None:
-
         rule_hook = HABAppRuleHook(created_rules.append, self.suggest_rule_name, self.rule_manager.runtime, self)
 
         # It seems like python 3.8 doesn't allow path like objects any more:
@@ -69,7 +71,6 @@ class RuleFile:
             runpy.run_path(str(self.path), run_name=str(self.path), init_globals=rule_hook.in_dict())
 
     def load(self) -> bool:
-
         created_rules: typing.List[HABApp.rule.Rule] = []
 
         ign = HABApp.core.wrapper.ExceptionToHABApp(logger=log)
