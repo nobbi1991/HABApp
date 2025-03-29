@@ -24,7 +24,7 @@ class EventFilterBaseGroup(EventFilterBase):
     ) -> bool:
         raise NotImplementedError()
 
-    def describe(self) -> NoReturn:
+    def describe(self) -> str:
         raise NotImplementedError()
 
 

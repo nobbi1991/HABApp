@@ -30,7 +30,7 @@ class FileNameBuilderRule:
         return Path(self.folder + name.removeprefix(prefix))
 
     def matches_name(self, name: str) -> bool:
-        return name.startswith(self.prefix) and (self.pattern is None or self.pattern.search(name))
+        return name.startswith(self.prefix) and (self.pattern is None or self.pattern.search(name) is not None)
 
 
 class FileNameBuilder:
@@ -85,7 +85,7 @@ class FileNameBuilder:
         return ret
 
     def get_names_with_path(self, paths: list[str]) -> list[tuple[str, Path]]:
-        ret = []
+        ret: list[tuple[str, Path]] = []
         for b in self._builders:
             ret.extend((n, Path(p)) for p in paths if (n := b.create_name(p)) is not None)
         return ret

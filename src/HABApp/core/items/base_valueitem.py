@@ -283,40 +283,40 @@ class BaseValueItem(BaseItem):
     # we don't support modification in place! We have to override this because otherwise
     # python falls back to the methods above
     def __iadd__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __isub__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __imul__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __imatmul__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __itruediv__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __ifloordiv__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __imod__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __ipow__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __ilshift__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __irshift__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __iand__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __ixor__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')
 
     def __ior__(self, other: object) -> Self:
-        return PermissionError('Call not allowed! Use "set_value" or "post_value"')
+        raise PermissionError('Call not allowed! Use "set_value" or "post_value"')

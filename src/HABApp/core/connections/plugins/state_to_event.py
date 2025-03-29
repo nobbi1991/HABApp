@@ -14,7 +14,7 @@ class ConnectionStateToEventBusPlugin(BaseConnectionPlugin):
 
     def __init__(self, name: str | None = None) -> None:
         super().__init__(name)
-        self.__last_report = None
+        self.__last_report: str | None = None
 
     def __post_event(self, connection: BaseConnection) -> None:
         if (status := connection.status.status.value) != self.__last_report:

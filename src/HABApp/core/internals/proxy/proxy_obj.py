@@ -35,7 +35,7 @@ class RestoreableObj:
     def __init__(self, key: str, globals: dict, proxy: 'StartUpProxyObj') -> None:
         self.key = key
         self.globals = globals
-        self.proxy = proxy
+        self.proxy: StartUpProxyObj | None = proxy
 
     def restore(self) -> None:
         self.globals[self.key] = self.proxy

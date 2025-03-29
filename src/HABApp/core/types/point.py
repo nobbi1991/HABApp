@@ -62,7 +62,7 @@ class Point:
 
         raise ValueError()
 
-    def __eq__(self, other: Self | tuple[float, float, float | None] | tuple[float, float]) -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return (self._latitude == other._latitude and self._longitude == other._longitude and
                     self._elevation == other._elevation)
@@ -79,7 +79,7 @@ class Point:
 
         return NotImplemented
 
-    def __getitem__(self, item: int | str) -> float:
+    def __getitem__(self, item: int | str) -> float | None:
         if isinstance(item, int):
             if item == 0:
                 return self._latitude

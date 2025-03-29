@@ -377,7 +377,7 @@ PSPEC_RULE = ParamSpec('PSPEC_RULE')
 TYPE_RULE = TypeVar('TYPE_RULE', bound=Rule)
 
 
-def create_rule(f: Callable[PSPEC_RULE, TYPE_RULE], *args: PSPEC_RULE.args, **kwargs: PSPEC_RULE.kwargs) -> TYPE_RULE:
+def create_rule(f: Callable[PSPEC_RULE, TYPE_RULE], *args: PSPEC_RULE.args, **kwargs: PSPEC_RULE.kwargs) -> TYPE_RULE | None:
     try:
         _get_rule_hook()
     except RuntimeError:

@@ -9,7 +9,7 @@ class WaitBetweenConnects:
     wait_max = 600
 
     def __init__(self) -> None:
-        self.wait_time: int = 0
+        self.wait_time: float = 0
         self.task: Task | None = None
 
     def reset_wait(self) -> None:
