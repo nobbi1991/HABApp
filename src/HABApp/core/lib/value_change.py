@@ -16,7 +16,7 @@ class ValueChange(Generic[T]):
         self._value: T | _MissingType = MISSING
         self.changed: bool = False
 
-    def set_value(self, value: T) -> Self:
+    def set_value(self, value: T | _MissingType) -> Self:
         current = self._value
 
         if value is MISSING and current is MISSING:

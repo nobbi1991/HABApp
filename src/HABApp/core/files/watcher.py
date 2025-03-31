@@ -14,7 +14,6 @@ from watchfiles import Change, DefaultFilter, awatch
 from HABApp.core.asyncio import create_task_from_async
 from HABApp.core.wrapper import process_exception
 
-
 log = logging.getLogger('HABApp.file.events')
 log.setLevel(logging.INFO)
 
@@ -65,7 +64,7 @@ class FolderDispatcher(FileWatcherDispatcherBase):
         return self._name == other._name and self._coro is other._coro and self._folder == other._folder
 
     @override
-    def allow(self, change: Change, path: str) -> bool:
+    def allow(self, change: Change | None, path: str) -> bool:
         return path.startswith(self._folder)
 
 
@@ -81,7 +80,7 @@ class FileDispatcher(FileWatcherDispatcherBase):
         return self._name == other._name and self._coro is other._coro and self._file == other._file
 
     @override
-    def allow(self, change: Change, path: str) -> bool:
+    def allow(self, change: Change | None, path: str) -> bool:
         return path == self._file
 
 
@@ -162,8 +161,9 @@ class HABAppFileWatcher:
         if dispatchers is not None:
             return any(dispatcher.allow(change, path) for dispatcher in dispatchers)
 
+        change_name = change.name if change else ''
         process = any(dispatcher.allow(change, path) for dispatcher in self._dispatchers)
-        log.debug(f'{change.name:s} {path:s}{" (ignored)" if not process else ""}')
+        log.debug(f'{change_name:s} {path:s}{" (ignored)" if not process else ""}')
         return process
 
     async def _watcher_task(self) -> None:

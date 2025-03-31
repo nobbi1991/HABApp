@@ -113,12 +113,12 @@ def format_frame_variables(tb: list[str], stack_variables: list[Variable]) -> No
     dotted_names: set[str] = {n.name.split('.')[0] for n in used_vars if '.' in n.name}
 
     # Sort output
-    used_vars = sorted(used_vars, key=lambda x: (
+    used_vars = set(sorted(used_vars, key=lambda x: (
         isinstance(x.nodes[0], ast.Compare),                                        # Compare objects last
         not any(map(
             lambda y: x.name == y or x.name.startswith(y + '.'), dotted_names)),    # Classes with attributes
         x.name.lower()                                                              # Name lowercase
-    ))
+    )))
 
     variables = {}
 

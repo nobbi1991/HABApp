@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections.abc import Iterator
 from typing import Generic, Literal, TypeAlias, TypeVar
 
-
 T = TypeVar('T')
 
 T_PRIO: TypeAlias = Literal['first', 'last'] | int
@@ -23,8 +22,12 @@ def _sort_func(obj: T_ENTRY) -> tuple[int, T_PRIO]:
     :return: A tuple of (prio, obj)
     """
     prio = {'first': 0, 'last': 2}
-    key = obj[0]
-    assert isinstance(key, int) or key in prio
+    if not (isinstance(key := obj[0], int) or key in prio):
+        raise ValueError(f'Invalid key. Must be int or one of {list(prio.keys())}')
+
+    if isinstance(key, int):
+        return 1, key
+
     return prio.get(key, 1), key
 
 
@@ -39,11 +42,13 @@ class PriorityList(Generic[T]):
         self._objs.append((priority, obj))
         self._objs.sort(key=_sort_func)
 
+        self.remove(obj)
+
     def remove(self, obj: T) -> None:
-        for i, (_, existing) in self._objs:
-            if existing is obj:
-                self._objs.pop(i)
-                return None
+        for prio, o in self._objs:
+            if o is obj:
+                self._objs.remove((prio, o))
+                return
 
     def __iter__(self) -> Iterator[T]:
         for p, o in self._objs:

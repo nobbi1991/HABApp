@@ -31,7 +31,7 @@ class ConstProxyObj(ProxyObjBase):
     def to_replace_name(self) -> str:
         return self.name
 
-class RestoreableObj:
+class RestorableObj:
     def __init__(self, key: str, globals: dict, proxy: 'StartUpProxyObj') -> None:
         self.key = key
         self.globals = globals
@@ -39,8 +39,8 @@ class RestoreableObj:
 
     def restore(self) -> None:
         self.globals[self.key] = self.proxy
-        self.globals = None
-        self.key = None
+        self.globals = {}
+        self.key = ""
         self.proxy = None
 
 class StartUpProxyObj(ProxyObjBase):
@@ -54,7 +54,7 @@ class StartUpProxyObj(ProxyObjBase):
     def to_replace_name(self) -> str:
         return str(getattr(self.to_replace, '__name__', self.to_replace))
 
-    def replace(self, replacements: dict[object, object], final: bool) -> RestoreableObj | None:
+    def replace(self, replacements: dict[object, object], final: bool) -> RestorableObj | None:
         assert self.globals is not None
         replacement = replacements[self.to_replace]
 
@@ -62,7 +62,7 @@ class StartUpProxyObj(ProxyObjBase):
             if value is self:
                 self.globals[name] = replacement
                 if not final:
-                    return RestoreableObj(name, self.globals, self)
+                    return RestorableObj(name, self.globals, self)
                 break
         else:
             file = self.globals.get('__file__', '?')
@@ -71,6 +71,7 @@ class StartUpProxyObj(ProxyObjBase):
 
         self.globals = None
         self.to_replace = None
+        return None
 
 
 def create_proxy(to_replace: Callable) -> StartUpProxyObj:
@@ -81,7 +82,7 @@ def create_proxy(to_replace: Callable) -> StartUpProxyObj:
 
 
 
-def replace_proxies(replacements: dict[object, object], final: bool) -> list[RestoreableObj]:
+def replace_proxies(replacements: dict[object, object], final: bool) -> list[RestorableObj]:
     restore_objs = []
     for proxy in PROXIES:
         restore = proxy.replace(replacements, final)

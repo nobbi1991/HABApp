@@ -7,7 +7,7 @@ from HABApp.core.internals.proxy.proxy_obj import create_proxy, replace_proxies
 
 if TYPE_CHECKING:
     import HABApp
-    from HABApp.core.internals.proxy.proxy_obj import RestoreableObj
+    from HABApp.core.internals.proxy.proxy_obj import RestorableObj
 
 
 def uses_post_event() -> Callable[[str, Any], None]:
@@ -35,7 +35,7 @@ def setup_internals(
     eb: 'HABApp.core.internals.EventBus',
     file_manager: 'HABApp.core.files.FileManager',
     final: bool = True,
-) -> list[RestoreableObj]:
+) -> list[RestorableObj]:
     """Replace the proxy objects with the real thing"""
     replacements = {
         uses_item_registry: ir,

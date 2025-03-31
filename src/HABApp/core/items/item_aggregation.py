@@ -101,8 +101,12 @@ class AggregationItem(BaseValueItem):
             self.__listener.cancel()
             self.__listener = None
 
+        topic = source.name if isinstance(source, BaseValueItem) else source
+        if not isinstance(topic, str):
+            raise TypeError(f"topic must be a string. Got {topic.__class__.__name__}")
+
         self.__listener = EventBusListener(
-            topic=source.name if isinstance(source, HABApp.core.items.BaseValueItem) else source,
+            topic=topic,
             callback=wrap_func(self._add_value, name=f'{self.name}.add_value'),
             event_filter=EventFilter(ValueChangeEvent if only_changes else ValueUpdateEvent)
         )

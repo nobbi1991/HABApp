@@ -277,7 +277,7 @@ class HSB(ColorType):
         return RGB.from_hsb(self)
 
     @classmethod
-    def from_rgb(cls, obj: RGB | tuple[int, int, int]) -> Self:
+    def from_rgb(cls, obj: RGB | tuple[int, int, int]) -> HSB:
         """Create an HSB object from an RGB object or an RGB tuple
 
         :param obj: HSB object or RGB tuple

@@ -6,21 +6,21 @@ from whenever import Instant
 from HABApp.core.asyncio import run_func_from_async
 from HABApp.core.items.base_item_watch import BaseWatch, ItemNoChangeWatch, ItemNoUpdateWatch
 
-
 log = logging.getLogger('HABApp')
 
-WATCH_OBJ = TypeVar('WATCH_OBJ', bound=BaseWatch)
+_WATCH_OBJ = TypeVar('_WATCH_OBJ', bound=BaseWatch)
 
 
-class ItemTimes(Generic[WATCH_OBJ]):
-    WATCH: type[ItemNoUpdateWatch] | type[ItemNoChangeWatch]
+class ItemTimes(Generic[_WATCH_OBJ]):
+    WATCH: type[_WATCH_OBJ]
 
-    def __init__(self, name: str, instant: Instant) -> None:
+    def __init__(self, name: str, instant: Instant, watch_cls: type[_WATCH_OBJ]) -> None:
         self.name: str = name
         self.instant: Instant = instant
-        self.tasks: list[WATCH_OBJ] = []
+        self.tasks: list[_WATCH_OBJ] = []
+        self.WATCH = watch_cls
 
-    def set(self, instant: Instant, events: bool=True) -> None:
+    def set(self, instant: Instant, events: bool = True) -> None:
         self.instant = instant
         if not self.tasks:
             return
@@ -29,7 +29,7 @@ class ItemTimes(Generic[WATCH_OBJ]):
             run_func_from_async(self.__async_schedule_events)
         return None
 
-    def add_watch(self, secs: int | float) -> WATCH_OBJ:
+    def add_watch(self, secs: int | float) -> _WATCH_OBJ:
         # don't add the watch two times
         for t in self.tasks:
             if not t.fut.is_canceled and t.fut.secs == secs:
@@ -58,8 +58,10 @@ class ItemTimes(Generic[WATCH_OBJ]):
 
 
 class UpdatedTime(ItemTimes[ItemNoUpdateWatch]):
-    WATCH = ItemNoUpdateWatch
+    def __init__(self, name: str, instant: Instant) -> None:
+        super().__init__(name, instant, ItemNoUpdateWatch)
 
 
 class ChangedTime(ItemTimes[ItemNoChangeWatch]):
-    WATCH = ItemNoChangeWatch
+    def __init__(self, name: str, instant: Instant) -> None:
+        super().__init__(name, instant, ItemNoChangeWatch)  # ✅ Pass the correct watch class

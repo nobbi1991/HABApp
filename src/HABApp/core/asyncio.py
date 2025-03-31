@@ -5,7 +5,7 @@ import logging
 from asyncio import Future as _Future
 from asyncio import Task as _Task
 from asyncio import run_coroutine_threadsafe as _run_coroutine_threadsafe
-from contextvars import ContextVar as _ContextVar
+from contextvars import ContextVar
 from threading import get_ident
 from typing import TYPE_CHECKING, Final
 from typing import Any as _Any
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from collections.abc import Coroutine as _Coroutine
 
 
-thread_context: Final = _ContextVar('thread_ctx')
+thread_context: Final = ContextVar('thread_ctx')
 thread_ident: Final = get_ident()
 
 

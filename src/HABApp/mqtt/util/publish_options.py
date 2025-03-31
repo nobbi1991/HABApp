@@ -1,4 +1,4 @@
-from typing import Any, Final
+from typing import Any, Final, Literal
 
 from typing_extensions import Self
 
@@ -8,7 +8,7 @@ from HABApp.mqtt.interface_sync import publish
 class MqttPublishOptions:
     """Allows to store the topic, qos and retain settings for a topic. These values can then be used to publish
     """
-    def __init__(self, topic: str, qos: int | None = None, retain: bool | None = None) -> None:
+    def __init__(self, topic: str, qos: Literal[0, 1, 2] | None = None, retain: bool | None = None) -> None:
         if not isinstance(topic, str):
             raise TypeError()
         if not topic:

@@ -129,7 +129,7 @@ class InstantView:
     def __ge__(self, other: HINT_OBJ) -> bool:
         return self._cmp(le, other)
 
-    def __eq__(self, other: InstantView | Instant) -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, InstantView):
             return self._instant == other._instant
         if isinstance(other, Instant):

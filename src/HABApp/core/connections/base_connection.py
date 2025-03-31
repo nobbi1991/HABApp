@@ -31,7 +31,7 @@ class HandleExceptionInConnection:
         pass
 
     def __exit__(
-        self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
+        self, exc_type: type[Exception] | None, exc_val: Exception | None, exc_tb: TracebackType | None
     ) -> bool | None:
         # no exception -> we exit gracefully
         if exc_type is None and exc_val is None:
@@ -105,7 +105,7 @@ class BaseConnection:
         else:
             if func is None:
                 func = f'{self.name} connection'
-            process_exception(func, e, self.log)
+            process_exception(func, e, logger=self.log)
 
     def register_plugin(
         self, obj: BaseConnectionPlugin, priority: int | Literal['first', 'last'] | None = None

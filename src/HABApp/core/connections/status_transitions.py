@@ -81,7 +81,7 @@ class StatusTransitions:
                 f'[{"x" if self.error else " "}] Error, '
                 f'[{"x" if self.setup else " "}] Setup>')
 
-    def __eq__(self, other: ConnectionStatus) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ConnectionStatus):
             return NotImplemented
         return self.status == other
