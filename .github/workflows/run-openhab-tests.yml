@@ -57,7 +57,7 @@ jobs:
           sleep 10
         done
         
-    - name: Run tests
+    - name: Run HABApp tests
       working-directory: ./run/conf_testing
       run: |
-        HABApp
+        python -m HABApp
