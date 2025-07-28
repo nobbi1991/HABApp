@@ -8,11 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mosquitto:
-        image: eclipse-mosquitto:latest
+        image: eclipse-mosquitto:2.0.15
         ports:
-          - "1883:1883"  # MQTT port
+          - "1883:1883"
+        env:
+          ALLOW_ANONYMOUS: "true"
         options: >-
-          --entrypoint /bin/sh -c "echo 'listener 1883\nallow_anonymous true' > /mosquitto/config/mosquitto.conf && /usr/sbin/mosquitto -c /mosquitto/config/mosquitto.conf"
           --health-cmd="mosquitto_pub -h localhost -t \$SYS/broker/uptime -m ''"
           --health-interval=10s
           --health-timeout=5s
