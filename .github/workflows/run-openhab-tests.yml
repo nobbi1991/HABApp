@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mosquitto:
-        image: eclipse-mosquitto:2.0.15
+        image: eclipse-mosquitto:latest
         ports:
           - "1883:1883"  # MQTT port
         volumes:
@@ -43,11 +43,12 @@ jobs:
         # Create OpenHAB config directory
         sudo mkdir -p /tmp/openhab/conf/services
         
-        # Create Mosquitto config directory
+        # Create and set up Mosquitto config directory
         sudo mkdir -p /tmp/mosquitto/config
-        
-        # Set permissions
-        sudo chmod -R 777 /tmp/openhab /tmp/mosquitto
+        sudo chown -R $USER:$USER /tmp/mosquitto
+        chmod -R 755 /tmp/mosquitto
+        mkdir -p /tmp/mosquitto/config
+        chmod 777 /tmp/mosquitto/config
         
         # Configure OpenHAB basic auth
         sudo tee /tmp/openhab/conf/services/runtime.cfg > /dev/null <<EOL
@@ -56,7 +57,7 @@ jobs:
         EOL
 
         # Create Mosquitto config file with anonymous access
-        cat > /tmp/mosquitto/config/mosquitto.conf <<EOL
+        sudo tee /tmp/mosquitto/config/mosquitto.conf > /dev/null <<EOL
         listener 1883
         allow_anonymous true
         EOL
