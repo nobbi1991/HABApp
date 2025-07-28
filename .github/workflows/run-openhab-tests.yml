@@ -75,4 +75,5 @@ jobs:
         
     - name: Run HABApp tests
       run: |
-        python -m HABApp -c ./run/conf_testing/config.yml
+        cd run/conf_testing
+        python -m HABApp -c config.yml
