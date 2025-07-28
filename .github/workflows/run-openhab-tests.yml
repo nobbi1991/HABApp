@@ -59,7 +59,7 @@ jobs:
       uses: astral-sh/setup-uv@v6
         
     - name: Install requirements
-      run: uv pip install .[all]
+      run: uv pip install .[all] --system
         
 #    - name: Wait for OpenHAB to be ready
 #      run: |
