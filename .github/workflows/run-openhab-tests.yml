@@ -56,14 +56,10 @@ jobs:
         python-version: '3.13'
         
     - name: Install uv
-      run: |
-        curl -sSf https://astral.sh/uv/install.sh | sh -s -- -y
-        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      uses: astral-sh/setup-uv@v6
         
-    - name: Install dependencies with uv
-      run: |
-        uv pip install --upgrade pip
-        uv pip install -e .[all]
+    - name: Install requirements
+      run: uv pip install .[all]
         
 #    - name: Wait for OpenHAB to be ready
 #      run: |
