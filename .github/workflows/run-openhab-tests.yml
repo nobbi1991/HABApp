@@ -73,6 +73,6 @@ jobs:
         done
         
     - name: Run HABApp tests
-      working-directory: ./run/conf_testing
       run: |
-        python -m HABApp -c ./run/conf_testing/config.yaml
+        cd run/conf_testing
+        python -m HABApp
