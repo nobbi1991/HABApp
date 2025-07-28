@@ -1,0 +1,60 @@
+name: Run OpenHAB 5 Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      openhab:
+        image: openhab/openhab:5.0.0
+        ports:
+          - 8080:8080
+          - 8443:8443
+        env:
+          OPENHAB_HTTP_PORT: "8080"
+          OPENHAB_HTTPS_PORT: "8443"
+          EXTRA_JAVA_OPTS: "-Duser.timezone=Europe/Berlin -Duser.language=de -Duser.region=DE -Djava.awt.headless=true"
+        options: >-
+          --health-cmd="wget --no-verbose --tries=1 --spider http://localhost:8080/rest/ || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          -v /tmp/openhab/conf/services/runtime.cfg:/openhab/conf/services/runtime.cfg
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up basic auth configuration of OpenHAB
+      run: |
+        mkdir -p /tmp/openhab/conf/services
+        echo "org.openhab.restauth:allowBasicAuth=true" > /tmp/openhab/conf/services/runtime.cfg
+        echo "org.openhab.restauth:trustedNetworks=127.0.0.1/32" >> /tmp/openhab/conf/services/runtime.cfg
+        
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[all]
+        
+    - name: Wait for OpenHAB to be ready
+      run: |
+        echo "Waiting for OpenHAB to be ready..."
+        for i in {1..30}; do
+          if curl -s http://localhost:8080/rest/ > /dev/null; then
+            echo "OpenHAB is ready!"
+            break
+          fi
+          echo "Waiting for OpenHAB to be ready... ($i/30)"
+          sleep 10
+        done
+        
+    - name: Run tests
+      working-directory: ./run/conf_testing
+      run: |
+        HABApp
