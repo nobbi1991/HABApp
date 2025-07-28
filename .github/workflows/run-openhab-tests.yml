@@ -7,6 +7,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
     services:
+      mosquitto:
+        image: eclipse-mosquitto:2.0.15
+        ports:
+          - "1883:1883"  # MQTT port
+        volumes:
+          - /tmp/mosquitto/config:/mosquitto/config
+        options: >-
+          --health-cmd="mosquitto_pub -h localhost -t \$SYS/broker/uptime -m ''"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+          
       openhab:
         image: openhab/openhab:5.0.0
         ports:
@@ -26,13 +38,27 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up basic auth configuration of OpenHAB
+    - name: Set up service configurations
       run: |
+        # Create OpenHAB config directory
         sudo mkdir -p /tmp/openhab/conf/services
-        sudo chmod -R 777 /tmp/openhab
+        
+        # Create Mosquitto config directory
+        sudo mkdir -p /tmp/mosquitto/config
+        
+        # Set permissions
+        sudo chmod -R 777 /tmp/openhab /tmp/mosquitto
+        
+        # Configure OpenHAB basic auth
         sudo tee /tmp/openhab/conf/services/runtime.cfg > /dev/null <<EOL
         org.openhab.restauth:allowBasicAuth=true
         org.openhab.restauth:trustedNetworks=127.0.0.1/32
+        EOL
+
+        # Create Mosquitto config file with anonymous access
+        cat > /tmp/mosquitto/config/mosquitto.conf <<EOL
+        listener 1883
+        allow_anonymous true
         EOL
         
     - name: Set up Python
@@ -60,4 +86,4 @@ jobs:
     - name: Run HABApp tests
       working-directory: ./run/conf_testing
       run: |
-        python -m HABApp
+        python -m HABApp -c ./run/conf_testing/config.yaml
