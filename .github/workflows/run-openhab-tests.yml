@@ -21,7 +21,7 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
-          -v /tmp/openhab/conf/services/runtime.cfg:/openhab/conf/services/runtime.cfg
+          -v /tmp/openhab/conf/services/:/openhab/conf/services/
 
     steps:
     - uses: actions/checkout@v4
@@ -29,8 +29,10 @@ jobs:
     - name: Set up basic auth configuration of OpenHAB
       run: |
         mkdir -p /tmp/openhab/conf/services
-        echo "org.openhab.restauth:allowBasicAuth=true" > /tmp/openhab/conf/services/runtime.cfg
-        echo "org.openhab.restauth:trustedNetworks=127.0.0.1/32" >> /tmp/openhab/conf/services/runtime.cfg
+        cat > /tmp/openhab/conf/services/runtime.cfg << EOL
+        org.openhab.restauth:allowBasicAuth=true
+        org.openhab.restauth:trustedNetworks=127.0.0.1/32
+        EOL
         
     - name: Set up Python
       uses: actions/setup-python@v5
