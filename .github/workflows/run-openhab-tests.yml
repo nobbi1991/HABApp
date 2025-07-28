@@ -11,9 +11,8 @@ jobs:
         image: eclipse-mosquitto:latest
         ports:
           - "1883:1883"  # MQTT port
-        volumes:
-          - /tmp/mosquitto/config:/mosquitto/config
         options: >-
+          --entrypoint /bin/sh -c "echo 'listener 1883\nallow_anonymous true' > /mosquitto/config/mosquitto.conf && /usr/sbin/mosquitto -c /mosquitto/config/mosquitto.conf"
           --health-cmd="mosquitto_pub -h localhost -t \$SYS/broker/uptime -m ''"
           --health-interval=10s
           --health-timeout=5s
@@ -43,23 +42,11 @@ jobs:
         # Create OpenHAB config directory
         sudo mkdir -p /tmp/openhab/conf/services
         
-        # Create and set up Mosquitto config directory
-        sudo mkdir -p /tmp/mosquitto/config
-        sudo chown -R $USER:$USER /tmp/mosquitto
-        chmod -R 755 /tmp/mosquitto
-        mkdir -p /tmp/mosquitto/config
-        chmod 777 /tmp/mosquitto/config
-        
         # Configure OpenHAB basic auth
+        sudo mkdir -p /tmp/openhab/conf/services
         sudo tee /tmp/openhab/conf/services/runtime.cfg > /dev/null <<EOL
         org.openhab.restauth:allowBasicAuth=true
         org.openhab.restauth:trustedNetworks=127.0.0.1/32
-        EOL
-
-        # Create Mosquitto config file with anonymous access
-        sudo tee /tmp/mosquitto/config/mosquitto.conf > /dev/null <<EOL
-        listener 1883
-        allow_anonymous true
         EOL
         
     - name: Set up Python
