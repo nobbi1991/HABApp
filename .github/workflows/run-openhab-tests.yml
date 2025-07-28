@@ -73,16 +73,6 @@ jobs:
           sleep 10
         done
         
-    - name: Find and log config files
-      run: |
-        echo "Searching for config.yaml files..."
-        find . -name "config.y*ml" -type f -exec echo "Found config file: {}" \;
-        echo "Current directory: $(pwd)"
-        echo "Contents of run/conf_testing:"
-        ls -la run/conf_testing/
-        echo "\nContents of the config file:"
-        cat run/conf_testing/config.yaml || echo "No config file found at run/conf_testing/config.yaml"
-        
     - name: Run HABApp tests
       run: |
         python -m HABApp -c ./run/conf_testing/config.yml
