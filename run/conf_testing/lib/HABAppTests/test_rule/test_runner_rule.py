@@ -10,7 +10,7 @@ from HABApp.core.wrapper import ignore_exception
 from HABAppTests.test_rule.test_case import TestResult, TestResultStatus
 
 from .test_rule import TestBaseRule, TestRuleStatus
-
+import sys
 
 log = logging.getLogger('HABApp.Tests')
 
@@ -71,6 +71,8 @@ class TestRunnerRule(HABApp.Rule):
         plog('')
         plog('-' * 120)
         plog(', '.join(parts))
+
+        sys.exit(0)
 
     async def tests_done(self, results: list[TestResult]) -> None:
         raise NotImplementedError()

@@ -74,6 +74,16 @@ jobs:
         done
         
     - name: Run HABApp tests
+      id: habapp-tests
       run: |
         cd run/conf_testing
         python -m HABApp -c config.yml
+      
+    - name: Upload log files
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: habapp-logs
+        path: run/conf_testing/log/
+        retention-days: 7
+        if-no-files-found: warn
