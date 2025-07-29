@@ -79,11 +79,26 @@ jobs:
         cd run/conf_testing
         python -m HABApp -c config.yml
       
+    - name: Collect OpenHAB logs
+      if: always()
+      run: |
+        # Get the container ID of the OpenHAB service
+        CONTAINER_ID=$(docker ps -qf "name=openhab")
+        if [ -n "$CONTAINER_ID" ]; then
+          # Create directory for OpenHAB logs
+          mkdir -p openhab_logs
+          # Copy logs from container to host
+          docker cp $CONTAINER_ID:/openhab/userdata/logs/ ./openhab_logs/
+        else
+          echo "OpenHAB container not found"
+          
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: habapp-logs
-        path: run/conf_testing/log/
+        name: test-logs
+        path: |
+          run/conf_testing/log/
+          openhab_logs/
         retention-days: 7
         if-no-files-found: warn
