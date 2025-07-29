@@ -46,7 +46,7 @@ jobs:
         # Configure OpenHAB basic auth
         sudo mkdir -p /tmp/openhab/conf/services
         sudo tee /tmp/openhab/conf/services/runtime.cfg > /dev/null <<EOL
-        org.openhab.restauth:allowBasicAuth=true
+        org.openhab.restauth:implicitUserRole=false
         org.openhab.restauth:trustedNetworks=127.0.0.1/32
         EOL
         
