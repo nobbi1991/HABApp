@@ -83,13 +83,30 @@ jobs:
         cd run/conf_testing
         python -m HABApp -c config.yml
       
+    - name: Prepare log files
+      if: always()
+      run: |
+        # Create structured log directory
+        mkdir -p logs/HABApp logs/OpenHAB
+        
+        # Copy HABApp logs if they exist
+        if [ -d "run/conf_testing/log/" ]; then
+          cp -r run/conf_testing/log/* logs/HABApp/ 2>/dev/null || true
+        fi
+        
+        # Copy OpenHAB logs if they exist
+        if [ -d "/tmp/openhab/logs/" ]; then
+          cp -r /tmp/openhab/logs/* logs/OpenHAB/ 2>/dev/null || true
+        fi
+        
+        # List the contents for debugging
+        find logs -type f | sort
+    
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-logs
-        path: |
-          run/conf_testing/log/
-          /tmp/openhab/logs/
+        name: logs
+        path: logs/
         retention-days: 7
         if-no-files-found: warn
