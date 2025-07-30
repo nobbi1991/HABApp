@@ -33,8 +33,8 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
-          -v "${{ github.workspace }}/openhab-conf:/openhab/conf"
-          -v "${{ github.workspace }}/openhab-logs:/openhab/userdata/logs"
+          -v /tmp/openhab/logs/:/openhab/userdata/logs/
+          -v /tmp/openhab/conf:/openhab/conf
 
     steps:
     - name: Checkout code
@@ -43,15 +43,19 @@ jobs:
         # Clean the working directory to avoid permission issues
         clean: true
         fetch-depth: 0
-    
+
     - name: Set up service configurations
       run: |
-        # Create a directory in the workspace that we have full permissions for
-        mkdir -p "${{ github.workspace }}/openhab-conf"
+        # Create OpenHAB config and log directories with proper permissions
+        sudo mkdir -p /tmp/openhab/conf
+        sudo mkdir -p /tmp/openhab/logs
+        sudo chmod -R 777 /tmp/openhab
         
-        # Copy the test configuration
+        # Copy the test configuration to the temporary directory
         if [ -d "${{ github.workspace }}/run/conf_testing/lib/openhab" ]; then
-          cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/"* "${{ github.workspace }}/openhab-conf/"
+          cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/"* /tmp/openhab/conf/
+          # Ensure all copied files are readable
+          chmod -R 755 /tmp/openhab/conf
         fi
 
     - name: Set up Python
