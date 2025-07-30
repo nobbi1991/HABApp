@@ -34,26 +34,26 @@ jobs:
           --health-timeout=5s
           --health-retries=10
           -v /tmp/openhab/logs/:/openhab/userdata/logs/
-          -v ${{ github.workspace }}/run/conf_testing/lib/openhab:/openhab/conf
+          -v /tmp/openhab/conf:/openhab/conf
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        # Don't clean the working directory to preserve conf_testing
-        clean: false
-        # Fetch all history for all tags and branches
+        # Clean the working directory to avoid permission issues
+        clean: true
         fetch-depth: 0
     
     - name: Set up service configurations
       run: |
         # Create OpenHAB config and log directories
-        sudo mkdir -p /tmp/openhab/conf/services
-        sudo mkdir -p /tmp/openhab/logs
+        mkdir -p /tmp/openhab/conf
+        mkdir -p /tmp/openhab/logs
         
-        # Ensure the conf_testing directory has the right permissions
-        if [ -d "${{ github.workspace }}/run/conf_testing" ]; then
-          sudo chmod -R 777 "${{ github.workspace }}/run/conf_testing"
+        # Copy the test configuration to the temporary directory
+        mkdir -p /tmp/openhab/conf/services
+        if [ -d "${{ github.workspace }}/run/conf_testing/lib/openhab" ]; then
+          cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/"* /tmp/openhab/conf/
         fi
 
     - name: Set up Python
