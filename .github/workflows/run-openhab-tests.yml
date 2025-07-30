@@ -33,8 +33,8 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
-          -v /tmp/openhab/conf/services/:/openhab/conf/services/
           -v /tmp/openhab/logs/:/openhab/userdata/logs/
+          -v ${{ github.workspace }}/run/conf_testing/lib/openhab:/openhab/conf
 
     steps:
     - uses: actions/checkout@v4
@@ -44,14 +44,7 @@ jobs:
         # Create OpenHAB config and log directories
         sudo mkdir -p /tmp/openhab/conf/services
         sudo mkdir -p /tmp/openhab/logs
-        sudo chmod -R 777 /tmp/openhab  # Ensure OpenHAB can write to these directories
 
-        # Configure OpenHAB basic auth
-        sudo tee /tmp/openhab/conf/services/runtime.cfg > /dev/null <<EOL
-        org.openhab.restauth:implicitUserRole=false
-        org.openhab.restauth:trustedNetworks=127.0.0.1/32
-        EOL
-        
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
