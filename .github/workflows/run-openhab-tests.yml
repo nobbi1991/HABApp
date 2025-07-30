@@ -44,6 +44,9 @@ jobs:
         # Create OpenHAB config and log directories
         sudo mkdir -p /tmp/openhab/conf/services
         sudo mkdir -p /tmp/openhab/logs
+        
+        # Ensure the conf_testing directory has the right permissions
+        sudo chmod -R 777 ${{ github.workspace }}/run/conf_testing
 
     - name: Set up Python
       uses: actions/setup-python@v5
