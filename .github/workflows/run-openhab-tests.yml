@@ -11,6 +11,8 @@ jobs:
         image: eclipse-mosquitto:2.0.15
         ports:
           - "1883:1883"
+        volumes:
+          - .github/workflows/mosquitto.conf:/mosquitto/config/mosquitto.conf
         env:
           ALLOW_ANONYMOUS: "true"
         options: >-

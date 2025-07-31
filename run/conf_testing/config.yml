@@ -13,7 +13,7 @@ location:
 mqtt:
   connection:
     identifier: HABAppTesting
-    host: 'mosquitto'
+    host: mosquitto
     user: ''
     password: ''
     port: 1883
