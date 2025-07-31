@@ -12,7 +12,7 @@ jobs:
         ports:
           - "1883:1883"
         volumes:
-          - ${{ github.workspace }}/.github/workflows/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+          - ${{ github.workspace }}/.github/workflows/mosquitto.conf:/mosquitto/config/mosquitto.conf
         env:
           ALLOW_ANONYMOUS: "true"
         options: >-
