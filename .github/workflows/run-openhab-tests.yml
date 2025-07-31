@@ -35,6 +35,7 @@ jobs:
           --health-retries=10
           -v /tmp/openhab/logs/:/openhab/userdata/logs/
           -v /tmp/openhab/conf:/openhab/conf
+          -v /tmp/openhab/addons:/openhab/addons
 
     steps:
     - name: Checkout code
@@ -52,11 +53,18 @@ jobs:
         sudo chmod -R 777 /tmp/openhab
         
         # Copy the test configuration to the temporary directory
-        if [ -d "${{ github.workspace }}/run/conf_testing/lib/openhab" ]; then
-          cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/"* /tmp/openhab/conf/
-          # Ensure all copied files are readable
-          sudo chmod -R 755 /tmp/openhab/conf
-        fi
+        cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/"* /tmp/openhab/conf/
+        # Ensure all copied files are readable
+        sudo chmod -R 755 /tmp/openhab/conf
+
+    - name: Download OpenHAB addons
+      run: |
+        mkdir -p /tmp/openhab/addons
+        wget -O /tmp/openhab/addons/org.openhab.binding.astro-5.0.0.jar https://openhab.jfrog.io/ui/native/libs-release-local/org/openhab/addons/bundles/org.openhab.binding.astro/5.0.0/org.openhab.binding.astro-5.0.0.jar
+        wget -O /tmp/openhab/addons/org.openhab.persistence.rrd4j-5.0.0.jar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/addons/bundles/org.openhab.persistence.rrd4j/5.0.0/org.openhab.persistence.rrd4j-5.0.0.jar
+        wget -O /tmp/openhab/addons/org.openhab.persistence.inmemory-5.0.0.jar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/addons/bundles/org.openhab.persistence.inmemory/5.0.0/org.openhab.persistence.inmemory-5.0.0.jar
+        wget -O /tmp/openhab/addons/org.openhab.persistence.mapdb-5.0.0.jar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/addons/bundles/org.openhab.persistence.mapdb/5.0.0/org.openhab.persistence.mapdb-5.0.0.jar
+        wget -O /tmp/openhab/addons/org.openhab.transform.map-5.0.0.jar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/addons/bundles/org.openhab.transform.map/5.0.0/org.openhab.transform.map-5.0.0.jar
 
     - name: Set up Python
       uses: actions/setup-python@v5
