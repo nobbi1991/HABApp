@@ -7,20 +7,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     services:
-      mosquitto:
-        image: eclipse-mosquitto:2.0.15
-        ports:
-          - "1883:1883"
-        volumes:
-          - ${{ github.workspace }}/.github/workflows/mosquitto.conf:/mosquitto/config/mosquitto.conf
-        env:
-          ALLOW_ANONYMOUS: "true"
-        options: >-
-          --health-cmd="mosquitto_pub -h localhost -t \$SYS/broker/uptime -m ''"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
       openhab:
         image: openhab/openhab:5.0.0
         ports:
@@ -58,6 +44,13 @@ jobs:
         cp -r "${{ github.workspace }}/run/conf_listen/lib/openhab/"* /tmp/openhab/conf/
         # Ensure all copied files are readable
         sudo chmod -R 755 /tmp/openhab/conf
+
+    - name: Start Mosquitto
+      uses: namoshek/mosquitto-github-action@v1
+      with:
+        ports: '1883:1883 8883:8883'
+        config: ${{ github.workspace }}/.github/workflows/mosquitto.conf
+        container-name: 'mqtt'
 
     - name: Download OpenHAB addons
       run: |
