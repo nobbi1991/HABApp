@@ -41,7 +41,7 @@ jobs:
         sudo chmod -R 777 /tmp/openhab
         
         # Copy the test configuration to the temporary directory
-        cp -r "${{ github.workspace }}/run/conf_listen/lib/openhab/"* /tmp/openhab/conf/
+        # cp -r "${{ github.workspace }}/run/conf_listen/lib/openhab/"* /tmp/openhab/conf/
         # Ensure all copied files are readable
         sudo chmod -R 755 /tmp/openhab/conf
 
