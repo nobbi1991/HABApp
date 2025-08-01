@@ -2,7 +2,7 @@ directories:
   logging: log
   rules: rules
   lib: lib
-  param: parameters
+  params: parameters
   config: config
 
 location:
@@ -13,7 +13,7 @@ location:
 mqtt:
   connection:
     identifier: HABAppTesting
-    host: localhost
+    host: mosquitto
     user: ''
     password: ''
     port: 1883
@@ -33,10 +33,10 @@ mqtt:
 
 openhab:
   connection:
-    user: asdf
-    password: asdf
-    url: http://localhost:8080  # Connect to this url
-    verify_ssl: true            # Check certificates when using https
+    url: http://openhab:8080   # Connect to this url
+    user: ''
+    password: ''
+    verify_ssl: true             # Check certificates when using https
   general:
     listen_only: false
     wait_for_openhab: false

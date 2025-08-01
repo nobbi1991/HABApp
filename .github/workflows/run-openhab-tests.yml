@@ -55,7 +55,7 @@ jobs:
         sudo chmod -R 777 /tmp/openhab
         
         # Copy the test configuration to the temporary directory
-        cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/"* /tmp/openhab/conf/
+        cp -r "${{ github.workspace }}/run/conf_listen/lib/openhab/"* /tmp/openhab/conf/
         # Ensure all copied files are readable
         sudo chmod -R 755 /tmp/openhab/conf
 
@@ -92,7 +92,7 @@ jobs:
     - name: Run HABApp tests
       id: habapp-tests
       run: |
-        cd run/conf_testing
+        cd run/conf_listen
         python -m HABApp -c config.yml
       
     - name: Prepare log files
@@ -102,8 +102,8 @@ jobs:
         mkdir -p logs/HABApp logs/OpenHAB
         
         # Copy HABApp logs if they exist
-        if [ -d "run/conf_testing/log/" ]; then
-          cp -r run/conf_testing/log/* logs/HABApp/ 2>/dev/null || true
+        if [ -d "run/conf_listen/log/" ]; then
+          cp -r run/conf_listen/log/* logs/HABApp/ 2>/dev/null || true
         fi
         
         # Copy OpenHAB logs if they exist
