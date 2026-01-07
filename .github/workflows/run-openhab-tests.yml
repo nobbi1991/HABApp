@@ -52,9 +52,9 @@ jobs:
           --name openhab \
           -p 8080:8080 \
           -p 8443:8443 \
-          -v tmp/openhab/conf:/openhab/conf \
-          -v tmp/openhab/userdata:/openhab/userdata \
-          -v tmp/openhab/addons:/openhab/addons \
+          -v /tmp/openhab/conf:/openhab/conf \
+          -v /tmp/openhab/userdata:/openhab/userdata \
+          -v /tmp/openhab/addons:/openhab/addons \
           openhab/openhab:5.0.0
 
     - name: Start Mosquitto
