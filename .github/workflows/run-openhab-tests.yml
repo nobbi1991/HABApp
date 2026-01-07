@@ -109,8 +109,8 @@ jobs:
         fi
         
         # Copy OpenHAB logs if they exist
-        if [ -d "/tmp/openhab/logs/" ]; then
-          cp -r /tmp/openhab/logs/* logs/OpenHAB/ 2>/dev/null || true
+        if [ -d "/tmp/openhab/userdata/logs/" ]; then
+          cp -r /tmp/openhab/userdata/logs/* logs/OpenHAB/ 2>/dev/null || true
         fi
         
         # List the contents for debugging
