@@ -1,0 +1,15 @@
+{
+  "habapp_test": {
+    "class": "org.openhab.core.auth.ManagedUser",
+    "value": {
+      "name": "habapp_test",
+      "passwordHash": "YIF81PnJjDfncBdq0jJfDkYwXvXn7qAUo8qskR+68ymAp5Uaqz1lf0kZEf2v6WyBVLTfK7xsxzBZEDNq9yXR+A\u003d\u003d",
+      "passwordSalt": "8FJ7EcFKSDJyCiVUqM6iYdR6m2d8ySPaQS/7gSlczS4tz6sQ5jdA9l4GWhrpKqzzRUoZsLCy7wjWmMhK3P3t3g\u003d\u003d",
+      "roles": [
+        "administrator"
+      ],
+      "sessions": [],
+      "apiTokens": []
+    }
+  }
+}

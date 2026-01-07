@@ -6,24 +6,24 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    services:
-      openhab:
-        image: openhab/openhab:5.0.0
-        ports:
-          - 8080:8080
-          - 8443:8443
-        env:
-          OPENHAB_HTTP_PORT: "8080"
-          OPENHAB_HTTPS_PORT: "8443"
-          EXTRA_JAVA_OPTS: "-Duser.timezone=Europe/Berlin -Duser.language=de -Duser.region=DE -Djava.awt.headless=true"
-        options: >-
-          --health-cmd="wget --no-verbose --tries=1 --spider http://localhost:8080/rest/ || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-          -v /tmp/openhab/logs/:/openhab/userdata/logs/
-          -v /tmp/openhab/conf:/openhab/conf
-          -v /tmp/openhab/addons:/openhab/addons
+#    services:
+#      openhab:
+#        image: openhab/openhab:5.0.0
+#        ports:
+#          - 8080:8080
+#          - 8443:8443
+#        env:
+#          OPENHAB_HTTP_PORT: "8080"
+#          OPENHAB_HTTPS_PORT: "8443"
+#          EXTRA_JAVA_OPTS: "-Duser.timezone=Europe/Berlin -Duser.language=de -Duser.region=DE -Djava.awt.headless=true"
+#        options: >-
+#          --health-cmd="wget --no-verbose --tries=1 --spider http://localhost:8080/rest/ || exit 1"
+#          --health-interval=10s
+#          --health-timeout=5s
+#          --health-retries=10
+#          -v /tmp/openhab/logs/:/openhab/userdata/logs/
+#          -v /tmp/openhab/conf:/openhab/conf
+#          -v /tmp/openhab/addons:/openhab/addons
 
     steps:
     - name: Checkout code
@@ -37,7 +37,8 @@ jobs:
       run: |
         # Create OpenHAB config and log directories with proper permissions
         sudo mkdir -p /tmp/openhab/conf
-        sudo mkdir -p /tmp/openhab/logs
+        sudo mkdir -p /tmp/openhab/userdata
+        sudo mkdir -p /tmp/openhab/addons
         sudo chmod -R 777 /tmp/openhab
         
         # Copy the test configuration to the temporary directory
@@ -45,17 +46,23 @@ jobs:
         # Ensure all copied files are readable
         sudo chmod -R 755 /tmp/openhab/conf
 
+    - name: Start OpenHAB
+      run: |
+        docker run -d \
+          --name openhab \
+          -p 8080:8080 \
+          -p 8443:8443 \
+          -v tmp/openhab/conf:/openhab/conf \
+          -v tmp/openhab/userdata:/openhab/userdata \
+          -v tmp/openhab/addons:/openhab/addons \
+          openhab/openhab:5.0.0
+
     - name: Start Mosquitto
       uses: namoshek/mosquitto-github-action@v1
       with:
         ports: '1883:1883 8883:8883'
         config: ${{ github.workspace }}/.github/workflows/mosquitto.conf
         container-name: 'mqtt'
-
-    - name: Download OpenHAB addons
-      run: |
-        mkdir -p /tmp/openhab/addons
-        wget -O /tmp/openhab/addons/org.openhab.binding.astro-5.0.0.jar https://openhab.jfrog.io/ui/native/libs-release-local/org/openhab/addons/bundles/org.openhab.binding.astro/5.0.0/org.openhab.binding.astro-5.0.0.jar
 
     - name: Set up Python
       uses: actions/setup-python@v5
