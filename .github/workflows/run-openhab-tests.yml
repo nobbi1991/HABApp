@@ -90,6 +90,13 @@ jobs:
           echo "Waiting for OpenHAB to be ready... ($i/30)"
           sleep 10
         done
+
+    - name: List /tmp/openhab/userdata contents
+      run: |
+        echo "Contents of /tmp/openhab/userdata:"
+        ls -la /tmp/openhab/userdata/
+        echo -e "\nContents of subdirectories:"
+        find /tmp/openhab/userdata/ -type d -exec sh -c 'echo "\n$1:"; ls -la "$1"/' _ {} \;
         
     - name: Run HABApp tests
       id: habapp-tests
