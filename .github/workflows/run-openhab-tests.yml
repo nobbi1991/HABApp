@@ -94,8 +94,7 @@ jobs:
 
     - name: Copy OpenHAB user and restart
       run: |
-        chmod -R 777 /tmp/openhab/userdata
-        cp -f "${{ github.workspace }}/run/conf_testing/lib/openhab/userdata/jsondb/users.json"* /tmp/openhab/userdata/jsondb/users.json
+        sudo cp -f "${{ github.workspace }}/run/conf_testing/lib/openhab/userdata/jsondb/users.json"* /tmp/openhab/userdata/jsondb/users.json
         docker restart openhab
 
     - name: Wait for OpenHAB to be ready
