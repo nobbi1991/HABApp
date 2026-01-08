@@ -43,7 +43,7 @@ jobs:
         
         # Copy the test configuration to the temporary directory
         cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/conf/"* /tmp/openhab/conf/
-        cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/userdata/"* /tmp/openhab/userdata/
+        # cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/userdata/"* /tmp/openhab/userdata/
         
         # Ensure all copied files are readable
         sudo chmod -R 755 /tmp/openhab/conf
@@ -88,9 +88,30 @@ jobs:
             echo "OpenHAB is ready!"
             break
           fi
-          echo "Waiting for OpenHAB to be ready... ($i/30)"
+          echo "Waiting 10sec for OpenHAB to be ready... ($i/30)"
           sleep 10
         done
+        echo "❌ Error: OpenHAB failed to start within 5 minutes"
+        exit 1
+
+    - name: Copy OpenHAB user and restart
+      run: |
+        cp -f "${{ github.workspace }}/run/conf_testing/lib/openhab/userdata/jsondb/users.json"* /tmp/openhab/userdata/jsondb/users.json
+        docker restart openhab
+
+    - name: Wait for OpenHAB to be ready
+      run: |
+        echo "Waiting for OpenHAB to be ready..."
+        for i in {1..30}; do
+          if curl -s http://localhost:8080/rest/ > /dev/null; then
+            echo "OpenHAB is ready!"
+            break
+          fi
+          echo "Waiting 10sec for OpenHAB to be ready... ($i/30)"
+          sleep 10
+        done
+        echo "❌ Error: OpenHAB failed to start within 5 minutes"
+        exit 1
 
     - name: List /tmp/openhab/userdata contents
       run: |
