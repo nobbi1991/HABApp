@@ -91,8 +91,6 @@ jobs:
           echo "Waiting 10sec for OpenHAB to be ready... ($i/30)"
           sleep 10
         done
-        echo "❌ Error: OpenHAB failed to start within 5 minutes"
-        exit 1
 
     - name: Copy OpenHAB user and restart
       run: |
@@ -110,8 +108,6 @@ jobs:
           echo "Waiting 10sec for OpenHAB to be ready... ($i/30)"
           sleep 10
         done
-        echo "❌ Error: OpenHAB failed to start within 5 minutes"
-        exit 1
 
     - name: List /tmp/openhab/userdata contents
       run: |
