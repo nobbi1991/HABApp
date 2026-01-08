@@ -13,7 +13,7 @@ location:
 mqtt:
   connection:
     identifier: HABAppTesting
-    host: mosquitto
+    host: localhost
     user: ''
     password: ''
     port: 1883
@@ -33,7 +33,7 @@ mqtt:
 
 openhab:
   connection:
-    url: http://openhab:8080   # Connect to this url
+    url: http://localhost:8080   # Connect to this url
     user: 'habapp_test'
     password: 'strong_password:)'
     verify_ssl: true             # Check certificates when using https
