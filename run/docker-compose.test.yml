@@ -1,0 +1,48 @@
+# Runs the HABApp tests (run/conf_testing) against a fresh openHAB and mosquitto.
+#
+#   docker compose -f run/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from habapp
+#   docker compose -f run/docker-compose.test.yml down -v
+#
+# Variables: OPENHAB_VERSION (default 5.2.4), PYTHON_VERSION (default 3.14)
+name: habapp-tests
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - ../.github/workflows/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  openhab:
+    image: openhab/openhab:${OPENHAB_VERSION:-5.2.4}
+    ports:
+      - "8080:8080"
+    environment:
+      EXTRA_JAVA_OPTS: "-Duser.timezone=Europe/Berlin -Duser.language=de -Duser.region=DE -Djava.awt.headless=true"
+    volumes:
+      # config and the test user are in place before the first start -> no restart needed
+      - ./conf_testing/lib/openhab/conf:/openhab/conf
+      - ./conf_testing/lib/openhab/userdata/jsondb/users.json:/openhab/userdata/jsondb/users.json
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8080/rest/ > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+
+  habapp:
+    build:
+      context: ..
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.14}
+        EXTRA_PIP_PACKAGES: "pytest==9.1.1 packaging==26.3"
+    depends_on:
+      mosquitto:
+        condition: service_started
+      openhab:
+        condition: service_healthy
+    volumes:
+      - ./conf_testing:/habapp/config
+      # log folder has to exist before HABApp starts (the debug traceback file is opened before the folders are created)
+      - ./conf_testing/log:/habapp/config/log

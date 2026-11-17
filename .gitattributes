@@ -4,3 +4,5 @@
 *.rst	text
 *.yml	text
 *.yaml	text
+
+*.sh	text eol=lf

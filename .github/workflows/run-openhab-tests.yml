@@ -6,141 +6,53 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-#    services:
-#      openhab:
-#        image: openhab/openhab:5.0.0
-#        ports:
-#          - 8080:8080
-#          - 8443:8443
-#        env:
-#          OPENHAB_HTTP_PORT: "8080"
-#          OPENHAB_HTTPS_PORT: "8443"
-#          EXTRA_JAVA_OPTS: "-Duser.timezone=Europe/Berlin -Duser.language=de -Duser.region=DE -Djava.awt.headless=true"
-#        options: >-
-#          --health-cmd="wget --no-verbose --tries=1 --spider http://localhost:8080/rest/ || exit 1"
-#          --health-interval=10s
-#          --health-timeout=5s
-#          --health-retries=10
-#          -v /tmp/openhab/logs/:/openhab/userdata/logs/
-#          -v /tmp/openhab/conf:/openhab/conf
-#          -v /tmp/openhab/addons:/openhab/addons
+    timeout-minutes: 30
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        # Clean the working directory to avoid permission issues
-        clean: true
-        fetch-depth: 0
 
-    - name: Set up service configurations
-      run: |
-        # Create OpenHAB config and log directories with proper permissions
-        sudo mkdir -p /tmp/openhab/conf
-        sudo mkdir -p /tmp/openhab/userdata
-        sudo mkdir -p /tmp/openhab/addons
-        sudo chmod -R 777 /tmp/openhab
-        
-        # Copy the test configuration to the temporary directory
-        cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/conf/"* /tmp/openhab/conf/
-        # cp -r "${{ github.workspace }}/run/conf_testing/lib/openhab/userdata/"* /tmp/openhab/userdata/
-        
-        # Ensure all copied files are readable
-        sudo chmod -R 755 /tmp/openhab/conf
-        sudo chmod -R 755 /tmp/openhab/userdata
-
-    - name: Start OpenHAB
-      run: |
-        docker run -d \
-          --name openhab \
-          -p 8080:8080 \
-          -p 8443:8443 \
-          -v /tmp/openhab/conf:/openhab/conf \
-          -v /tmp/openhab/userdata:/openhab/userdata \
-          -v /tmp/openhab/addons:/openhab/addons \
-          openhab/openhab:5.0.0
-
-    - name: Start Mosquitto
-      uses: namoshek/mosquitto-github-action@v1
-      with:
-        ports: '1883:1883 8883:8883'
-        config: ${{ github.workspace }}/.github/workflows/mosquitto.conf
-        container-name: 'mqtt'
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-        
-    - name: Install uv
-      uses: astral-sh/setup-uv@v6
-        
-    - name: Install requirements
-      run: |
-        uv pip install .[all] --system
-        uv pip install -r requirements_tests.txt --system
-        
-    - name: Wait for OpenHAB to be ready
-      run: |
-        echo "Waiting for OpenHAB to be ready..."
-        for i in {1..30}; do
-          if curl -s http://localhost:8080/rest/ > /dev/null; then
-            echo "OpenHAB is ready!"
-            break
-          fi
-          echo "Waiting 10sec for OpenHAB to be ready... ($i/30)"
-          sleep 10
-        done
-
-    - name: Copy OpenHAB user and restart
-      run: |
-        sudo cp -f "${{ github.workspace }}/run/conf_testing/lib/openhab/userdata/jsondb/users.json"* /tmp/openhab/userdata/jsondb/users.json
-        docker restart openhab
-
-    - name: Wait for OpenHAB to be ready
-      run: |
-        echo "Waiting for OpenHAB to be ready..."
-        for i in {1..30}; do
-          if curl -s http://localhost:8080/rest/ > /dev/null; then
-            echo "OpenHAB is ready!"
-            break
-          fi
-          echo "Waiting 10sec for OpenHAB to be ready... ($i/30)"
-          sleep 10
-        done
-
-#    - name: List /tmp/openhab/userdata contents
-#      run: |
-#        echo "Contents of /tmp/openhab/userdata:"
-#        ls -la /tmp/openhab/userdata/
-#        echo -e "\nContents of subdirectories:"
-#        find /tmp/openhab/userdata/ -type d -exec sh -c 'echo "\n$1:"; ls -la "$1"/' _ {} \;
-        
+    # openHAB, mosquitto and HABApp (with the tests from run/conf_testing) run in containers.
+    # Same command as locally, see run/docker-compose.test.yml
     - name: Run HABApp tests
-      id: habapp-tests
       run: |
-        cd run/conf_listen
-        python -m HABApp -c config.yml
-      
+        docker compose -f run/docker-compose.test.yml up --build \
+          --abort-on-container-exit --exit-code-from habapp
+
+    # HABApp might crash on startup and still exit with 0 -> the report is only written if the tests have run
+    - name: Check that the tests have run
+      if: always()
+      run: |
+        if [ ! -f run/conf_testing/log/test_report.xml ]; then
+          echo "::error::No test report found - the tests did not run (HABApp crashed or did not start)"
+          exit 1
+        fi
+
+    - name: Show test report
+      if: always()
+      run: |
+        if [ -f run/conf_testing/log/test_report.md ]; then
+          cat run/conf_testing/log/test_report.md >> "$GITHUB_STEP_SUMMARY"
+        fi
+
     - name: Prepare log files
       if: always()
       run: |
-        # Create structured log directory
         mkdir -p logs/HABApp logs/OpenHAB
-        
-        # Copy HABApp logs if they exist
-        if [ -d "run/conf_listen/log/" ]; then
-          cp -r run/conf_listen/log/* logs/HABApp/ 2>/dev/null || true
+
+        # HABApp logs and test reports
+        if [ -d run/conf_testing/log ]; then
+          cp -r run/conf_testing/log/. logs/HABApp/ || true
         fi
-        
-        # Copy OpenHAB logs if they exist
-        if [ -d "/tmp/openhab/userdata/logs/" ]; then
-          cp -r /tmp/openhab/userdata/logs/* logs/OpenHAB/ 2>/dev/null || true
-        fi
-        
-        # List the contents for debugging
+
+        # openHAB logs (the containers are stopped but still exist)
+        docker cp habapp-tests-openhab-1:/openhab/userdata/logs/. logs/OpenHAB/ || true
+
+        # console output of all containers
+        docker compose -f run/docker-compose.test.yml logs --no-color --timestamps > logs/compose.log || true
+
         find logs -type f | sort
-    
+
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v4
@@ -149,3 +61,7 @@ jobs:
         path: logs/
         retention-days: 7
         if-no-files-found: warn
+
+    - name: Stop containers
+      if: always()
+      run: docker compose -f run/docker-compose.test.yml down -v

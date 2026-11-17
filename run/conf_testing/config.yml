@@ -39,7 +39,7 @@ openhab:
   connection:
     url: http://openhab:8080   # Connect to this url
     user: 'habapp_test'
-    password: 'strong_password:)'
+    password: 'strong_password'
     verify_ssl: true             # Check certificates when using https
   general:
     listen_only: false      # If True HABApp will not change anything on the openHAB instance.

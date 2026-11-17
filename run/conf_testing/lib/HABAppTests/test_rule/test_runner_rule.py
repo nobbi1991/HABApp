@@ -11,6 +11,7 @@ from HABApp.core.shutdown import ShutdownInfo
 from HABApp.core.wrapper import ignore_exception
 from HABAppTests.test_rule.test_case import TestResult, TestResultStatus
 
+from .report import write_reports
 from .test_rule import TestBaseRule, TestRuleStatus
 import sys
 
@@ -76,7 +77,10 @@ class TestRunnerRule(HABApp.Rule):
         plog('-' * 120)
         plog(', '.join(parts))
 
-        sys.exit(0)
+        for file in write_reports(results, HABApp.CONFIG.directories.logging):
+            plog(f'Report written to {file}')
+
+        sys.exit(1 if failed or error else 0)
 
     async def tests_done(self, results: list[TestResult]) -> None:
         raise NotImplementedError()

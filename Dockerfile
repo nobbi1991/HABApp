@@ -1,4 +1,6 @@
-FROM python:3.13 as buildimage
+ARG PYTHON_VERSION=3.13
+
+FROM python:${PYTHON_VERSION} as buildimage
 
 COPY . /tmp/app_install
 
@@ -7,7 +9,10 @@ RUN set -eux; \
 	cd /tmp/app_install; \
 	pip wheel --wheel-dir=/root/wheels .
 
-FROM python:3.13
+FROM python:${PYTHON_VERSION}
+
+# optional extra pip packages (e.g. for running the tests), empty for the release image
+ARG EXTRA_PIP_PACKAGES=""
 
 COPY --from=buildimage /root/wheels /root/wheels
 COPY container/entrypoint.sh /entrypoint.sh
@@ -32,6 +37,7 @@ RUN set -eux; \
     	--no-index \
     	--find-links=/root/wheels \
 		habapp; \
+	if [ -n "${EXTRA_PIP_PACKAGES}" ]; then pip3 install ${EXTRA_PIP_PACKAGES}; fi; \
 # prepare entrypoint script
 	chmod +x /entrypoint.sh; \
 # clean up

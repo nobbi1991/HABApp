@@ -36,6 +36,7 @@ class TestResult:
 
         self.state = TestResultStatus.NOT_SET
         self.msgs: Final[list[str]] = []
+        self.details: Final[list[str]] = []  # e.g. traceback, only used for the report
 
     def set_state(self, new_state: TestResultStatus) -> None:
         if self.state <= new_state:
@@ -58,6 +59,7 @@ class TestResult:
 
         for line in HABApp.core.wrapper.format_exception(e):
             log.error(line)
+            self.details.append(line)
 
     def add_msg(self, msg: str) -> None:
         for line in msg.splitlines():
