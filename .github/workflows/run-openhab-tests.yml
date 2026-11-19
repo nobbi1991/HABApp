@@ -89,3 +89,26 @@ jobs:
     - name: Stop containers
       if: always()
       run: docker compose -f run/docker-compose.test.yml down -v
+
+  # Overview of all openHAB versions in the summary of the workflow run
+  summary:
+    name: summary
+    needs: [versions, test]
+    if: always() && needs.versions.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: Download logs of all versions
+      uses: actions/download-artifact@v8
+      with:
+        pattern: logs-openhab-*
+        path: artifacts
+
+    - name: Summarize test reports
+      env:
+        VERSIONS: ${{ join(fromJSON(needs.versions.outputs.matrix).openhab, ' ') }}
+      run: python .github/scripts/summarize_test_reports.py artifacts $VERSIONS
