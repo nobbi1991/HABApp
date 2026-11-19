@@ -3,7 +3,7 @@
 #   docker compose -f run/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from habapp
 #   docker compose -f run/docker-compose.test.yml down -v
 #
-# Variables: OPENHAB_VERSION (default 5.2.4), PYTHON_VERSION (default 3.14)
+# Variables: OPENHAB_VERSION (default 5.2.5), PYTHON_VERSION (default 3.14)
 name: habapp-tests
 
 services:
@@ -15,7 +15,7 @@ services:
       - ../.github/workflows/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   openhab:
-    image: openhab/openhab:${OPENHAB_VERSION:-5.2.4}
+    image: openhab/openhab:${OPENHAB_VERSION:-5.2.5}
     ports:
       - "8080:8080"
     environment:

@@ -1,12 +1,35 @@
-name: Run OpenHAB 5 Tests
+name: Run OpenHAB Tests
 
 on:
   workflow_dispatch:
 
 jobs:
+  # openHAB only publishes the exact versions (no floating tags like "5.2").
+  # The newest patch version of every minor version below is looked up, so only the minor versions have to be maintained.
+  versions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.resolve.outputs.matrix }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: Resolve newest patch versions
+      id: resolve
+      run: python .github/scripts/resolve_openhab_versions.py 4.3 5.0 5.1 5.2
+
   test:
+    name: test (openHAB ${{ matrix.openhab }})
+    needs: versions
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.versions.outputs.matrix) }}
+    env:
+      OPENHAB_VERSION: ${{ matrix.openhab }}
 
     steps:
     - name: Checkout code
@@ -31,6 +54,7 @@ jobs:
     - name: Show test report
       if: always()
       run: |
+        echo "**openHAB ${OPENHAB_VERSION}**" >> "$GITHUB_STEP_SUMMARY"
         if [ -f run/conf_testing/log/test_report.md ]; then
           cat run/conf_testing/log/test_report.md >> "$GITHUB_STEP_SUMMARY"
         fi
@@ -57,7 +81,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: logs
+        name: logs-openhab-${{ matrix.openhab }}
         path: logs/
         retention-days: 7
         if-no-files-found: warn
