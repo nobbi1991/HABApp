@@ -2,6 +2,11 @@ name: Run OpenHAB Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      minors:
+        description: 'openHAB minor versions to test (space separated). The newest patch version of each is used.'
+        required: false
+        default: '4.3 5.0 5.1 5.2'
 
 jobs:
   # openHAB only publishes the exact versions (no floating tags like "5.2").
@@ -18,7 +23,9 @@ jobs:
 
     - name: Resolve newest patch versions
       id: resolve
-      run: python .github/scripts/resolve_openhab_versions.py 4.3 5.0 5.1 5.2
+      env:
+        MINORS: ${{ inputs.minors }}
+      run: python .github/scripts/resolve_openhab_versions.py ${MINORS:-4.3 5.0 5.1 5.2}
 
   test:
     name: test (openHAB ${{ matrix.openhab }})
@@ -41,6 +48,28 @@ jobs:
       run: |
         docker compose -f run/docker-compose.test.yml up --build \
           --abort-on-container-exit --exit-code-from habapp
+
+    # Why did the tests not run? Collect infos about the openHAB container (e.g. if it never became healthy)
+    - name: Diagnostics
+      if: failure()
+      run: |
+        mkdir -p logs
+        {
+          echo "== runner"; nproc; free -m; df -h /
+          echo "== docker compose ps"; docker compose -f run/docker-compose.test.yml ps -a
+          echo "== openhab container state"; docker inspect habapp-tests-openhab-1 --format '{{json .State}}'
+          echo "== openhab healthcheck log"
+          docker inspect habapp-tests-openhab-1 --format '{{json .State.Health.Log}}'
+          echo "== processes in openhab container"; docker exec habapp-tests-openhab-1 ps aux
+          echo "== GET /rest/ inside the openhab container"
+          docker exec habapp-tests-openhab-1 curl -s -i -m 10 http://localhost:8080/rest/ | head -n 20
+          echo "== openhab userdata/logs and tmp"
+          docker exec habapp-tests-openhab-1 ls -la /openhab/userdata/logs /openhab/userdata/tmp
+          echo "== tail of openhab.log"; docker exec habapp-tests-openhab-1 tail -n 80 /openhab/userdata/logs/openhab.log
+          echo "== thread dump of the openhab jvm"
+          docker exec habapp-tests-openhab-1 sh -c 'jcmd $(pgrep -f karaf | head -n 1) Thread.print' | head -n 200
+          echo "== container output (tail)"; docker logs --tail 60 habapp-tests-openhab-1
+        } > logs/diagnostics.txt 2>&1 || true
 
     # HABApp might crash on startup and still exit with 0 -> the report is only written if the tests have run
     - name: Check that the tests have run
