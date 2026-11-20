@@ -51,7 +51,7 @@ jobs:
 
     # Why did the tests not run? Collect infos about the openHAB container (e.g. if it never became healthy)
     - name: Diagnostics
-      if: failure()
+      if: failure() || cancelled()  # a timeout counts as cancelled
       run: |
         mkdir -p logs
         {
