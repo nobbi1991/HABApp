@@ -11,6 +11,7 @@ on:
 jobs:
   # openHAB only publishes the exact versions (no floating tags like "5.2").
   # The newest patch version of every minor version below is looked up, so only the minor versions have to be maintained.
+  # The newest milestone / release candidate (e.g. 5.3.0.M5) is always added as long as there is no final release for it.
   versions:
     runs-on: ubuntu-latest
     timeout-minutes: 5
