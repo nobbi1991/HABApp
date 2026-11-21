@@ -1,8 +1,8 @@
 {
-  "habapp_test": {
+  "asdf": {
     "class": "org.openhab.core.auth.ManagedUser",
     "value": {
-      "name": "habapp_test",
+      "name": "asdf",
       "passwordHash": "5qCHTbCvMhL3FuQ33ouW3vStltQEvPqlRWMz9u3WfMcjAX4cdgU6GwH8b9wkU3IjrVKPopdAY9V7wAtHxWpOpg\u003d\u003d",
       "passwordSalt": "Z5CKCKhKhEWs2+mW1an8JuOns4XngQTsXrc95sky0u8FG2jCr7chiAvJN0AzMxKRoj6SkfbJA4GzbTvw4mSm8Q\u003d\u003d",
       "roles": [

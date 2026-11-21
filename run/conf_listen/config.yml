@@ -34,7 +34,7 @@ mqtt:
 openhab:
   connection:
     url: http://localhost:8080   # Connect to this url
-    user: 'habapp_test'
+    user: 'asdf'
     password: 'strong_password'
     verify_ssl: true             # Check certificates when using https
   general:

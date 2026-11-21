@@ -36,7 +36,7 @@ services:
       context: ..
       args:
         PYTHON_VERSION: ${PYTHON_VERSION:-3.14}
-        EXTRA_PIP_PACKAGES: "pytest==9.1.1 packaging==26.3"
+        EXTRA_PIP_PACKAGES: "pytest==9.2.0 packaging==26.3"
     depends_on:
       mosquitto:
         condition: service_started
