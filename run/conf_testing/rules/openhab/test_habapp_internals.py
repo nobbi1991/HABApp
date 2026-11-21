@@ -17,7 +17,10 @@ class OpenhabMetaData(TestBaseRule):
         await self.async_oh.set_metadata(tmpitem.name, 'HABApp', 'value', {'a': 'b'})
 
         d = await self.async_oh.get_item(tmpitem.name)
-        assert d.metadata['HABApp'] == {'value': 'value', 'config': {'a': 'b'}, 'editable': True}
+        meta = dict(d.metadata['HABApp'])
+        # openHAB 4.3 does not return the key "editable"
+        assert meta.pop('editable', True) is True
+        assert meta == {'value': 'value', 'config': {'a': 'b'}}
 
         # remove metadata again
         await self.async_oh.remove_metadata(tmpitem.name, 'HABApp')

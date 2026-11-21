@@ -1,4 +1,6 @@
+import asyncio
 import logging
+from time import monotonic
 from typing import Final
 
 import HABApp
@@ -43,12 +45,59 @@ class TestRunnerRule(HABApp.Rule):
                 return rule
         return None
 
+    async def _wait_until_item_events_work(self, shutdown: ShutdownInfo, stable_for: float = 30,
+                                           timeout: float = 240) -> None:
+        """Wait until HABApp receives the events for items which were created in openHAB.
+
+        Some openHAB versions (e.g. 4.3) close the websocket some seconds after the startup. HABApp needs
+        around a minute to notice this and to reconnect. Items which are created in this time are not known to
+        HABApp, so all tests that create items would fail.
+        Because the websocket is closed after the first successful check, the check has to succeed
+        for ``stable_for`` seconds without interruption.
+        """
+        from HABAppTests.openhab_tmp_item import AsyncOpenhabTmpItem  # noqa: PLC0415
+
+        started = monotonic()
+        ok_since: float | None = None
+        while not shutdown.is_requested():
+            item = AsyncOpenhabTmpItem('String')
+            try:
+                await item.create_item()
+                ready = True
+            except Exception as e:  # noqa: BLE001
+                log.debug(f'Item events do not work yet: {e!r}')
+                ready = False
+            finally:
+                try:
+                    await item.remove()
+                except Exception as e:  # noqa: BLE001
+                    log.debug(f'Could not remove item {item.name}: {e!r}')
+
+            now = monotonic()
+            if not ready:
+                ok_since = None
+            elif ok_since is None:
+                ok_since = now
+            elif now - ok_since >= stable_for:
+                log.info(f'HABApp receives item events from openHAB (waited {now - started:.0f}s)')
+                return
+
+            if now - started > timeout:
+                log.warning(f'HABApp does not receive item events from openHAB after {now - started:.0f}s! '
+                            f'Tests which create items will fail.')
+                return
+
+            await asyncio.sleep(2)
+
     @ignore_exception
     async def _run_tests(self) -> None:
         results: list[TestResult] = []
 
         # todo: Implement this properly
         shutdown = await HABAPP_PROVIDER.get(ShutdownInfo)
+
+        await self._wait_until_item_events_work(shutdown)
+
         while (rule := self._get_next_rule()) is not None and not shutdown.is_requested():
             results.extend(await rule.run_test_cases())
 
