@@ -21,12 +21,6 @@ from HABApp.openhab.events import (
 from HABApp.openhab.items import NumberItem
 
 
-def _without_channel(source: str | None) -> str | None:
-    """openHAB appends the channel and the user to the source if the event was sent through the REST api
-    (e.g. ``HABApp.TestSource=>org.openhab.core.io.rest$habapp_test``). Only compare the part set by HABApp."""
-    return None if source is None else source.split('=>', 1)[0]
-
-
 class TestOpenhabEventTypes(TestBaseRule):
     """This rule is testing the OpenHAB data types by posting values and checking the events"""
 
@@ -90,18 +84,21 @@ class TestOpenhabEventTypes(TestBaseRule):
                     item_waiter.wait_for_state(receive_value)
 
     def test_event_source_command(self, transport: str) -> None:
+        source_suffix: Final = '' if transport == 'websocket' else '=>org.openhab.core.io.rest$asdf'
+
         with OpenhabTmpItem('Number') as item, EventWaiter(item.name, ItemCommandEventFilter()) as event_waiter:
             # test manual source
             self.oh.send_command(item.name, 5, source='TestSource', transport=transport)
             event: ItemCommandEvent = event_waiter.wait_for_event()
-            assert _without_channel(event.source) == 'HABApp.TestSource'
+            assert event.source == 'HABApp.TestSource' + source_suffix
 
             # automatic source
             self.oh.send_command(item.name, 6, transport=transport)
             event: ItemCommandEvent = event_waiter.wait_for_event()
-            assert _without_channel(event.source) == 'HABApp.TestOpenhabEventTypes'
+            assert event.source == 'HABApp.TestOpenhabEventTypes' + source_suffix
 
     def test_event_source_update(self, transport: str) -> None:
+        source_suffix: Final = '' if transport == 'websocket' else '=>org.openhab.core.io.rest$asdf'
 
         events: list[ItemStateUpdatedEvent | ItemStateChangedEvent] = []
 
@@ -131,7 +128,9 @@ class TestOpenhabEventTypes(TestBaseRule):
         assert e1.value == value_1
 
         assert isinstance(e2, ItemStateChangedEvent)
-        assert _without_channel(e2.source) == 'HABApp.TestSource_1'
+        assert e2.source == 'HABApp.TestSource_1' + source_suffix
+        assert e2.source.origin == ('HABApp', 'TestSource_1')
+        assert str(e2.source.origin) == 'HABApp.TestSource_1'
         assert e2.value == value_1
 
         assert isinstance(e3, ItemStateUpdatedEvent)
@@ -143,7 +142,7 @@ class TestOpenhabEventTypes(TestBaseRule):
         assert e4.value == value_2
 
         assert isinstance(e5, ItemStateChangedEvent)
-        assert _without_channel(e5.source) == 'HABApp.TestOpenhabEventTypes'
+        assert e5.source == 'HABApp.TestOpenhabEventTypes' + source_suffix
         assert e5.value == value_2
 
         assert isinstance(e6, ItemStateUpdatedEvent)
