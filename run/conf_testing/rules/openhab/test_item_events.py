@@ -41,10 +41,12 @@ class TestOpenhabEventTypes(TestBaseRule):
         for name, unit in dimensions.items():
             self.add_test(f'Quantity {name} events', self.test_quantity_type_events, name, unit)
 
-        self.add_test('EventSourceCommandHttp', self.test_event_source_command, 'http')
+        # Before openHAB 5.1 the REST API ignores the source parameter and the ItemStateChangedEvent
+        # does not contain the source of the update which caused the change.
+        self.add_test('EventSourceCommandHttp', self.test_event_source_command, 'http', min_openhab_version=(5, 1))
         self.add_test('EventSourceCommandWs', self.test_event_source_command, 'websocket')
-        self.add_test('EventSourceUpdateHttp', self.test_event_source_update, 'http')
-        self.add_test('EventSourceUpdateWs', self.test_event_source_update, 'websocket')
+        self.add_test('EventSourceUpdateHttp', self.test_event_source_update, 'http', min_openhab_version=(5, 1))
+        self.add_test('EventSourceUpdateWs', self.test_event_source_update, 'websocket', min_openhab_version=(5, 1))
 
     def test_item(self, item_type: str, test_states: tuple, test_commands: tuple) -> None:
         item_name = f'{item_type}_value_test'

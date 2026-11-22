@@ -52,9 +52,10 @@ class TestBaseRule(HABApp.Rule):
     def add_test(self, name: str, func: Callable | Callable[[...], Coroutine], *args: Any,
                  setup_up: Callable | Callable[[...], Coroutine] | None = None,
                  tear_down: Callable | Callable[[...], Coroutine] | None = None,
+                 min_openhab_version: tuple[int, int] | None = None,
                  **kwargs: Any) -> Self:
 
-        tc = TestCase(name, func, args, kwargs, setup_up, tear_down)
+        tc = TestCase(name, func, args, kwargs, setup_up, tear_down, min_openhab_version)
         assert tc.name not in self._test_cases
         self._test_cases[tc.name] = tc
         return self

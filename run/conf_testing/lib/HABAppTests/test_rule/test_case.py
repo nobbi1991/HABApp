@@ -9,6 +9,8 @@ from typing import Any, Final, Self
 import HABApp
 from HABApp.core.events import NoEventFilter
 from HABApp.core.internals import EventBusListener, ExecutorFactory, FunctionExecutorBase, get_current_context
+from HABApp.core.provider import HABAPP_PROVIDER
+from HABApp.openhab.connection.connection import OpenhabConnection
 from HABAppTests.test_rule._com_patcher import BasePatcher, MqttPatcher, RestPatcher, WebsocketPatcher
 from HABAppTests.test_rule.test_result import TestResult, TestResultStatus
 from HABAppTests.utils import get_file_path_of_obj
@@ -92,7 +94,8 @@ class TestCase:
     def __init__(self, name: str, func: Callable | Callable[[...], Coroutine],
                  args: Sequence[Any] = (), kwargs: dict[str, Any] | None = None,
                  setup_up: Callable | Callable[[...], Coroutine] | None = None,
-                 tear_down: Callable | Callable[[...], Coroutine] | None = None) -> None:
+                 tear_down: Callable | Callable[[...], Coroutine] | None = None,
+                 min_openhab_version: tuple[int, int] | None = None) -> None:
         self.name: Final = name
         self.func: Final = func
         self.args: Final = args
@@ -100,6 +103,18 @@ class TestCase:
 
         self.set_up: Final = setup_up if setup_up is not None else None
         self.tear_down: Final = tear_down if tear_down is not None else None
+        self.min_openhab_version: Final = min_openhab_version
+
+    def get_skip_reason(self) -> str | None:
+        if (min_version := self.min_openhab_version) is None:
+            return None
+
+        # if the version is not known (yet) the test is run
+        if (version := get_openhab_version()) is None or version >= min_version:
+            return None
+
+        return (f'requires openHAB {".".join(map(str, min_version))} or newer '
+                f'(running {".".join(map(str, version))})')
 
     async def run(self, res: TestResult) -> TestResult:
 
@@ -158,6 +173,11 @@ class TestCase:
 log = logging.getLogger('HABApp.Tests')
 
 
+def get_openhab_version() -> tuple[int, int, int] | None:
+    context = HABAPP_PROVIDER.get_existing(OpenhabConnection).context
+    return context.version if context is not None else None
+
+
 async def run_test_cases(test_cases: Sequence[TestCase], group_name: str, source: str | object, *,
                          skip_on_failure: bool = False) -> list[TestResult]:
     source_text = source if isinstance(source, str) else get_file_path_of_obj(source)
@@ -175,6 +195,12 @@ async def run_test_cases(test_cases: Sequence[TestCase], group_name: str, source
     for res, tc in zip(results, test_cases, strict=True):
         if skip_on_failure and max(r.state for r in results) >= TestResultStatus.FAILED:
             res.set_state(TestResultStatus.SKIPPED)
+            res.log()
+            continue
+
+        if reason := tc.get_skip_reason():
+            res.set_state(TestResultStatus.SKIPPED)
+            res.add_msg(reason)
             res.log()
             continue
 
