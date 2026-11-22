@@ -1,3 +1,5 @@
+import time
+from time import monotonic
 from typing import Final
 
 from HABAppTests import (
@@ -16,7 +18,6 @@ from HABApp.openhab.events import (
     ItemCommandEventFilter,
     ItemStateChangedEvent,
     ItemStateUpdatedEvent,
-    ItemStateUpdatedEventFilter,
 )
 from HABApp.openhab.items import NumberItem
 
@@ -106,7 +107,7 @@ class TestOpenhabEventTypes(TestBaseRule):
             assert isinstance(event, (ItemStateUpdatedEvent, ItemStateChangedEvent))
             events.append(event)
 
-        with OpenhabTmpItem('Number') as item, EventWaiter(item.name, ItemStateUpdatedEventFilter()) as event_waiter:
+        with OpenhabTmpItem('Number') as item:
 
             NumberItem.get_item(item.name).listen_event(_on_event)
 
@@ -119,35 +120,34 @@ class TestOpenhabEventTypes(TestBaseRule):
             value_2: Final = 6
             self.oh.post_update(item.name, value_2, transport=transport)
             self.oh.post_update(item.name, value_2, transport=transport)
-            event_waiter.wait_for_event()
 
-        e1, e2, e3, e4, e5, e6 = events
+            # The callbacks run in worker threads, so the order in which they append to the list is not
+            # guaranteed to be the order in which the events were received -> wait for all of them
+            end = monotonic() + 2
+            while len(events) < 6 and monotonic() < end:  # noqa: PLR2004
+                time.sleep(0.01)
+            time.sleep(0.1)  # make sure no additional events arrive
 
-        assert isinstance(e1, ItemStateUpdatedEvent)
-        assert e1.source is None
-        assert e1.value == value_1
+        assert len(events) == 6, events  # noqa: PLR2004
 
-        assert isinstance(e2, ItemStateChangedEvent)
-        assert e2.source == 'HABApp.TestSource_1' + source_suffix
-        assert e2.source.origin == ('HABApp', 'TestSource_1')
-        assert str(e2.source.origin) == 'HABApp.TestSource_1'
-        assert e2.value == value_1
+        updated = [e for e in events if isinstance(e, ItemStateUpdatedEvent)]
+        changed = [e for e in events if isinstance(e, ItemStateChangedEvent)]
 
-        assert isinstance(e3, ItemStateUpdatedEvent)
-        assert e3.source is None
-        assert e3.value == value_1
+        # updated events have no source
+        assert len(updated) == 4, updated  # noqa: PLR2004
+        assert sorted(e.value for e in updated) == [value_1, value_1, value_2, value_2]
+        for e in updated:
+            assert e.source is None
 
-        assert isinstance(e4, ItemStateUpdatedEvent)
-        assert e4.source is None
-        assert e4.value == value_2
+        assert len(changed) == 2, changed  # noqa: PLR2004
+        c1, c2 = sorted(changed, key=lambda x: x.value)
 
-        assert isinstance(e5, ItemStateChangedEvent)
-        assert e5.source == 'HABApp.TestOpenhabEventTypes' + source_suffix
-        assert e5.value == value_2
+        assert c1.source == 'HABApp.TestSource_1' + source_suffix
+        assert c1.source.origin == ('HABApp', 'TestSource_1')
+        assert str(c1.source.origin) == 'HABApp.TestSource_1'
+        assert c1.value == value_1
 
-        assert isinstance(e6, ItemStateUpdatedEvent)
-        assert e6.source is None
-        assert e6.value == value_2
-
+        assert c2.source == 'HABApp.TestOpenhabEventTypes' + source_suffix
+        assert c2.value == value_2
 
 TestOpenhabEventTypes()
