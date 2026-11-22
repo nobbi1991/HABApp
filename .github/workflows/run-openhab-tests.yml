@@ -67,8 +67,13 @@ jobs:
           echo "== openhab userdata/logs and tmp"
           docker exec habapp-tests-openhab-1 ls -la /openhab/userdata/logs /openhab/userdata/tmp
           echo "== tail of openhab.log"; docker exec habapp-tests-openhab-1 tail -n 80 /openhab/userdata/logs/openhab.log
-          echo "== thread dump of the openhab jvm"
-          docker exec habapp-tests-openhab-1 sh -c 'jcmd $(pgrep -f karaf | head -n 1) Thread.print' | head -n 200
+          echo "== thread dump of the openhab jvm (see thread_dump.txt)"
+          # The image has no jcmd/jstack: SIGQUIT lets the jvm print the thread dump to the container output.
+          # There can be more than one karaf jvm (openHAB restarts itself after the first start).
+          docker exec habapp-tests-openhab-1 sh -c 'for p in $(pgrep -f org.apache.karaf.main.Main); do echo "pid $p"; kill -3 $p; done'
+          sleep 3
+          docker logs habapp-tests-openhab-1 2>&1 | sed -n '/Full thread dump/,$p' > logs/thread_dump.txt
+          wc -l logs/thread_dump.txt
           echo "== container output (tail)"; docker logs --tail 60 habapp-tests-openhab-1
         } > logs/diagnostics.txt 2>&1 || true
 

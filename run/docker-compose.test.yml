@@ -28,7 +28,13 @@ services:
       test:
         - CMD-SHELL
         - |
-          curl -fs http://localhost:8080/rest/ > /dev/null || exit 1
+          # Wait until openHAB has (nearly) started and runs for some time: some versions (e.g. 5.2) restart once
+          # shortly after the first start. If HABApp connects during the restart the tests can hang.
+          # The uptime starts again with 0 after the restart. Credentials are the ones of the test user.
+          info=$$(curl -fs -m 5 -u asdf:strong_password http://localhost:8080/rest/systeminfo) || exit 1
+          level=$$(echo "$$info" | sed -n 's/.*"startLevel": *\([0-9]*\).*/\1/p')
+          uptime=$$(echo "$$info" | sed -n 's/.*"uptime": *\([0-9]*\).*/\1/p')
+          [ "$${level:-0}" -ge 70 ] && [ "$${uptime:-0}" -ge 30 ] || exit 1
           # Enable the debug logging for the websocket (a bit later than the rest api the karaf console is ready).
           # HABApp is started afterwards, so these messages are in the openhab.log from the beginning.
           [ -f /tmp/log-levels-set ] && exit 0
