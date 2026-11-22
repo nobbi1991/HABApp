@@ -2,10 +2,12 @@
 
 Usage: summarize_test_reports.py <folder with the downloaded artifacts> <openHAB version> [<openHAB version> ...]
 
-For every version the report ``<folder>/*<version>/HABApp/test_report.xml`` is read.
+For every version the report ``<folder>/logs-openhab-<version>-attempt-<n>/HABApp/test_report.xml`` is read.
+If a job was re-run there is one folder per attempt: the report of the latest attempt is used.
 The markdown is printed and appended to ``$GITHUB_STEP_SUMMARY`` if it is set.
 """
 import os
+import re
 import sys
 from pathlib import Path
 from xml.etree import ElementTree as ET
@@ -15,13 +17,27 @@ OK, WARNING, FAILED, ERROR, SKIPPED = 'ok', 'warning', 'failed', 'error', 'skipp
 SYMBOLS = {OK: '✅', WARNING: '⚠️', FAILED: '❌', ERROR: '❌', SKIPPED: '⏭️', None: '➖'}
 
 
+def find_report(folder: Path, version: str) -> Path | None:
+    pattern = re.compile(rf'logs-openhab-{re.escape(version)}-attempt-(\d+)')
+
+    attempts: dict[int, Path] = {}
+    for artifact in folder.iterdir():
+        if artifact.is_dir() and (m := pattern.fullmatch(artifact.name)):
+            attempts[int(m.group(1))] = artifact
+
+    # The latest attempt is the result of the job, even if it has no report (e.g. openHAB did not start)
+    if not attempts:
+        return None
+    file = attempts[max(attempts)] / 'HABApp' / 'test_report.xml'
+    return file if file.is_file() else None
+
+
 def read_report(folder: Path, version: str) -> dict[str, str] | None:
-    files = sorted(folder.glob(f'*{version}/HABApp/test_report.xml'))
-    if not files:
+    if (file := find_report(folder, version)) is None:
         return None
 
     results: dict[str, str] = {}
-    for case in ET.parse(files[0]).getroot().iter('testcase'):
+    for case in ET.parse(file).getroot().iter('testcase'):
         name = f'{case.get("classname")}.{case.get("name")}'
         if case.find('failure') is not None:
             results[name] = FAILED
