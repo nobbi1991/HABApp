@@ -150,11 +150,12 @@ class TestOpenhabInterface(TestBaseRule):
             self.openhab.remove_metadata(item, 'MyNameSpace')
 
     def test_async_oder(self) -> None:
+        # Every value is unique: waiting for the last one ensures that openHAB has processed all updates
+        # before the item is removed (otherwise the remaining updates fail with "Could not find item").
         with OpenhabTmpItem('String', 'AsyncOrderTest') as item, ItemWaiter(item) as waiter:
-            for _ in range(10):
-                for i in range(5):
-                    item.oh_post_update(str(i))
-            waiter.wait_for_state('4')
+            for i in range(50):
+                item.oh_post_update(str(i))
+            waiter.wait_for_state('49')
 
 
 TestOpenhabInterface()

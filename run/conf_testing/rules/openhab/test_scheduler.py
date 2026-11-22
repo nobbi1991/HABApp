@@ -1,11 +1,22 @@
+from collections.abc import Callable, Coroutine
 from datetime import timedelta
 from time import monotonic, sleep
+from typing import Any
 
 from HABAppTests import OpenhabTmpItem, TestBaseRule
 
 from HABApp.core.events import ValueUpdateEventFilter
 from HABApp.core.items.base_valueitem import datetime
 from HABApp.openhab.items import DatetimeItem
+
+
+def append_in_order(target: list,
+                    func: Callable[[Any], Any] = lambda x: x) -> Callable[[Any], Coroutine[Any, Any, None]]:
+    # Callbacks of sync functions run in worker threads, so the order in which they append to the list is not
+    # guaranteed. Async callbacks are executed as tasks in the event loop in the order the events are received.
+    async def append(event: Any) -> None:
+        target.append(func(event))
+    return append
 
 
 class TestSchedulerOhInteraction(TestBaseRule):
@@ -22,7 +33,7 @@ class TestSchedulerOhInteraction(TestBaseRule):
 
         item_states = []
         item = DatetimeItem.get_item(tmp_item.name)
-        listener = item.listen_event(lambda x: item_states.append(x), ValueUpdateEventFilter())
+        listener = item.listen_event(append_in_order(item_states), ValueUpdateEventFilter())
 
         next_hour = datetime.now().replace(second=0, microsecond=0) + timedelta(hours=1)
 
@@ -41,7 +52,7 @@ class TestSchedulerOhInteraction(TestBaseRule):
 
         item_states = []
         item = DatetimeItem.get_item(tmp_item.name)
-        listener = item.listen_event(lambda x: item_states.append(x), ValueUpdateEventFilter())
+        listener = item.listen_event(append_in_order(item_states), ValueUpdateEventFilter())
 
         next_hour = datetime.now().replace(second=0, microsecond=0) + timedelta(hours=1)
 
@@ -64,7 +75,7 @@ class TestSchedulerOhInteraction(TestBaseRule):
         item_states = []
 
         item = DatetimeItem.get_item(tmp_item.name)
-        listener = item.listen_event(lambda x: item_states.append(x.value), ValueUpdateEventFilter())
+        listener = item.listen_event(append_in_order(item_states, lambda x: x.value), ValueUpdateEventFilter())
 
         def reset_func() -> None:
             calls.append(monotonic())

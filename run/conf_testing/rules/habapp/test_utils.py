@@ -1,4 +1,6 @@
 import logging
+import time
+from time import monotonic
 
 from HABAppTests import ItemWaiter, OpenhabTmpItem, TestBaseRule, get_random_name
 
@@ -10,6 +12,15 @@ from HABApp.util.rate_limiter import RateLimiter
 
 
 log = logging.getLogger('HABApp.Tests.MultiMode')
+
+
+def wait_for_enabled(mode: SwitchItemValueMode, enabled: bool, timeout: float = 1) -> None:
+    # The mode is enabled/disabled by an event listener which runs in a worker thread.
+    # It is executed after the item state has changed, so it has to be waited for separately.
+    end = monotonic() + timeout
+    while mode.enabled is not enabled and monotonic() < end:
+        time.sleep(0.01)
+    assert mode.enabled is enabled, mode.enabled
 
 
 class TestSwitchMode(TestBaseRule):
@@ -36,7 +47,7 @@ class TestSwitchMode(TestBaseRule):
             switch.off()
             waiter.wait_for_state('OFF')
             assert switch.is_off()
-            assert mode.enabled is False, mode.enabled
+            wait_for_enabled(mode, False)
 
             mode.set_value('asdf')
             assert mode.enabled is False, mode.enabled
@@ -65,7 +76,7 @@ class TestSwitchMode(TestBaseRule):
 
             switch.off()
             waiter.wait_for_state('OFF')
-            assert mode.enabled is True, mode.enabled
+            wait_for_enabled(mode, True)
 
         HABAPP_PROVIDER.get_existing(ItemRegistry).pop_item(mm.name)
 
