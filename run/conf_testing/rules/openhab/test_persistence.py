@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from time import monotonic, sleep
 from typing import TYPE_CHECKING, Any, Final
 
 from HABAppTests import ItemWaiter, TestBaseRule
@@ -51,9 +52,20 @@ class TestRRD4j(TestPersistenceBase):
         self.add_test('RRD4J get', self.test_get)
 
     def test_get(self) -> None:
-        now = datetime.now()
-        d = self.get_persistence_data(now - timedelta(seconds=60), now)
-        assert d.get_data()
+        # rrd4j does not return a value immediately: it consolidates the values into fixed time steps.
+        # On a fresh openHAB (e.g. the docker tests) the first value of the item is set in set_up just before
+        # this test, so there is no data yet. The every30s strategy stores a value at the latest after 30 seconds.
+        timeout: Final = 45
+        start = monotonic()
+        while True:
+            now = datetime.now()
+            d = self.get_persistence_data(now - timedelta(seconds=60), now)
+            if d.get_data():
+                return
+            if monotonic() - start > timeout:
+                msg = f'No data from rrd4j for {self.item_name} after {timeout}s'
+                raise AssertionError(msg)
+            sleep(1)
 
 
 TestRRD4j()
